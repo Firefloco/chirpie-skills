@@ -25,7 +25,10 @@ const chirpie = new ChirpieClient({
 // Option 2: Auto-load from env or ~/.chirpie/config.json
 import { requireConfig } from "@chirpie/sdk";
 const config = requireConfig();
-const chirpie = new ChirpieClient(config);
+const chirpie = new ChirpieClient({
+  apiKey: config.api_key,
+  baseUrl: config.base_url,
+});
 ```
 
 **Environment variables:**
@@ -85,7 +88,7 @@ const { authorization_url } = await chirpie.connectAccount();
 ### API Keys
 
 ```typescript
-const { key, prefix, name } = await chirpie.createKey({ name: "My Bot" });
+const { key, prefix, name } = await chirpie.createKey("My Bot");
 const keys = await chirpie.listKeys();
 await chirpie.revokeKey("key-uuid");
 ```
@@ -139,7 +142,7 @@ import { getConfig, saveConfig, deleteConfig, requireConfig } from "@chirpie/sdk
 const config = getConfig();
 
 // Save config (creates ~/.chirpie/config.json with 0600 permissions)
-saveConfig({ api_key: "chirpie_sk_...", base_url: "https://chirpie.ai" });
+saveConfig("chirpie_sk_...", "https://chirpie.ai");
 
 // Delete config
 deleteConfig();

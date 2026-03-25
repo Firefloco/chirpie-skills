@@ -75,10 +75,10 @@ Scheduled posts have a separate monthly quota:
 
 | Plan | Scheduled/mo |
 |------|-------------|
-| Free | 50 |
+| Free | 25 |
 | Starter | 500 |
-| Pro | 5,000 |
-| Scale | 25,000 |
+| Pro | 2,500 |
+| Scale | 12,500 |
 | Enterprise | Unlimited |
 
 Both `posts` and `scheduled` limits are checked when creating scheduled content. A scheduled thread of 5 posts counts as 5 against both quotas.

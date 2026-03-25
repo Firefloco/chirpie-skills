@@ -55,7 +55,7 @@ Chirpie is a social media API for AI agents and developers. Post to X/Twitter vi
 | Delete post | `/api/v1/posts/:id` | DELETE |
 | Create thread | `/api/v1/threads` | POST |
 | List accounts | `/api/v1/accounts` | GET |
-| Connect account | `/api/v1/accounts/connect` | POST |
+| Connect account | `/api/v1/accounts` | POST |
 | Create API key | `/api/v1/keys` | POST |
 | List keys | `/api/v1/keys` | GET |
 | Revoke key | `/api/v1/keys?id=ID` | DELETE |
@@ -76,5 +76,5 @@ All endpoints return:
 ## Rate Limits
 
 - **Burst:** 60 requests/minute per API key
-- **Monthly quotas:** Free 100, Starter 1K, Pro 10K, Scale 50K posts/month
-- **Overage:** $0.005/post on paid plans, hard limit on free
+- **Monthly quotas:** Free 50, Starter 1K, Pro 5K, Scale 25K posts/month
+- **Overage:** $0.01/post (Starter), $0.008/post (Pro). Free plan has hard limit. Scale is custom pricing.
