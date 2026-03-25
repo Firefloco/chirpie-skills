@@ -1,0 +1,155 @@
+---
+name: chirpie-mcp
+description: Connect the Chirpie MCP server to Claude Code, Claude Desktop, Cursor, or other AI agents. Lists all available tools and their parameters.
+---
+
+# Chirpie MCP Server
+
+The Chirpie MCP server lets AI agents post to X/Twitter through the Model Context Protocol.
+
+## Prerequisites
+
+Authenticate first (choose one):
+
+```bash
+# Option A: CLI login (saves to ~/.chirpie/config.json)
+npx chirpie login
+
+# Option B: Set environment variable
+export CHIRPIE_API_KEY=chirpie_sk_YOUR_KEY
+```
+
+## Setup
+
+### Claude Code
+
+```bash
+claude mcp add chirpie -- npx @chirpie/mcp
+```
+
+Or add to `.mcp.json` in your project:
+
+```json
+{
+  "mcpServers": {
+    "chirpie": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@chirpie/mcp"]
+    }
+  }
+}
+```
+
+### Claude Desktop
+
+Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "chirpie": {
+      "command": "npx",
+      "args": ["@chirpie/mcp"]
+    }
+  }
+}
+```
+
+### Cursor
+
+Add to Cursor MCP settings:
+
+```json
+{
+  "mcpServers": {
+    "chirpie": {
+      "command": "npx",
+      "args": ["@chirpie/mcp"]
+    }
+  }
+}
+```
+
+## Available Tools
+
+### chirpie_post
+
+Create a single post on X.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `account_id` | string | Yes | X account UUID |
+| `text` | string | Yes | Post text (max 280 chars) |
+| `schedule_at` | string | No | ISO 8601 datetime (UTC, must be future) |
+
+### chirpie_thread
+
+Create a multi-post thread on X.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `account_id` | string | Yes | X account UUID |
+| `posts` | array | Yes | Array of `{ text }` objects (2-25) |
+| `schedule_at` | string | No | ISO 8601 datetime |
+
+### chirpie_list_posts
+
+List posts with optional filters.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `status` | string | No | Filter: draft, scheduled, published, failed, deleted |
+| `account_id` | string | No | Filter by account |
+| `limit` | number | No | Results to return |
+
+### chirpie_get_post
+
+Get a single post by ID.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | string | Yes | Post UUID |
+
+### chirpie_delete_post
+
+Delete a post (also removes from X if published).
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | string | Yes | Post UUID |
+
+### chirpie_list_accounts
+
+List all connected X accounts. No parameters.
+
+Returns: `id`, `x_username`, `x_display_name`, `x_profile_image_url`, `is_active`
+
+### chirpie_analytics
+
+Get engagement metrics for a published post.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `post_id` | string | Yes | Post UUID |
+
+Returns: impressions, likes, retweets, replies, quotes, bookmarks, clicks.
+
+## Example Prompts
+
+Once configured, ask your AI agent:
+
+- "Post a tweet saying 'Just shipped v2!'"
+- "Create a thread about why TypeScript is great"
+- "Show me my recent posts"
+- "What are the analytics for my last published post?"
+- "Schedule a post for tomorrow at 9am UTC"
+- "List my connected X accounts"
+- "Delete the post with ID xyz"
+
+## Authentication Priority
+
+1. `CHIRPIE_API_KEY` environment variable
+2. `~/.chirpie/config.json` (created by `chirpie login`)
+
+Both CLI and MCP share the same config — `chirpie login` authenticates both.
