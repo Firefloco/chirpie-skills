@@ -9,15 +9,14 @@ The Chirpie MCP server lets AI agents post to X/Twitter through the Model Contex
 
 ## Prerequisites
 
-Authenticate first (choose one):
+Authenticate via the CLI (opens browser — user is typically already logged in):
 
 ```bash
-# Option A: CLI login (saves to ~/.chirpie/config.json)
-npx chirpie login
-
-# Option B: Set environment variable
-export CHIRPIE_API_KEY=chirpie_sk_YOUR_KEY
+npm install -g chirpie
+chirpie login
 ```
+
+The MCP server reads saved credentials from `~/.chirpie/config.json` automatically. Alternatively, set `CHIRPIE_API_KEY` as an environment variable (useful for CI/CD).
 
 ## Setup
 
@@ -75,12 +74,13 @@ Add to Cursor MCP settings:
 
 ### chirpie_post
 
-Create a single post on X.
+Create a single post on X with optional media (images/video).
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `account_id` | string | Yes | X account UUID |
-| `text` | string | Yes | Post text (max 280 chars) |
+| `text` | string | Yes | Post text (max 280 chars, or 25,000 for X Premium) |
+| `media_urls` | string[] | No | Up to 4 public image/video URLs (JPEG, PNG, WebP, GIF up to 5MB; MP4/MOV up to 512MB) |
 | `schedule_at` | string | No | ISO 8601 datetime (UTC, must be future) |
 
 ### chirpie_thread
@@ -90,7 +90,7 @@ Create a multi-post thread on X.
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `account_id` | string | Yes | X account UUID |
-| `posts` | array | Yes | Array of `{ text }` objects (2-25) |
+| `posts` | array | Yes | Array of `{ text, media_urls? }` objects (2-25) |
 | `schedule_at` | string | No | ISO 8601 datetime |
 
 ### chirpie_list_posts

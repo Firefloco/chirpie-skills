@@ -1,6 +1,6 @@
 # Chirpie Skills for AI Agents
 
-A collection of task-based skills enabling AI coding agents to integrate Chirpie — a social media API for posting to X/Twitter.
+A collection of task-based skills enabling AI coding agents to integrate Chirpie — a social media API for posting to X/Twitter (with X Premium support for long-form posts).
 
 ## Directory Structure
 

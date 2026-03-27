@@ -45,7 +45,7 @@ const chirpie = new ChirpieClient({
 // Create a post (immediate or scheduled)
 const post = await chirpie.createPost({
   account_id: "uuid",        // Required
-  text: "Hello!",            // Required, 1-280 chars
+  text: "Hello!",            // Required, 1-280 chars (25,000 for X Premium)
   media_urls: ["url"],       // Optional, max 4
   schedule_at: "ISO8601",    // Optional, must be future
 });

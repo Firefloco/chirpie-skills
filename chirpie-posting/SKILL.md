@@ -35,8 +35,8 @@ curl -X POST https://chirpie.ai/api/v1/posts \
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `account_id` | UUID string | Yes | Connected X account ID |
-| `text` | string | Yes | 1-280 characters |
-| `media_urls` | string[] | No | Up to 4 media URLs |
+| `text` | string | Yes | 1-280 characters (up to 25,000 for X Premium accounts) |
+| `media_urls` | string[] | No | Up to 4 public image/video URLs (JPEG, PNG, WebP, GIF up to 5MB; MP4/MOV up to 512MB). Media is downloaded immediately and uploaded to X at publish time. |
 | `schedule_at` | ISO 8601 | No | Future datetime for scheduling |
 
 ### Response (201)
@@ -90,7 +90,7 @@ curl -X POST https://chirpie.ai/api/v1/threads \
 ```
 
 - Min 2 posts, max 25 posts per thread
-- Each post: 1-280 characters
+- Each post: 1-280 characters (up to 25,000 for X Premium accounts)
 - Thread counts as N posts against your monthly quota
 - All posts publish as connected replies
 
