@@ -1,6 +1,6 @@
 ---
 name: chirpie-cli
-description: Use the Chirpie CLI to post to X/Twitter from the terminal. Covers installation, browser-based login, and all commands.
+description: Use the Chirpie CLI to post to X/Twitter and Bluesky from the terminal. Covers installation, browser-based login, and all commands.
 ---
 
 # Chirpie CLI
@@ -93,8 +93,9 @@ chirpie posts --json                   # JSON output
 ### chirpie accounts
 
 ```bash
-chirpie accounts                       # List connected X accounts
-chirpie accounts connect              # Start OAuth flow (prints URL)
+chirpie accounts                       # List connected accounts (X and Bluesky)
+chirpie accounts connect              # Start X OAuth flow (prints URL)
+chirpie accounts connect-bluesky --handle yourhandle.bsky.social --app-password xxxx-xxxx-xxxx-xxxx
 ```
 
 ### chirpie keys

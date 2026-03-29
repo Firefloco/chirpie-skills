@@ -1,6 +1,6 @@
 ---
 name: chirpie-setup
-description: Set up Chirpie in your project — install SDK, configure API keys, connect X accounts, send your first post.
+description: Set up Chirpie in your project — install SDK, configure API keys, connect X and Bluesky accounts, send your first post.
 ---
 
 # Chirpie Setup
@@ -9,7 +9,7 @@ description: Set up Chirpie in your project — install SDK, configure API keys,
 
 - A Chirpie account at https://chirpie.ai/auth/signup
 - An API key (created during onboarding or at https://chirpie.ai/dashboard/keys)
-- At least one connected X account (via https://chirpie.ai/dashboard/accounts)
+- At least one connected X or Bluesky account (via https://chirpie.ai/dashboard/accounts)
 
 ## Step 1: Install the SDK
 
@@ -38,15 +38,39 @@ const chirpie = new ChirpieClient({
 
 > **Security:** Never hardcode API keys in source code. Always use environment variables.
 
-## Step 3: Find Your Account ID
+## Step 3: Connect Accounts
+
+**X/Twitter** — Connect via OAuth from the dashboard or API:
+```typescript
+const { authorization_url } = await chirpie.connectAccount();
+// Open URL in browser to authorize
+```
+
+**Bluesky** — Connect with an app password (generate at https://bsky.app/settings/app-passwords):
+```typescript
+await chirpie.connectBlueskyAccount({
+  platform: "bluesky",
+  identifier: "yourhandle.bsky.social",
+  app_password: "xxxx-xxxx-xxxx-xxxx",
+});
+```
+
+Or via CLI:
+```bash
+chirpie accounts connect-bluesky --handle yourhandle.bsky.social --app-password xxxx-xxxx-xxxx-xxxx
+# --handle is required, --app-password is optional (prompts securely if omitted)
+```
+
+## Step 4: Find Your Account ID
 
 ```typescript
 const accounts = await chirpie.listAccounts();
 console.log(accounts);
+// Each account has: id, platform ("x" or "bluesky"), username, display_name, avatar_url
 // Use the `id` field as your account_id for posting
 ```
 
-## Step 4: Send Your First Post
+## Step 5: Send Your First Post
 
 ```typescript
 const post = await chirpie.createPost({
@@ -77,7 +101,7 @@ See `chirpie-mcp` skill for Claude/Cursor/AI agent configuration.
 ## Common Pitfalls
 
 1. **API key format:** Keys must start with `chirpie_sk_`. If you get 401 errors, check the prefix.
-2. **Account not active:** If OAuth tokens expired, `is_active` will be `false`. Re-authorize from the dashboard.
+2. **Account not active:** If OAuth tokens expired (X) or app password is revoked (Bluesky), `is_active` will be `false`. Re-authorize from the dashboard.
 3. **Environment variable loading:** In Next.js, server-side env vars don't need `NEXT_PUBLIC_` prefix. Don't expose your API key to the browser.
 
 ## Plan Limits

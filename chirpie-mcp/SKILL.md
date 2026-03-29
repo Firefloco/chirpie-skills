@@ -5,7 +5,7 @@ description: Connect the Chirpie MCP server to Claude Code, Claude Desktop, Curs
 
 # Chirpie MCP Server
 
-The Chirpie MCP server lets AI agents post to X/Twitter through the Model Context Protocol.
+The Chirpie MCP server lets AI agents post to X/Twitter and Bluesky through the Model Context Protocol.
 
 ## Prerequisites
 
@@ -74,23 +74,23 @@ Add to Cursor MCP settings:
 
 ### chirpie_post
 
-Create a single post on X with optional media (images/video).
+Create a single post on X or Bluesky with optional media (images/video).
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `account_id` | string | Yes | X account UUID |
-| `text` | string | Yes | Post text (max 280 chars, or 25,000 for X Premium) |
-| `media_urls` | string[] | No | Up to 4 public image/video URLs (JPEG, PNG, WebP, GIF up to 5MB; MP4/MOV up to 512MB) |
+| `account_id` | string | Yes | Account UUID (X or Bluesky) |
+| `text` | string | Yes | Post text. X: max 280 chars (25,000 for X Premium). Bluesky: max 300 chars. |
+| `media_urls` | string[] | No | Up to 4 public image/video URLs (JPEG, PNG, WebP, GIF up to 5MB; MP4/MOV up to 512MB). Bluesky: images only, no video. |
 | `schedule_at` | string | No | ISO 8601 datetime (UTC, must be future) |
 
 ### chirpie_thread
 
-Create a multi-post thread on X.
+Create a multi-post thread on X or Bluesky.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `account_id` | string | Yes | X account UUID |
-| `posts` | array | Yes | Array of `{ text, media_urls? }` objects (2-25) |
+| `account_id` | string | Yes | Account UUID (X or Bluesky) |
+| `posts` | array | Yes | Array of `{ text, media_urls? }` objects (2-25). Bluesky: images only, no video. |
 | `schedule_at` | string | No | ISO 8601 datetime |
 
 ### chirpie_list_posts
@@ -113,7 +113,7 @@ Get a single post by ID.
 
 ### chirpie_delete_post
 
-Delete a post (also removes from X if published).
+Delete a post (also removes from X/Bluesky if published).
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -121,9 +121,9 @@ Delete a post (also removes from X if published).
 
 ### chirpie_list_accounts
 
-List all connected X accounts. No parameters.
+List all connected accounts (X and Bluesky). No parameters.
 
-Returns: `id`, `x_username`, `x_display_name`, `x_profile_image_url`, `is_active`
+Returns: `id`, `platform`, `username`, `display_name`, `avatar_url`, `is_active`
 
 ### chirpie_analytics
 
@@ -140,11 +140,12 @@ Returns: impressions, likes, retweets, replies, quotes, bookmarks, clicks.
 Once configured, ask your AI agent:
 
 - "Post a tweet saying 'Just shipped v2!'"
+- "Post to Bluesky saying 'Just shipped v2!'"
 - "Create a thread about why TypeScript is great"
 - "Show me my recent posts"
 - "What are the analytics for my last published post?"
 - "Schedule a post for tomorrow at 9am UTC"
-- "List my connected X accounts"
+- "List my connected accounts"
 - "Delete the post with ID xyz"
 
 ## Authentication Priority

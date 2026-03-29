@@ -45,7 +45,7 @@ const chirpie = new ChirpieClient({
 // Create a post (immediate or scheduled)
 const post = await chirpie.createPost({
   account_id: "uuid",        // Required
-  text: "Hello!",            // Required, 1-280 chars (25,000 for X Premium)
+  text: "Hello!",            // Required. X: 1-280 chars (25,000 for X Premium). Bluesky: 1-300 chars.
   media_urls: ["url"],       // Optional, max 4
   schedule_at: "ISO8601",    // Optional, must be future
 });
@@ -61,7 +61,7 @@ const posts = await chirpie.listPosts({
 // Get a single post
 const post = await chirpie.getPost("post-uuid");
 
-// Delete a post (also deletes from X if published)
+// Delete a post (also deletes from X/Bluesky if published)
 const result = await chirpie.deletePost("post-uuid");
 ```
 
@@ -81,8 +81,19 @@ const thread = await chirpie.createThread({
 ### Accounts
 
 ```typescript
+// List all connected accounts (X and Bluesky)
 const accounts = await chirpie.listAccounts();
+// Each account: { id, platform, username, display_name, avatar_url, is_active }
+
+// Connect X account (OAuth flow)
 const { authorization_url } = await chirpie.connectAccount();
+
+// Connect Bluesky account (app password)
+await chirpie.connectBlueskyAccount({
+  platform: "bluesky",
+  identifier: "yourhandle.bsky.social",
+  app_password: "xxxx-xxxx-xxxx-xxxx",
+});
 ```
 
 ### API Keys
@@ -104,14 +115,15 @@ const metrics = await chirpie.getPostAnalytics("post-uuid");
 
 ```typescript
 import type {
-  ApiPost,           // Post object returned from API
-  ApiThread,         // Thread object returned from API
-  ApiAccount,        // Connected X account
-  ApiAnalytics,      // Post metrics
-  ApiKeyInfo,        // API key metadata (prefix only)
-  CreatePostInput,   // Input for createPost()
-  CreateThreadInput, // Input for createThread()
-  ListPostsOptions,  // Options for listPosts()
+  ApiPost,                    // Post object (includes `platform` field)
+  ApiThread,                  // Thread object returned from API
+  ApiAccount,                 // Connected account (platform, username, display_name, avatar_url)
+  ApiAnalytics,               // Post metrics
+  ApiKeyInfo,                 // API key metadata (prefix only)
+  CreatePostInput,            // Input for createPost()
+  CreateThreadInput,          // Input for createThread()
+  ConnectBlueskyAccountInput, // Input for connectBlueskyAccount()
+  ListPostsOptions,           // Options for listPosts()
 } from "@chirpie/sdk";
 ```
 

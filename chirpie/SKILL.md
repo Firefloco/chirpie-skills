@@ -1,11 +1,11 @@
 ---
 name: chirpie
-description: Chirpie social media API router. Use when user asks about posting to X/Twitter, social media automation, scheduling tweets, connecting X accounts, or using the Chirpie API/SDK/CLI/MCP. Automatically routes to the specific skill based on their task.
+description: Chirpie social media API router. Use when user asks about posting to X/Twitter or Bluesky, social media automation, scheduling posts, connecting X or Bluesky accounts, or using the Chirpie API/SDK/CLI/MCP. Automatically routes to the specific skill based on their task.
 ---
 
 # Chirpie Skills Router
 
-Chirpie is a social media API for AI agents and developers. Post to X/Twitter via API, CLI, MCP, or SDK — with scheduling, analytics, and multi-account support.
+Chirpie is a social media API for AI agents and developers. Post to X/Twitter and Bluesky via API, CLI, MCP, or SDK — with scheduling, analytics, and multi-account support.
 
 **Base URL:** `https://chirpie.ai/api/v1`
 **Auth:** `Authorization: Bearer chirpie_sk_YOUR_KEY`
@@ -16,7 +16,7 @@ Chirpie is a social media API for AI agents and developers. Post to X/Twitter vi
 **Setting up Chirpie in a project** → Use `chirpie-setup`
 - Install the SDK
 - Configure API keys
-- Connect X accounts
+- Connect X and Bluesky accounts
 - First post quickstart
 
 **Creating posts or threads** → Use `chirpie-posting`

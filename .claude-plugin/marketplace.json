@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "chirpie-skills",
-  "description": "Official Chirpie skills for AI coding agents — post to X/Twitter via API, SDK, CLI, or MCP",
+  "description": "Official Chirpie skills for AI coding agents — post to X/Twitter and Bluesky via API, SDK, CLI, or MCP",
   "owner": {
     "name": "Fireflo LLC",
     "email": "support@chirpie.ai"
@@ -16,12 +16,12 @@
       "path": "skills/chirpie",
       "category": "social-media",
       "license": "MIT",
-      "keywords": ["chirpie", "social-media", "x", "twitter", "posting", "router"]
+      "keywords": ["chirpie", "social-media", "x", "twitter", "bluesky", "posting", "router"]
     },
     {
       "name": "chirpie-setup",
       "version": "1.0.0",
-      "description": "Set up Chirpie in your project — install SDK, configure API keys, connect X accounts",
+      "description": "Set up Chirpie in your project — install SDK, configure API keys, connect X and Bluesky accounts",
       "path": "skills/chirpie-setup",
       "category": "social-media",
       "license": "MIT",
@@ -31,12 +31,12 @@
     {
       "name": "chirpie-posting",
       "version": "1.0.0",
-      "description": "Create posts and threads on X/Twitter via the Chirpie API",
+      "description": "Create posts and threads on X/Twitter and Bluesky via the Chirpie API",
       "path": "skills/chirpie-posting",
       "category": "social-media",
       "license": "MIT",
       "required_inputs": ["CHIRPIE_API_KEY"],
-      "keywords": ["chirpie", "posts", "threads", "x", "twitter"]
+      "keywords": ["chirpie", "posts", "threads", "x", "twitter", "bluesky"]
     },
     {
       "name": "chirpie-scheduling",
@@ -61,7 +61,7 @@
     {
       "name": "chirpie-cli",
       "version": "1.0.0",
-      "description": "Use the Chirpie CLI to post from the terminal",
+      "description": "Use the Chirpie CLI to post to X/Twitter and Bluesky from the terminal",
       "path": "skills/chirpie-cli",
       "category": "social-media",
       "license": "MIT",

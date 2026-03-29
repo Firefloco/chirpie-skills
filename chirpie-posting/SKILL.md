@@ -1,6 +1,6 @@
 ---
 name: chirpie-posting
-description: Create posts and threads on X/Twitter via the Chirpie API. Covers single posts, multi-post threads, listing, deletion, and analytics.
+description: Create posts and threads on X/Twitter and Bluesky via the Chirpie API. Covers single posts, multi-post threads, listing, deletion, and analytics.
 ---
 
 # Chirpie Posting
@@ -34,9 +34,9 @@ curl -X POST https://chirpie.ai/api/v1/posts \
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `account_id` | UUID string | Yes | Connected X account ID |
-| `text` | string | Yes | 1-280 characters (up to 25,000 for X Premium accounts) |
-| `media_urls` | string[] | No | Up to 4 public image/video URLs (JPEG, PNG, WebP, GIF up to 5MB; MP4/MOV up to 512MB). Media is downloaded immediately and uploaded to X at publish time. |
+| `account_id` | UUID string | Yes | Connected account ID (X or Bluesky) |
+| `text` | string | Yes | X: 1-280 chars (25,000 for X Premium). Bluesky: 1-300 chars. |
+| `media_urls` | string[] | No | Up to 4 public image/video URLs (JPEG, PNG, WebP, GIF up to 5MB; MP4/MOV up to 512MB). Media is downloaded immediately and uploaded at publish time. Bluesky supports images only (~1MB each), no video. |
 | `schedule_at` | ISO 8601 | No | Future datetime for scheduling |
 
 ### Response (201)
@@ -48,6 +48,7 @@ curl -X POST https://chirpie.ai/api/v1/posts \
     "account_id": "uuid",
     "text": "Hello world!",
     "media_urls": null,
+    "platform": "x",
     "platform_post_id": "1234567890",
     "status": "published",
     "scheduled_at": null,
@@ -90,7 +91,7 @@ curl -X POST https://chirpie.ai/api/v1/threads \
 ```
 
 - Min 2 posts, max 25 posts per thread
-- Each post: 1-280 characters (up to 25,000 for X Premium accounts)
+- Each post: X: 1-280 chars (25,000 for X Premium). Bluesky: 1-300 chars.
 - Thread counts as N posts against your monthly quota
 - All posts publish as connected replies
 
@@ -115,7 +116,7 @@ const post = await chirpie.getPost("post-uuid");
 
 ```typescript
 const result = await chirpie.deletePost("post-uuid");
-// Also deletes from X if published
+// Also deletes from X/Bluesky if published
 ```
 
 ## Get Analytics
@@ -140,7 +141,7 @@ try {
       case 401: // Invalid API key
       case 404: // Account not found or inactive
       case 429: // Rate limited (monthly quota or burst)
-      case 502: // X API error (temporary, retry)
+      case 502: // Platform API error (temporary, retry)
     }
   }
 }
@@ -151,7 +152,7 @@ try {
 ```
 immediate:  → published | failed
 scheduled:  → scheduled → publishing → published | failed
-deleted:    → deleted (also removed from X if published)
+deleted:    → deleted (also removed from X/Bluesky if published)
 ```
 
 Failed posts: check `error_message` field for details.
