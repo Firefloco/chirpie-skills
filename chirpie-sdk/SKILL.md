@@ -45,7 +45,7 @@ const chirpie = new ChirpieClient({
 // Create a post (immediate or scheduled)
 const post = await chirpie.createPost({
   account_id: "uuid",        // Required
-  text: "Hello!",            // Required. X: 1-280 chars (25,000 for X Premium). Bluesky: 1-300 chars. LinkedIn: 1-3,000 chars. Threads: 1-500 chars.
+  text: "Hello!",            // Required. X: 1-280 chars (25,000 for X Premium). Bluesky: 1-300 chars. LinkedIn: 1-3,000 chars. Threads: 1-500 chars. Mastodon: 1-500 chars.
   media_urls: ["url"],       // Optional, max 4
   schedule_at: "ISO8601",    // Optional, must be future
 });
@@ -61,7 +61,7 @@ const posts = await chirpie.listPosts({
 // Get a single post
 const post = await chirpie.getPost("post-uuid");
 
-// Delete a post (also deletes from X/Bluesky/LinkedIn/Threads if published)
+// Delete a post (also deletes from X/Bluesky/LinkedIn/Threads/Mastodon if published)
 const result = await chirpie.deletePost("post-uuid");
 ```
 
@@ -81,7 +81,7 @@ const thread = await chirpie.createThread({
 ### Accounts
 
 ```typescript
-// List all connected accounts (X, Bluesky, LinkedIn, and Threads)
+// List all connected accounts (X, Bluesky, LinkedIn, Threads, and Mastodon)
 const accounts = await chirpie.listAccounts();
 // Each account: { id, platform, username, display_name, avatar_url, is_active }
 
@@ -100,6 +100,12 @@ const { authorization_url } = await chirpie.connectLinkedInAccount();
 
 // Connect Threads account (Meta OAuth flow)
 const { authorization_url } = await chirpie.connectThreadsAccount();
+
+// Connect Mastodon account (OAuth flow)
+const { authorization_url } = await chirpie.connectMastodonAccount({
+  platform: "mastodon",
+  instance_url: "https://mastodon.social",
+});
 ```
 
 ### API Keys
@@ -123,7 +129,7 @@ const metrics = await chirpie.getPostAnalytics("post-uuid");
 import type {
   ApiPost,                    // Post object (includes `platform` field)
   ApiThread,                  // Thread object returned from API
-  ApiAccount,                 // Connected account (platform: "x"|"bluesky"|"linkedin"|"threads", username, display_name, avatar_url)
+  ApiAccount,                 // Connected account (platform: "x"|"bluesky"|"linkedin"|"threads"|"mastodon", username, display_name, avatar_url)
   ApiAnalytics,               // Post metrics
   ApiKeyInfo,                 // API key metadata (prefix only)
   CreatePostInput,            // Input for createPost()
@@ -131,6 +137,7 @@ import type {
   ConnectBlueskyInput,        // Input for connectBlueskyAccount()
   ConnectLinkedInInput,       // Input for connectLinkedInAccount()
   ConnectThreadsInput,        // Input for connectThreadsAccount()
+  ConnectMastodonInput,       // Input for connectMastodonAccount()
   ListPostsOptions,           // Options for listPosts()
 } from "@chirpie/sdk";
 ```

@@ -5,7 +5,7 @@ description: Connect the Chirpie MCP server to Claude Code, Claude Desktop, Curs
 
 # Chirpie MCP Server
 
-The Chirpie MCP server lets AI agents post to X/Twitter, Bluesky, LinkedIn, and Threads through the Model Context Protocol.
+The Chirpie MCP server lets AI agents post to X/Twitter, Bluesky, LinkedIn, Threads, and Mastodon through the Model Context Protocol.
 
 ## Prerequisites
 
@@ -74,23 +74,23 @@ Add to Cursor MCP settings:
 
 ### chirpie_post
 
-Create a single post on X, Bluesky, LinkedIn, or Threads with optional media (images/video).
+Create a single post on X, Bluesky, LinkedIn, Threads, or Mastodon with optional media (images/video).
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `account_id` | string | Yes | Account UUID (X, Bluesky, LinkedIn, or Threads) |
-| `text` | string | Yes | Post text. X: max 280 chars (25,000 for X Premium). Bluesky: max 300 chars. LinkedIn: max 3,000 chars. Threads: max 500 chars. |
-| `media_urls` | string[] | No | Up to 4 public image/video URLs (JPEG, PNG, WebP, GIF up to 5MB; MP4/MOV up to 512MB). Bluesky: images only (~1MB each, max 4), no video. LinkedIn: images only (JPEG/PNG/GIF, max 8MB each, max 4), no video. Threads: one image per post (URL-based, JPEG/PNG), no video. |
+| `account_id` | string | Yes | Account UUID (X, Bluesky, LinkedIn, Threads, or Mastodon) |
+| `text` | string | Yes | Post text. X: max 280 chars (25,000 for X Premium). Bluesky: max 300 chars. LinkedIn: max 3,000 chars. Threads: max 500 chars. Mastodon: max 500 chars. |
+| `media_urls` | string[] | No | Up to 4 public image/video URLs (JPEG, PNG, WebP, GIF up to 5MB; MP4/MOV up to 512MB). Bluesky: images only (~1MB each, max 4), no video. LinkedIn: images only (JPEG/PNG/GIF, max 8MB each, max 4), no video. Threads: one image per post (URL-based, JPEG/PNG), no video. Mastodon: images + video, max 4 attachments. |
 | `schedule_at` | string | No | ISO 8601 datetime (UTC, must be future) |
 
 ### chirpie_thread
 
-Create a multi-post thread on X, Bluesky, LinkedIn, or Threads.
+Create a multi-post thread on X, Bluesky, LinkedIn, Threads, or Mastodon.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `account_id` | string | Yes | Account UUID (X, Bluesky, LinkedIn, or Threads) |
-| `posts` | array | Yes | Array of `{ text, media_urls? }` objects (2-25). Bluesky: images only (~1MB each, max 4), no video. LinkedIn: images only (JPEG/PNG/GIF, max 8MB each, max 4), no video. Threads: one image per post (URL-based, JPEG/PNG), no video. |
+| `account_id` | string | Yes | Account UUID (X, Bluesky, LinkedIn, Threads, or Mastodon) |
+| `posts` | array | Yes | Array of `{ text, media_urls? }` objects (2-25). Bluesky: images only (~1MB each, max 4), no video. LinkedIn: images only (JPEG/PNG/GIF, max 8MB each, max 4), no video. Threads: one image per post (URL-based, JPEG/PNG), no video. Mastodon: images + video, max 4 attachments. |
 | `schedule_at` | string | No | ISO 8601 datetime |
 
 ### chirpie_list_posts
@@ -113,7 +113,7 @@ Get a single post by ID.
 
 ### chirpie_delete_post
 
-Delete a post (also removes from X/Bluesky/LinkedIn/Threads if published).
+Delete a post (also removes from X/Bluesky/LinkedIn/Threads/Mastodon if published).
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -121,7 +121,7 @@ Delete a post (also removes from X/Bluesky/LinkedIn/Threads if published).
 
 ### chirpie_list_accounts
 
-List all connected accounts (X, Bluesky, LinkedIn, and Threads). No parameters.
+List all connected accounts (X, Bluesky, LinkedIn, Threads, and Mastodon). No parameters.
 
 Returns: `id`, `platform`, `username`, `display_name`, `avatar_url`, `is_active`
 
@@ -143,6 +143,7 @@ Once configured, ask your AI agent:
 - "Post to Bluesky saying 'Just shipped v2!'"
 - "Post to LinkedIn saying 'Just shipped v2!'"
 - "Post to Threads saying 'Just shipped v2!'"
+- "Post to Mastodon saying 'Hello fediverse!'"
 - "Create a thread about why TypeScript is great"
 - "Show me my recent posts"
 - "What are the analytics for my last published post?"

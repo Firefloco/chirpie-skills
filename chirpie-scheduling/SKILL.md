@@ -88,4 +88,4 @@ Both `posts` and `scheduled` limits are checked when creating scheduled content.
 1. **`schedule_at` must be in the future.** Past datetimes return 400.
 2. **Times are UTC.** Convert from local time before sending.
 3. **Thread atomicity.** You can't cancel individual posts in a scheduled thread — delete any one post and the whole thread is canceled.
-4. **Platform rate limits.** If X, Bluesky, LinkedIn, or Threads rate-limits your account, scheduled posts will retry automatically.
+4. **Platform rate limits.** If X, Bluesky, LinkedIn, Threads, or Mastodon rate-limits your account, scheduled posts will retry automatically.
