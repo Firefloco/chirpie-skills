@@ -45,8 +45,8 @@ const chirpie = new ChirpieClient({
 // Create a post (immediate or scheduled)
 const post = await chirpie.createPost({
   account_id: "uuid",        // Required
-  text: "Hello!",            // Required. X: 1-280 chars (25,000 for X Premium). Bluesky: 1-300 chars. LinkedIn: 1-3,000 chars. Threads: 1-500 chars. Mastodon: 1-500 chars. Instagram: 1-2,200 chars. Facebook: 1-63,206 chars.
-  media_urls: ["url"],       // Optional, max 4 (up to 10 for Instagram carousel)
+  text: "Hello!",            // Required. Char limits: X 280 (25K Premium), Bluesky 300, LinkedIn 3K, Threads 500, Mastodon 500, Instagram 2,200, Facebook 63,206, Telegram 4,096, Reddit 40K, Pinterest 500, TikTok 2,200, YouTube 5K, Google Business 1,500, Snapchat 160
+  media_urls: ["url"],       // Optional, limits vary by platform. Instagram/Pinterest/TikTok/YouTube/Snapchat REQUIRE media.
   schedule_at: "ISO8601",    // Optional, must be future
 });
 
@@ -61,7 +61,7 @@ const posts = await chirpie.listPosts({
 // Get a single post
 const post = await chirpie.getPost("post-uuid");
 
-// Delete a post (also deletes from X/Bluesky/LinkedIn/Threads/Mastodon/Instagram/Facebook if published)
+// Delete a post (also deletes from platform if published, except TikTok)
 const result = await chirpie.deletePost("post-uuid");
 ```
 
@@ -81,7 +81,7 @@ const thread = await chirpie.createThread({
 ### Accounts
 
 ```typescript
-// List all connected accounts (X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, and Facebook)
+// List all connected accounts (all 14 platforms)
 const accounts = await chirpie.listAccounts();
 // Each account: { id, platform, username, display_name, avatar_url, is_active }
 
@@ -112,6 +112,21 @@ const { authorization_url } = await chirpie.connectInstagramAccount();
 
 // Connect Facebook Page (Facebook Login OAuth flow)
 const { authorization_url } = await chirpie.connectFacebookAccount();
+
+// Connect Telegram bot (bot token auth)
+await chirpie.connectTelegramAccount({
+  platform: "telegram",
+  bot_token: "TOKEN",
+  chat_id: "CHAT_ID",
+});
+
+// Connect Reddit (OAuth), Pinterest, TikTok, YouTube, Google Business, Snapchat
+const { authorization_url } = await chirpie.connectRedditAccount();
+const { authorization_url } = await chirpie.connectPinterestAccount();
+const { authorization_url } = await chirpie.connectTikTokAccount();
+const { authorization_url } = await chirpie.connectYouTubeAccount();
+const { authorization_url } = await chirpie.connectGBPAccount();
+const { authorization_url } = await chirpie.connectSnapchatAccount();
 ```
 
 ### API Keys
@@ -135,7 +150,7 @@ const metrics = await chirpie.getPostAnalytics("post-uuid");
 import type {
   ApiPost,                    // Post object (includes `platform` field)
   ApiThread,                  // Thread object returned from API
-  ApiAccount,                 // Connected account (platform: "x"|"bluesky"|"linkedin"|"threads"|"mastodon"|"instagram"|"facebook", username, display_name, avatar_url)
+  ApiAccount,                 // Connected account (14 platform types, username, display_name, avatar_url)
   ApiAnalytics,               // Post metrics
   ApiKeyInfo,                 // API key metadata (prefix only)
   CreatePostInput,            // Input for createPost()
@@ -146,6 +161,13 @@ import type {
   ConnectMastodonInput,       // Input for connectMastodonAccount()
   ConnectInstagramInput,      // Input for connectInstagramAccount()
   ConnectFacebookInput,       // Input for connectFacebookAccount()
+  ConnectTelegramInput,       // Input for connectTelegramAccount()
+  ConnectRedditInput,         // Input for connectRedditAccount()
+  ConnectPinterestInput,      // Input for connectPinterestAccount()
+  ConnectTikTokInput,         // Input for connectTikTokAccount()
+  ConnectYouTubeInput,        // Input for connectYouTubeAccount()
+  ConnectGBPInput,            // Input for connectGBPAccount()
+  ConnectSnapchatInput,       // Input for connectSnapchatAccount()
   ListPostsOptions,           // Options for listPosts()
 } from "@chirpie/sdk";
 ```

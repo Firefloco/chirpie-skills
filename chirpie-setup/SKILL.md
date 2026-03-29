@@ -1,6 +1,6 @@
 ---
 name: chirpie-setup
-description: Set up Chirpie in your project — install SDK, configure API keys, connect X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, and Facebook accounts, send your first post.
+description: Set up Chirpie in your project — install SDK, configure API keys, connect X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram, Reddit, Pinterest, TikTok, YouTube, Google Business Profile, and Snapchat accounts, send your first post.
 ---
 
 # Chirpie Setup
@@ -9,7 +9,7 @@ description: Set up Chirpie in your project — install SDK, configure API keys,
 
 - A Chirpie account at https://chirpie.ai/auth/signup
 - An API key (created during onboarding or at https://chirpie.ai/dashboard/keys)
-- At least one connected X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, or Facebook account (via https://chirpie.ai/dashboard/accounts)
+- At least one connected social account (via https://chirpie.ai/dashboard/accounts)
 
 ## Step 1: Install the SDK
 
@@ -124,12 +124,63 @@ chirpie accounts connect-facebook
 # Opens browser for Facebook Login OAuth authorization
 ```
 
+**Telegram** — Connect with a bot token (create via [@BotFather](https://t.me/BotFather)):
+```typescript
+await chirpie.connectTelegramAccount({
+  platform: "telegram",
+  bot_token: "123456789:ABCdefGHIjklMNOpqrSTUvwxYZ",
+  chat_id: "-1001234567890",
+});
+```
+
+Or via CLI:
+```bash
+chirpie accounts connect-telegram --bot-token TOKEN --chat-id ID
+# --bot-token and --chat-id are optional (prompts securely if omitted)
+```
+
+**Reddit** — Connect via OAuth from the dashboard or API:
+```typescript
+const { authorization_url } = await chirpie.connectRedditAccount();
+// Open URL in browser to authorize via Reddit OAuth
+```
+
+**Pinterest** — Connect via OAuth from the dashboard or API:
+```typescript
+const { authorization_url } = await chirpie.connectPinterestAccount();
+// Open URL in browser to authorize via Pinterest OAuth
+```
+
+**TikTok** — Connect via OAuth from the dashboard or API:
+```typescript
+const { authorization_url } = await chirpie.connectTikTokAccount();
+// Open URL in browser to authorize via TikTok OAuth
+```
+
+**YouTube** — Connect via Google OAuth from the dashboard or API:
+```typescript
+const { authorization_url } = await chirpie.connectYouTubeAccount();
+// Open URL in browser to authorize via Google OAuth
+```
+
+**Google Business Profile** — Connect via Google OAuth from the dashboard or API:
+```typescript
+const { authorization_url } = await chirpie.connectGBPAccount();
+// Open URL in browser to authorize via Google OAuth
+```
+
+**Snapchat** — Connect via OAuth from the dashboard or API (allowlist-only):
+```typescript
+const { authorization_url } = await chirpie.connectSnapchatAccount();
+// Open URL in browser to authorize via Snapchat OAuth
+```
+
 ## Step 4: Find Your Account ID
 
 ```typescript
 const accounts = await chirpie.listAccounts();
 console.log(accounts);
-// Each account has: id, platform ("x", "bluesky", "linkedin", "threads", "mastodon", "instagram", or "facebook"), username, display_name, avatar_url
+// Each account has: id, platform, username, display_name, avatar_url
 // Use the `id` field as your account_id for posting
 ```
 
@@ -164,7 +215,7 @@ See `chirpie-mcp` skill for Claude/Cursor/AI agent configuration.
 ## Common Pitfalls
 
 1. **API key format:** Keys must start with `chirpie_sk_`. If you get 401 errors, check the prefix.
-2. **Account not active:** If OAuth tokens expired (X, LinkedIn, Threads, Instagram), token was revoked (Mastodon), or app password is revoked (Bluesky), `is_active` will be `false`. Re-authorize from the dashboard. Note: Facebook Page tokens do not expire, but page permissions can be revoked.
+2. **Account not active:** If OAuth tokens expired or were revoked, `is_active` will be `false`. Re-authorize from the dashboard. For Bluesky, generate a new app password. For Telegram, verify bot token and chat ID.
 3. **Environment variable loading:** In Next.js, server-side env vars don't need `NEXT_PUBLIC_` prefix. Don't expose your API key to the browser.
 
 ## Plan Limits

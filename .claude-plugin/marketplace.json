@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "chirpie-skills",
-  "description": "Official Chirpie skills for AI coding agents — post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, and Facebook via API, SDK, CLI, or MCP",
+  "description": "Official Chirpie skills for AI coding agents — post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram, Reddit, Pinterest, TikTok, YouTube, Google Business Profile, and Snapchat (14 platforms) via API, SDK, CLI, or MCP",
   "owner": {
     "name": "Fireflo LLC",
     "email": "support@chirpie.ai"
@@ -16,27 +16,27 @@
       "path": "skills/chirpie",
       "category": "social-media",
       "license": "MIT",
-      "keywords": ["chirpie", "social-media", "x", "twitter", "bluesky", "linkedin", "threads", "mastodon", "instagram", "facebook", "fediverse", "posting", "router"]
+      "keywords": ["chirpie", "social-media", "x", "twitter", "bluesky", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "reddit", "pinterest", "tiktok", "youtube", "google-business", "snapchat", "fediverse", "posting", "router"]
     },
     {
       "name": "chirpie-setup",
       "version": "1.0.0",
-      "description": "Set up Chirpie in your project — install SDK, configure API keys, connect X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, and Facebook accounts",
+      "description": "Set up Chirpie in your project — install SDK, configure API keys, connect accounts (14 platforms)",
       "path": "skills/chirpie-setup",
       "category": "social-media",
       "license": "MIT",
       "required_inputs": ["CHIRPIE_API_KEY"],
-      "keywords": ["chirpie", "setup", "quickstart", "api-key", "linkedin", "threads", "mastodon", "instagram", "facebook"]
+      "keywords": ["chirpie", "setup", "quickstart", "api-key", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "reddit", "pinterest", "tiktok", "youtube", "google-business", "snapchat"]
     },
     {
       "name": "chirpie-posting",
       "version": "1.0.0",
-      "description": "Create posts and threads on X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, and Facebook via the Chirpie API",
+      "description": "Create posts and threads on 14 platforms via the Chirpie API",
       "path": "skills/chirpie-posting",
       "category": "social-media",
       "license": "MIT",
       "required_inputs": ["CHIRPIE_API_KEY"],
-      "keywords": ["chirpie", "posts", "threads", "x", "twitter", "bluesky", "linkedin", "threads", "mastodon", "instagram", "facebook"]
+      "keywords": ["chirpie", "posts", "threads", "x", "twitter", "bluesky", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "reddit", "pinterest", "tiktok", "youtube", "google-business", "snapchat"]
     },
     {
       "name": "chirpie-scheduling",
@@ -46,7 +46,7 @@
       "category": "social-media",
       "license": "MIT",
       "required_inputs": ["CHIRPIE_API_KEY"],
-      "keywords": ["chirpie", "scheduling", "cron", "scheduled-posts", "linkedin", "threads", "mastodon", "instagram", "facebook"]
+      "keywords": ["chirpie", "scheduling", "cron", "scheduled-posts", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "reddit", "pinterest", "tiktok", "youtube", "google-business", "snapchat"]
     },
     {
       "name": "chirpie-sdk",
@@ -56,16 +56,16 @@
       "category": "social-media",
       "license": "MIT",
       "required_inputs": ["CHIRPIE_API_KEY"],
-      "keywords": ["chirpie", "sdk", "typescript", "client", "linkedin", "threads", "mastodon", "instagram", "facebook"]
+      "keywords": ["chirpie", "sdk", "typescript", "client", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "reddit", "pinterest", "tiktok", "youtube", "google-business", "snapchat"]
     },
     {
       "name": "chirpie-cli",
       "version": "1.0.0",
-      "description": "Use the Chirpie CLI to post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, and Facebook from the terminal",
+      "description": "Use the Chirpie CLI to post to 14 platforms from the terminal",
       "path": "skills/chirpie-cli",
       "category": "social-media",
       "license": "MIT",
-      "keywords": ["chirpie", "cli", "terminal", "command-line", "linkedin", "threads", "mastodon", "instagram", "facebook"]
+      "keywords": ["chirpie", "cli", "terminal", "command-line", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "reddit", "pinterest", "tiktok", "youtube", "google-business", "snapchat"]
     },
     {
       "name": "chirpie-mcp",
@@ -74,7 +74,7 @@
       "path": "skills/chirpie-mcp",
       "category": "social-media",
       "license": "MIT",
-      "keywords": ["chirpie", "mcp", "claude", "cursor", "agent", "linkedin", "threads", "mastodon", "instagram", "facebook"]
+      "keywords": ["chirpie", "mcp", "claude", "cursor", "agent", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "reddit", "pinterest", "tiktok", "youtube", "google-business", "snapchat"]
     }
   ]
 }

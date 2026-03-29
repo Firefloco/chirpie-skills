@@ -1,6 +1,6 @@
 ---
 name: chirpie-cli
-description: Use the Chirpie CLI to post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, and Facebook from the terminal. Covers installation, browser-based login, and all commands.
+description: Use the Chirpie CLI to post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram, Reddit, Pinterest, TikTok, YouTube, Google Business Profile, and Snapchat from the terminal. Covers installation, browser-based login, and all commands.
 ---
 
 # Chirpie CLI
@@ -93,7 +93,7 @@ chirpie posts --json                   # JSON output
 ### chirpie accounts
 
 ```bash
-chirpie accounts                       # List connected accounts (X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, and Facebook)
+chirpie accounts                       # List connected accounts (all 14 platforms)
 chirpie accounts connect              # Start X OAuth flow (prints URL)
 chirpie accounts connect-bluesky --handle yourhandle.bsky.social --app-password xxxx-xxxx-xxxx-xxxx
 chirpie accounts connect-linkedin     # Start LinkedIn OAuth flow (prints URL to open in browser)
@@ -101,6 +101,13 @@ chirpie accounts connect-threads      # Start Threads Meta OAuth flow (prints UR
 chirpie accounts connect-mastodon --instance https://mastodon.social  # Start Mastodon OAuth flow
 chirpie accounts connect-instagram     # Start Instagram Login OAuth flow (prints URL to open in browser)
 chirpie accounts connect-facebook      # Start Facebook Login OAuth flow (prints URL to open in browser)
+chirpie accounts connect-telegram --bot-token TOKEN --chat-id ID  # Connect Telegram bot
+chirpie accounts connect-reddit        # Start Reddit OAuth flow
+chirpie accounts connect-pinterest     # Start Pinterest OAuth flow
+chirpie accounts connect-tiktok        # Start TikTok OAuth flow
+chirpie accounts connect-youtube       # Start YouTube/Google OAuth flow
+chirpie accounts connect-google-business  # Start Google Business OAuth flow
+chirpie accounts connect-snapchat      # Start Snapchat OAuth flow
 ```
 
 ### chirpie keys
