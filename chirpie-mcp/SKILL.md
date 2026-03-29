@@ -5,7 +5,7 @@ description: Connect the Chirpie MCP server to Claude Code, Claude Desktop, Curs
 
 # Chirpie MCP Server
 
-The Chirpie MCP server lets AI agents post to X/Twitter, Bluesky, LinkedIn, Threads, and Mastodon through the Model Context Protocol.
+The Chirpie MCP server lets AI agents post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, and Facebook through the Model Context Protocol.
 
 ## Prerequisites
 
@@ -74,23 +74,23 @@ Add to Cursor MCP settings:
 
 ### chirpie_post
 
-Create a single post on X, Bluesky, LinkedIn, Threads, or Mastodon with optional media (images/video).
+Create a single post on X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, or Facebook with optional media (images/video). Note: Instagram REQUIRES at least one image (no text-only posts). Facebook is Pages only.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `account_id` | string | Yes | Account UUID (X, Bluesky, LinkedIn, Threads, or Mastodon) |
-| `text` | string | Yes | Post text. X: max 280 chars (25,000 for X Premium). Bluesky: max 300 chars. LinkedIn: max 3,000 chars. Threads: max 500 chars. Mastodon: max 500 chars. |
-| `media_urls` | string[] | No | Up to 4 public image/video URLs (JPEG, PNG, WebP, GIF up to 5MB; MP4/MOV up to 512MB). Bluesky: images only (~1MB each, max 4), no video. LinkedIn: images only (JPEG/PNG/GIF, max 8MB each, max 4), no video. Threads: one image per post (URL-based, JPEG/PNG), no video. Mastodon: images + video, max 4 attachments. |
+| `account_id` | string | Yes | Account UUID (X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, or Facebook) |
+| `text` | string | Yes | Post text. X: max 280 chars (25,000 for X Premium). Bluesky: max 300 chars. LinkedIn: max 3,000 chars. Threads: max 500 chars. Mastodon: max 500 chars. Instagram: max 2,200 chars. Facebook: max 63,206 chars. |
+| `media_urls` | string[] | No | Public image/video URLs. Bluesky: images only (~1MB each, max 4), no video. LinkedIn: images only (JPEG/PNG/GIF, max 8MB each, max 4), no video. Threads: one image per post (URL-based, JPEG/PNG), no video. Mastodon: images + video, max 4 attachments. Instagram: REQUIRED (at least 1 image, max 10 for carousel), no video. Facebook: images (max 4), no video. |
 | `schedule_at` | string | No | ISO 8601 datetime (UTC, must be future) |
 
 ### chirpie_thread
 
-Create a multi-post thread on X, Bluesky, LinkedIn, Threads, or Mastodon.
+Create a multi-post thread on X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, or Facebook. Note: Instagram and Facebook do not support threading.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `account_id` | string | Yes | Account UUID (X, Bluesky, LinkedIn, Threads, or Mastodon) |
-| `posts` | array | Yes | Array of `{ text, media_urls? }` objects (2-25). Bluesky: images only (~1MB each, max 4), no video. LinkedIn: images only (JPEG/PNG/GIF, max 8MB each, max 4), no video. Threads: one image per post (URL-based, JPEG/PNG), no video. Mastodon: images + video, max 4 attachments. |
+| `account_id` | string | Yes | Account UUID (X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, or Facebook) |
+| `posts` | array | Yes | Array of `{ text, media_urls? }` objects (2-25). Bluesky: images only (~1MB each, max 4), no video. LinkedIn: images only (JPEG/PNG/GIF, max 8MB each, max 4), no video. Threads: one image per post (URL-based, JPEG/PNG), no video. Mastodon: images + video, max 4 attachments. Instagram: requires images (max 10 carousel), no video. Facebook: images (max 4), no video. Instagram and Facebook do not support threading. |
 | `schedule_at` | string | No | ISO 8601 datetime |
 
 ### chirpie_list_posts
@@ -113,7 +113,7 @@ Get a single post by ID.
 
 ### chirpie_delete_post
 
-Delete a post (also removes from X/Bluesky/LinkedIn/Threads/Mastodon if published).
+Delete a post (also removes from X/Bluesky/LinkedIn/Threads/Mastodon/Instagram/Facebook if published).
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -121,7 +121,7 @@ Delete a post (also removes from X/Bluesky/LinkedIn/Threads/Mastodon if publishe
 
 ### chirpie_list_accounts
 
-List all connected accounts (X, Bluesky, LinkedIn, Threads, and Mastodon). No parameters.
+List all connected accounts (X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, and Facebook). No parameters.
 
 Returns: `id`, `platform`, `username`, `display_name`, `avatar_url`, `is_active`
 
@@ -144,6 +144,8 @@ Once configured, ask your AI agent:
 - "Post to LinkedIn saying 'Just shipped v2!'"
 - "Post to Threads saying 'Just shipped v2!'"
 - "Post to Mastodon saying 'Hello fediverse!'"
+- "Post to Instagram with this image" (requires media)
+- "Post to our Facebook Page about the product launch"
 - "Create a thread about why TypeScript is great"
 - "Show me my recent posts"
 - "What are the analytics for my last published post?"

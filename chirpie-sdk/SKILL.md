@@ -45,8 +45,8 @@ const chirpie = new ChirpieClient({
 // Create a post (immediate or scheduled)
 const post = await chirpie.createPost({
   account_id: "uuid",        // Required
-  text: "Hello!",            // Required. X: 1-280 chars (25,000 for X Premium). Bluesky: 1-300 chars. LinkedIn: 1-3,000 chars. Threads: 1-500 chars. Mastodon: 1-500 chars.
-  media_urls: ["url"],       // Optional, max 4
+  text: "Hello!",            // Required. X: 1-280 chars (25,000 for X Premium). Bluesky: 1-300 chars. LinkedIn: 1-3,000 chars. Threads: 1-500 chars. Mastodon: 1-500 chars. Instagram: 1-2,200 chars. Facebook: 1-63,206 chars.
+  media_urls: ["url"],       // Optional, max 4 (up to 10 for Instagram carousel)
   schedule_at: "ISO8601",    // Optional, must be future
 });
 
@@ -61,7 +61,7 @@ const posts = await chirpie.listPosts({
 // Get a single post
 const post = await chirpie.getPost("post-uuid");
 
-// Delete a post (also deletes from X/Bluesky/LinkedIn/Threads/Mastodon if published)
+// Delete a post (also deletes from X/Bluesky/LinkedIn/Threads/Mastodon/Instagram/Facebook if published)
 const result = await chirpie.deletePost("post-uuid");
 ```
 
@@ -81,7 +81,7 @@ const thread = await chirpie.createThread({
 ### Accounts
 
 ```typescript
-// List all connected accounts (X, Bluesky, LinkedIn, Threads, and Mastodon)
+// List all connected accounts (X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, and Facebook)
 const accounts = await chirpie.listAccounts();
 // Each account: { id, platform, username, display_name, avatar_url, is_active }
 
@@ -106,6 +106,12 @@ const { authorization_url } = await chirpie.connectMastodonAccount({
   platform: "mastodon",
   instance_url: "https://mastodon.social",
 });
+
+// Connect Instagram account (Instagram Login OAuth flow)
+const { authorization_url } = await chirpie.connectInstagramAccount();
+
+// Connect Facebook Page (Facebook Login OAuth flow)
+const { authorization_url } = await chirpie.connectFacebookAccount();
 ```
 
 ### API Keys
@@ -129,7 +135,7 @@ const metrics = await chirpie.getPostAnalytics("post-uuid");
 import type {
   ApiPost,                    // Post object (includes `platform` field)
   ApiThread,                  // Thread object returned from API
-  ApiAccount,                 // Connected account (platform: "x"|"bluesky"|"linkedin"|"threads"|"mastodon", username, display_name, avatar_url)
+  ApiAccount,                 // Connected account (platform: "x"|"bluesky"|"linkedin"|"threads"|"mastodon"|"instagram"|"facebook", username, display_name, avatar_url)
   ApiAnalytics,               // Post metrics
   ApiKeyInfo,                 // API key metadata (prefix only)
   CreatePostInput,            // Input for createPost()
@@ -138,6 +144,8 @@ import type {
   ConnectLinkedInInput,       // Input for connectLinkedInAccount()
   ConnectThreadsInput,        // Input for connectThreadsAccount()
   ConnectMastodonInput,       // Input for connectMastodonAccount()
+  ConnectInstagramInput,      // Input for connectInstagramAccount()
+  ConnectFacebookInput,       // Input for connectFacebookAccount()
   ListPostsOptions,           // Options for listPosts()
 } from "@chirpie/sdk";
 ```

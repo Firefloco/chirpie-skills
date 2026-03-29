@@ -1,6 +1,6 @@
 # Chirpie Skills
 
-AI agent skills for [Chirpie](https://chirpie.ai) — the social media API for AI agents and developers. Post to X/Twitter, Bluesky, LinkedIn, Threads, and Mastodon from a single API.
+AI agent skills for [Chirpie](https://chirpie.ai) — the social media API for AI agents and developers. Post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, and Facebook from a single API.
 
 ## Install
 
@@ -28,6 +28,8 @@ Once installed, ask your AI agent:
 - "Post to LinkedIn saying 'Just shipped a new feature!'"
 - "Post to Threads saying 'Hello world!'"
 - "Post to Mastodon saying 'Hello fediverse!'"
+- "Post to Instagram with this photo"
+- "Post to our Facebook Page about the launch"
 - "Create a thread about TypeScript"
 - "Schedule a post for tomorrow at 9am"
 - "Set up the Chirpie MCP server"
@@ -38,7 +40,7 @@ Once installed, ask your AI agent:
 | Skill | Description |
 |-------|-------------|
 | `chirpie` | Router — directs to the right sub-skill |
-| `chirpie-setup` | Install SDK, configure keys, connect X, Bluesky, LinkedIn, Threads, and Mastodon accounts |
+| `chirpie-setup` | Install SDK, configure keys, connect X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, and Facebook accounts |
 | `chirpie-posting` | Create posts and threads, list, delete, analytics |
 | `chirpie-scheduling` | Schedule content for future publishing |
 | `chirpie-sdk` | TypeScript SDK reference |
@@ -48,7 +50,7 @@ Once installed, ask your AI agent:
 ## Prerequisites
 
 1. Sign up at [chirpie.ai](https://chirpie.ai/auth/signup)
-2. Connect your X, Bluesky, LinkedIn, Threads, and/or Mastodon account
+2. Connect your X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, and/or Facebook account
 3. Get an API key
 
 ## Links

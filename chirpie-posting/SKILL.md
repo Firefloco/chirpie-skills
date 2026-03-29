@@ -1,6 +1,6 @@
 ---
 name: chirpie-posting
-description: Create posts and threads on X/Twitter, Bluesky, LinkedIn, Threads, and Mastodon via the Chirpie API. Covers single posts, multi-post threads, listing, deletion, and analytics.
+description: Create posts and threads on X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, and Facebook via the Chirpie API. Covers single posts, multi-post threads, listing, deletion, and analytics.
 ---
 
 # Chirpie Posting
@@ -34,9 +34,9 @@ curl -X POST https://chirpie.ai/api/v1/posts \
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `account_id` | UUID string | Yes | Connected account ID (X, Bluesky, LinkedIn, Threads, or Mastodon) |
-| `text` | string | Yes | X: 1-280 chars (25,000 for X Premium). Bluesky: 1-300 chars. LinkedIn: 1-3,000 chars. Threads: 1-500 chars. Mastodon: 1-500 chars. |
-| `media_urls` | string[] | No | Up to 4 public image/video URLs (JPEG, PNG, WebP, GIF up to 5MB; MP4/MOV up to 512MB). Media is downloaded immediately and uploaded at publish time. Bluesky supports images only (~1MB each, max 4), no video. LinkedIn supports images only (JPEG/PNG/GIF, max 8MB each, max 4), no video. Threads supports one image per post (URL-based, JPEG/PNG), no video. Mastodon supports images + video, max 4 attachments. |
+| `account_id` | UUID string | Yes | Connected account ID (X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, or Facebook) |
+| `text` | string | Yes | X: 1-280 chars (25,000 for X Premium). Bluesky: 1-300 chars. LinkedIn: 1-3,000 chars. Threads: 1-500 chars. Mastodon: 1-500 chars. Instagram: 1-2,200 chars. Facebook: 1-63,206 chars. |
+| `media_urls` | string[] | No | Public image/video URLs. Media is downloaded immediately and uploaded at publish time. Bluesky: images only (~1MB each, max 4), no video. LinkedIn: images only (JPEG/PNG/GIF, max 8MB each, max 4), no video. Threads: one image per post (URL-based, JPEG/PNG), no video. Mastodon: images + video, max 4 attachments. Instagram: REQUIRED (at least 1 image, max 10 for carousel), no video. Facebook: images (max 4), no video. |
 | `schedule_at` | ISO 8601 | No | Future datetime for scheduling |
 
 ### Response (201)
@@ -91,9 +91,10 @@ curl -X POST https://chirpie.ai/api/v1/threads \
 ```
 
 - Min 2 posts, max 25 posts per thread
-- Each post: X: 1-280 chars (25,000 for X Premium). Bluesky: 1-300 chars. LinkedIn: 1-3,000 chars. Threads: 1-500 chars. Mastodon: 1-500 chars.
+- Each post: X: 1-280 chars (25,000 for X Premium). Bluesky: 1-300 chars. LinkedIn: 1-3,000 chars. Threads: 1-500 chars. Mastodon: 1-500 chars. Instagram: 1-2,200 chars. Facebook: 1-63,206 chars.
+- X, Bluesky, Threads, and Mastodon support native reply threading.
+- LinkedIn, Instagram, and Facebook degrade gracefully — each item is published as a standalone post.
 - Thread counts as N posts against your monthly quota
-- All posts publish as connected replies
 
 ## List Posts
 
@@ -116,7 +117,7 @@ const post = await chirpie.getPost("post-uuid");
 
 ```typescript
 const result = await chirpie.deletePost("post-uuid");
-// Also deletes from X/Bluesky/LinkedIn/Threads/Mastodon if published
+// Also deletes from X/Bluesky/LinkedIn/Threads/Mastodon/Instagram/Facebook if published
 ```
 
 ## Get Analytics
@@ -152,7 +153,7 @@ try {
 ```
 immediate:  → published | failed
 scheduled:  → scheduled → publishing → published | failed
-deleted:    → deleted (also removed from X/Bluesky/LinkedIn/Threads/Mastodon if published)
+deleted:    → deleted (also removed from X/Bluesky/LinkedIn/Threads/Mastodon/Instagram/Facebook if published)
 ```
 
 Failed posts: check `error_message` field for details.

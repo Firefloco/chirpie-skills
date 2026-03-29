@@ -1,6 +1,6 @@
 ---
 name: chirpie-setup
-description: Set up Chirpie in your project — install SDK, configure API keys, connect X, Bluesky, LinkedIn, Threads, and Mastodon accounts, send your first post.
+description: Set up Chirpie in your project — install SDK, configure API keys, connect X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, and Facebook accounts, send your first post.
 ---
 
 # Chirpie Setup
@@ -9,7 +9,7 @@ description: Set up Chirpie in your project — install SDK, configure API keys,
 
 - A Chirpie account at https://chirpie.ai/auth/signup
 - An API key (created during onboarding or at https://chirpie.ai/dashboard/keys)
-- At least one connected X, Bluesky, LinkedIn, Threads, or Mastodon account (via https://chirpie.ai/dashboard/accounts)
+- At least one connected X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, or Facebook account (via https://chirpie.ai/dashboard/accounts)
 
 ## Step 1: Install the SDK
 
@@ -100,12 +100,36 @@ chirpie accounts connect-mastodon --instance https://mastodon.social
 # Opens browser for Mastodon OAuth authorization
 ```
 
+**Instagram** — Connect via Instagram Login from the dashboard or API:
+```typescript
+const { authorization_url } = await chirpie.connectInstagramAccount();
+// Open URL in browser to authorize via Instagram Login
+```
+
+Or via CLI:
+```bash
+chirpie accounts connect-instagram
+# Opens browser for Instagram Login OAuth authorization
+```
+
+**Facebook** — Connect a Facebook Page via Facebook Login from the dashboard or API:
+```typescript
+const { authorization_url } = await chirpie.connectFacebookAccount();
+// Open URL in browser to authorize via Facebook Login and select a Page
+```
+
+Or via CLI:
+```bash
+chirpie accounts connect-facebook
+# Opens browser for Facebook Login OAuth authorization
+```
+
 ## Step 4: Find Your Account ID
 
 ```typescript
 const accounts = await chirpie.listAccounts();
 console.log(accounts);
-// Each account has: id, platform ("x", "bluesky", "linkedin", "threads", or "mastodon"), username, display_name, avatar_url
+// Each account has: id, platform ("x", "bluesky", "linkedin", "threads", "mastodon", "instagram", or "facebook"), username, display_name, avatar_url
 // Use the `id` field as your account_id for posting
 ```
 
@@ -140,7 +164,7 @@ See `chirpie-mcp` skill for Claude/Cursor/AI agent configuration.
 ## Common Pitfalls
 
 1. **API key format:** Keys must start with `chirpie_sk_`. If you get 401 errors, check the prefix.
-2. **Account not active:** If OAuth tokens expired (X, LinkedIn, Threads), token was revoked (Mastodon), or app password is revoked (Bluesky), `is_active` will be `false`. Re-authorize from the dashboard.
+2. **Account not active:** If OAuth tokens expired (X, LinkedIn, Threads, Instagram), token was revoked (Mastodon), or app password is revoked (Bluesky), `is_active` will be `false`. Re-authorize from the dashboard. Note: Facebook Page tokens do not expire, but page permissions can be revoked.
 3. **Environment variable loading:** In Next.js, server-side env vars don't need `NEXT_PUBLIC_` prefix. Don't expose your API key to the browser.
 
 ## Plan Limits

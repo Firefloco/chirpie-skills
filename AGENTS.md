@@ -1,6 +1,6 @@
 # Chirpie Skills for AI Agents
 
-A collection of task-based skills enabling AI coding agents to integrate Chirpie — a social media API for posting to X/Twitter, Bluesky, LinkedIn, Threads, and Mastodon (with X Premium support for long-form posts).
+A collection of task-based skills enabling AI coding agents to integrate Chirpie — a social media API for posting to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, and Facebook (with X Premium support for long-form posts).
 
 ## Directory Structure
 
@@ -23,7 +23,7 @@ The `chirpie` router skill directs requests to sub-skills:
 | User Intent | Skill |
 |-------------|-------|
 | "Add Chirpie to my project" | chirpie-setup |
-| "Post a tweet" / "Post to Bluesky" / "Post to LinkedIn" / "Post to Threads" / "Post to Mastodon" / "Create a thread" | chirpie-posting |
+| "Post a tweet" / "Post to Bluesky" / "Post to LinkedIn" / "Post to Threads" / "Post to Mastodon" / "Post to Instagram" / "Post to Facebook" / "Create a thread" | chirpie-posting |
 | "Schedule a post for tomorrow" | chirpie-scheduling |
 | "Use the Chirpie SDK" | chirpie-sdk |
 | "Post from the terminal" | chirpie-cli |

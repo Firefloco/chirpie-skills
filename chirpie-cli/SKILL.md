@@ -1,6 +1,6 @@
 ---
 name: chirpie-cli
-description: Use the Chirpie CLI to post to X/Twitter, Bluesky, LinkedIn, Threads, and Mastodon from the terminal. Covers installation, browser-based login, and all commands.
+description: Use the Chirpie CLI to post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, and Facebook from the terminal. Covers installation, browser-based login, and all commands.
 ---
 
 # Chirpie CLI
@@ -93,12 +93,14 @@ chirpie posts --json                   # JSON output
 ### chirpie accounts
 
 ```bash
-chirpie accounts                       # List connected accounts (X, Bluesky, LinkedIn, Threads, and Mastodon)
+chirpie accounts                       # List connected accounts (X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, and Facebook)
 chirpie accounts connect              # Start X OAuth flow (prints URL)
 chirpie accounts connect-bluesky --handle yourhandle.bsky.social --app-password xxxx-xxxx-xxxx-xxxx
 chirpie accounts connect-linkedin     # Start LinkedIn OAuth flow (prints URL to open in browser)
 chirpie accounts connect-threads      # Start Threads Meta OAuth flow (prints URL to open in browser)
 chirpie accounts connect-mastodon --instance https://mastodon.social  # Start Mastodon OAuth flow
+chirpie accounts connect-instagram     # Start Instagram Login OAuth flow (prints URL to open in browser)
+chirpie accounts connect-facebook      # Start Facebook Login OAuth flow (prints URL to open in browser)
 ```
 
 ### chirpie keys
