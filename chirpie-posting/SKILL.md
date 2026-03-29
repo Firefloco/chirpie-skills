@@ -1,6 +1,6 @@
 ---
 name: chirpie-posting
-description: Create posts and threads on X/Twitter and Bluesky via the Chirpie API. Covers single posts, multi-post threads, listing, deletion, and analytics.
+description: Create posts and threads on X/Twitter, Bluesky, LinkedIn, and Threads via the Chirpie API. Covers single posts, multi-post threads, listing, deletion, and analytics.
 ---
 
 # Chirpie Posting
@@ -34,9 +34,9 @@ curl -X POST https://chirpie.ai/api/v1/posts \
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `account_id` | UUID string | Yes | Connected account ID (X or Bluesky) |
-| `text` | string | Yes | X: 1-280 chars (25,000 for X Premium). Bluesky: 1-300 chars. |
-| `media_urls` | string[] | No | Up to 4 public image/video URLs (JPEG, PNG, WebP, GIF up to 5MB; MP4/MOV up to 512MB). Media is downloaded immediately and uploaded at publish time. Bluesky supports images only (~1MB each), no video. |
+| `account_id` | UUID string | Yes | Connected account ID (X, Bluesky, LinkedIn, or Threads) |
+| `text` | string | Yes | X: 1-280 chars (25,000 for X Premium). Bluesky: 1-300 chars. LinkedIn: 1-3,000 chars. Threads: 1-500 chars. |
+| `media_urls` | string[] | No | Up to 4 public image/video URLs (JPEG, PNG, WebP, GIF up to 5MB; MP4/MOV up to 512MB). Media is downloaded immediately and uploaded at publish time. Bluesky supports images only (~1MB each, max 4), no video. LinkedIn supports images only (JPEG/PNG/GIF, max 8MB each, max 4), no video. Threads supports one image per post (URL-based, JPEG/PNG), no video. |
 | `schedule_at` | ISO 8601 | No | Future datetime for scheduling |
 
 ### Response (201)
@@ -91,7 +91,7 @@ curl -X POST https://chirpie.ai/api/v1/threads \
 ```
 
 - Min 2 posts, max 25 posts per thread
-- Each post: X: 1-280 chars (25,000 for X Premium). Bluesky: 1-300 chars.
+- Each post: X: 1-280 chars (25,000 for X Premium). Bluesky: 1-300 chars. LinkedIn: 1-3,000 chars. Threads: 1-500 chars.
 - Thread counts as N posts against your monthly quota
 - All posts publish as connected replies
 
@@ -116,7 +116,7 @@ const post = await chirpie.getPost("post-uuid");
 
 ```typescript
 const result = await chirpie.deletePost("post-uuid");
-// Also deletes from X/Bluesky if published
+// Also deletes from X/Bluesky/LinkedIn/Threads if published
 ```
 
 ## Get Analytics
@@ -152,7 +152,7 @@ try {
 ```
 immediate:  → published | failed
 scheduled:  → scheduled → publishing → published | failed
-deleted:    → deleted (also removed from X/Bluesky if published)
+deleted:    → deleted (also removed from X/Bluesky/LinkedIn/Threads if published)
 ```
 
 Failed posts: check `error_message` field for details.
