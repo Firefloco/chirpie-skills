@@ -42,7 +42,7 @@ const chirpie = new ChirpieClient({
 
 **X/Twitter** — Connect via OAuth from the dashboard or API:
 ```typescript
-const { authorization_url } = await chirpie.connectAccount();
+const { authorization_url } = await chirpie.connectXAccount();
 // Open URL in browser to authorize
 ```
 
@@ -139,41 +139,7 @@ chirpie accounts connect-telegram --bot-token TOKEN --chat-id ID
 # --bot-token and --chat-id are optional (prompts securely if omitted)
 ```
 
-**Reddit** — Connect via OAuth from the dashboard or API:
-```typescript
-const { authorization_url } = await chirpie.connectRedditAccount();
-// Open URL in browser to authorize via Reddit OAuth
-```
-
-**Pinterest** — Connect via OAuth from the dashboard or API:
-```typescript
-const { authorization_url } = await chirpie.connectPinterestAccount();
-// Open URL in browser to authorize via Pinterest OAuth
-```
-
-**TikTok** — Connect via OAuth from the dashboard or API:
-```typescript
-const { authorization_url } = await chirpie.connectTikTokAccount();
-// Open URL in browser to authorize via TikTok OAuth
-```
-
-**YouTube** — Connect via Google OAuth from the dashboard or API:
-```typescript
-const { authorization_url } = await chirpie.connectYouTubeAccount();
-// Open URL in browser to authorize via Google OAuth
-```
-
-**Google Business Profile** — Connect via Google OAuth from the dashboard or API:
-```typescript
-const { authorization_url } = await chirpie.connectGBPAccount();
-// Open URL in browser to authorize via Google OAuth
-```
-
-**Snapchat** — Connect via OAuth from the dashboard or API (allowlist-only):
-```typescript
-const { authorization_url } = await chirpie.connectSnapchatAccount();
-// Open URL in browser to authorize via Snapchat OAuth
-```
+**Reddit, Pinterest, TikTok, YouTube, Google Business Profile, Snapchat** — Coming Soon.
 
 ## Step 4: Find Your Account ID
 

@@ -11,7 +11,7 @@
   "plugins": [
     {
       "name": "chirpie",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "description": "Chirpie router — automatically routes to the right skill based on your task",
       "path": "skills/chirpie",
       "category": "social-media",
@@ -20,7 +20,7 @@
     },
     {
       "name": "chirpie-setup",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "description": "Set up Chirpie in your project — install SDK, configure API keys, connect accounts (14 platforms)",
       "path": "skills/chirpie-setup",
       "category": "social-media",
@@ -30,7 +30,7 @@
     },
     {
       "name": "chirpie-posting",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "description": "Create posts and threads on 14 platforms via the Chirpie API",
       "path": "skills/chirpie-posting",
       "category": "social-media",
@@ -40,7 +40,7 @@
     },
     {
       "name": "chirpie-scheduling",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "description": "Schedule posts and threads for future publishing with Chirpie",
       "path": "skills/chirpie-scheduling",
       "category": "social-media",
@@ -50,7 +50,7 @@
     },
     {
       "name": "chirpie-sdk",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "description": "Use the @chirpie/sdk TypeScript client in your application",
       "path": "skills/chirpie-sdk",
       "category": "social-media",
@@ -60,7 +60,7 @@
     },
     {
       "name": "chirpie-cli",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "description": "Use the Chirpie CLI to post to 14 platforms from the terminal",
       "path": "skills/chirpie-cli",
       "category": "social-media",
@@ -69,7 +69,7 @@
     },
     {
       "name": "chirpie-mcp",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "description": "Connect the Chirpie MCP server to Claude, Cursor, or other AI agents",
       "path": "skills/chirpie-mcp",
       "category": "social-media",
