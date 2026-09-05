@@ -214,6 +214,11 @@ Setup guide: https://chirpie.ai/docs/x-byo-keys
 After setting keys, the user must add the returned `redirect_uri` as a callback
 URI on their X app and reconnect each X account (`chirpie_connect_x`).
 
+`chirpie_remove_x_keys` is API-key auth only. On a hosted server signed in with
+OAuth it is not offered — remove the app from
+[account settings](https://chirpie.ai/dashboard/accounts) instead. Setting keys
+and checking their status stay available over OAuth.
+
 ### chirpie_analytics
 
 Get engagement metrics for a published post.
@@ -264,6 +269,10 @@ The user does not need to leave the agent to connect a platform. Call the matchi
 ## Key management tools
 
 `chirpie_create_key` (returns the key once), `chirpie_list_keys`, `chirpie_revoke_key`.
+
+These are API-key auth only, along with `chirpie_remove_x_keys`. On a hosted
+server signed in with OAuth they are not offered — manage API keys in the
+[dashboard](https://chirpie.ai/dashboard/keys) instead.
 
 ## Authentication Priority
 
