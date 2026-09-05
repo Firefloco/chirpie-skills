@@ -1,6 +1,6 @@
 ---
 name: chirpie
-description: Chirpie social media API router. Use when user asks about posting to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram, Reddit, Pinterest, TikTok, YouTube, Google Business Profile, or Snapchat, social media automation, scheduling posts, connecting social accounts, or using the Chirpie API/SDK/CLI/MCP. Automatically routes to the specific skill based on their task.
+description: Chirpie social media API router. Use when user asks about posting to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram, Reddit, Pinterest, TikTok, YouTube, Google Business Profile, or Snapchat, social media automation, scheduling posts, connecting social accounts, or using the Chirpie API/SDK/CLI/MCP/n8n node. Automatically routes to the specific skill based on their task.
 ---
 
 # Chirpie Skills Router
@@ -44,6 +44,11 @@ Chirpie is a social media API for AI agents and developers. Post to X/Twitter, B
 - Configure for Claude Code, Cursor, or Claude Desktop
 - Available tools and parameters
 - Authentication flow
+
+**Using Chirpie in n8n** → See https://chirpie.ai/docs/n8n
+- Install the `n8n-nodes-chirpie` community node (Settings → Community Nodes → `n8n-nodes-chirpie`)
+- Add a Chirpie API credential, then use the Chirpie node for posts, threads, accounts, and analytics
+- The node is usable as a tool by n8n AI Agents
 
 **Running inside OpenClaw** → Use `chirpie-openclaw`
 - Install via `openclaw skills install`

@@ -60,6 +60,10 @@ openclaw skills install git:Firefloco/chirpie-skills --global
 
 Set `CHIRPIE_API_KEY` in the agent's environment. See the [OpenClaw guide](https://chirpie.ai/docs/guides/give-your-openclaw-agent-a-social-media-account).
 
+## Other Ways to Use Chirpie
+
+- **n8n** — install the `n8n-nodes-chirpie` community node (Settings → Community Nodes → `n8n-nodes-chirpie`) to post, thread, schedule, and pull analytics from a workflow. It also works as a tool for n8n AI Agents. [Docs](https://chirpie.ai/docs/n8n)
+
 ## Prerequisites
 
 1. Sign up at [chirpie.ai](https://chirpie.ai/auth/signup)
