@@ -108,7 +108,7 @@ curl -s "https://chirpie.ai/api/v1/posts?status=scheduled&limit=50" \
 curl -s https://chirpie.ai/api/v1/posts/POST_ID \
   -H "Authorization: Bearer $CHIRPIE_API_KEY"
 
-# Delete (also removes it from the platform)
+# Delete (also removes it from the platform, except Instagram and TikTok)
 curl -s -X DELETE https://chirpie.ai/api/v1/posts/POST_ID \
   -H "Authorization: Bearer $CHIRPIE_API_KEY"
 ```

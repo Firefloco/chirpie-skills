@@ -119,7 +119,7 @@ const post = await chirpie.getPost("post-uuid");
 
 ```typescript
 const result = await chirpie.deletePost("post-uuid");
-// Also deletes from the platform if published (except TikTok which has no delete API)
+// Also deletes from the platform if published (except Instagram and TikTok, which have no delete API)
 ```
 
 ## Get Analytics
@@ -155,7 +155,7 @@ try {
 ```
 immediate:  → published | failed
 scheduled:  → scheduled → publishing → published | failed
-deleted:    → deleted (also removed from platform if published, except TikTok)
+deleted:    → deleted (also removed from platform if published, except Instagram and TikTok)
 ```
 
 Failed posts: check `error_message` field for details.

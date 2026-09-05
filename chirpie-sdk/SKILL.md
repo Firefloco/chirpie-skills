@@ -61,7 +61,7 @@ const posts = await chirpie.listPosts({
 // Get a single post
 const post = await chirpie.getPost("post-uuid");
 
-// Delete a post (also deletes from platform if published, except TikTok)
+// Delete a post (also deletes from platform if published, except Instagram and TikTok)
 const result = await chirpie.deletePost("post-uuid");
 ```
 

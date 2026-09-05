@@ -113,7 +113,7 @@ chirpie accounts connect-mastodon --instance https://mastodon.social
 # Opens browser for Mastodon OAuth authorization
 ```
 
-**Instagram**: Connect via Instagram Login from the dashboard or API:
+**Instagram**: Connect via Instagram Login from the dashboard or API. Requires an Instagram professional account (Business or Creator); personal accounts cannot be connected. Instagram posts always need at least one image.
 ```typescript
 const { authorization_url } = await chirpie.connectInstagramAccount();
 // Open URL in browser to authorize via Instagram Login
