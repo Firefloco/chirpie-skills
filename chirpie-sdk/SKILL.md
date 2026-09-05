@@ -81,7 +81,7 @@ const thread = await chirpie.createThread({
 ### Accounts
 
 ```typescript
-// List all connected accounts (all 14 platforms)
+// List all connected accounts
 const accounts = await chirpie.listAccounts();
 // Each account: { id, platform, username, display_name, avatar_url, is_active }
 
@@ -160,7 +160,7 @@ const metrics = await chirpie.getPostAnalytics("post-uuid");
 import type {
   ApiPost,                    // Post object (includes `platform` field)
   ApiThread,                  // Thread object returned from API
-  ApiAccount,                 // Connected account (14 platform types, username, display_name, avatar_url)
+  ApiAccount,                 // Connected account (platform, username, display_name, avatar_url)
   ApiAnalytics,               // Post metrics
   ApiKeyInfo,                 // API key metadata (prefix only)
   CreatePostInput,            // Input for createPost()

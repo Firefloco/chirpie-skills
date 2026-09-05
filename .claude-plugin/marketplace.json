@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "chirpie-skills",
-  "description": "Official Chirpie skills for AI coding agents — post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram, Reddit, Pinterest, TikTok, YouTube, Google Business Profile, and Snapchat (14 platforms) via API, SDK, CLI, or MCP",
+  "description": "Official Chirpie skills for AI coding agents — post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram via API, SDK, CLI, or MCP",
   "owner": {
     "name": "Fireflo LLC",
     "email": "support@chirpie.ai"
@@ -21,7 +21,7 @@
     {
       "name": "chirpie-setup",
       "version": "1.1.0",
-      "description": "Set up Chirpie in your project — install SDK, configure API keys, connect accounts (14 platforms)",
+      "description": "Set up Chirpie in your project — install SDK, configure API keys, connect accounts",
       "path": "skills/chirpie-setup",
       "category": "social-media",
       "license": "MIT",
@@ -31,7 +31,7 @@
     {
       "name": "chirpie-posting",
       "version": "1.1.0",
-      "description": "Create posts and threads on 14 platforms via the Chirpie API",
+      "description": "Create posts and threads across every connected platform via the Chirpie API",
       "path": "skills/chirpie-posting",
       "category": "social-media",
       "license": "MIT",
@@ -61,7 +61,7 @@
     {
       "name": "chirpie-cli",
       "version": "1.1.0",
-      "description": "Use the Chirpie CLI to post to 14 platforms from the terminal",
+      "description": "Use the Chirpie CLI to post to every connected platform from the terminal",
       "path": "skills/chirpie-cli",
       "category": "social-media",
       "license": "MIT",
@@ -79,7 +79,7 @@
     {
       "name": "chirpie-openclaw",
       "version": "1.0.0",
-      "description": "Give an OpenClaw agent a social media account — post, thread, and schedule across 14 platforms",
+      "description": "Give an OpenClaw agent a social media account — post, thread, and schedule across every connected platform",
       "path": "skills/chirpie-openclaw",
       "category": "social-media",
       "license": "MIT",

@@ -93,7 +93,7 @@ chirpie posts --json                   # JSON output
 ### chirpie accounts
 
 ```bash
-chirpie accounts                       # List connected accounts (all 14 platforms)
+chirpie accounts                       # List connected accounts
 chirpie accounts connect              # Start X OAuth flow (prints URL)
 chirpie accounts connect-bluesky --handle yourhandle.bsky.social --app-password xxxx-xxxx-xxxx-xxxx
 chirpie accounts connect-linkedin     # Start LinkedIn OAuth flow (prints URL to open in browser)

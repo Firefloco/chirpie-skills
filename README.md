@@ -1,6 +1,6 @@
 # Chirpie Skills
 
-AI agent skills for [Chirpie](https://chirpie.ai) — the social media API for AI agents and developers. Post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram, Reddit, Pinterest, TikTok, YouTube, Google Business Profile, and Snapchat (14 platforms) from a single API.
+AI agent skills for [Chirpie](https://chirpie.ai) — the social media API for AI agents and developers. Post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram from a single API.
 
 ## Install
 
@@ -43,7 +43,7 @@ Once installed, ask your AI agent:
 | Skill | Description |
 |-------|-------------|
 | `chirpie` | Router — directs to the right sub-skill |
-| `chirpie-setup` | Install SDK, configure keys, connect accounts (all 14 platforms) |
+| `chirpie-setup` | Install SDK, configure keys, connect accounts |
 | `chirpie-posting` | Create posts and threads, list, delete, analytics |
 | `chirpie-scheduling` | Schedule content for future publishing |
 | `chirpie-sdk` | TypeScript SDK reference |

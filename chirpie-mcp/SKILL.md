@@ -5,7 +5,7 @@ description: Connect the Chirpie MCP server to Claude, Claude Code, Cursor, Chat
 
 # Chirpie MCP Server
 
-The Chirpie MCP server lets AI agents post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram, Reddit, Pinterest, TikTok, YouTube, Google Business Profile, and Snapchat (14 platforms) through the Model Context Protocol.
+The Chirpie MCP server lets AI agents post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram through the Model Context Protocol.
 
 There are two ways to connect. Prefer the hosted server unless the user explicitly wants to run it locally.
 
@@ -145,22 +145,22 @@ Both servers expose exactly the same tools.
 
 ### chirpie_post
 
-Create a single post on any of 14 platforms with optional media. Note: Instagram, Pinterest, TikTok, YouTube, and Snapchat REQUIRE media. Facebook is Pages only.
+Create a single post on any connected platform with optional media. Note: Instagram REQUIRES media. Facebook is Pages only.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `account_id` | string | Yes | Account UUID (any of 14 platforms) |
+| `account_id` | string | Yes | Account UUID |
 | `text` | string | Yes | Post text. Max varies: X 280 (25K Premium), Bluesky 300, LinkedIn 3K, Threads 500, Mastodon 500, Instagram 2,200, Facebook 63,206, Telegram 4,096, Reddit 40K, Pinterest 500, TikTok 2,200, YouTube 5K, Google Business 1,500, Snapchat 160. |
 | `media_urls` | string[] | No | Public image/video URLs. Limits vary by platform. Instagram, Pinterest, TikTok, YouTube, and Snapchat REQUIRE media. |
 | `schedule_at` | string | No | ISO 8601 datetime, must be future and carry a timezone (`...Z` or `+02:00`); normalized to UTC |
 
 ### chirpie_thread
 
-Create a multi-post thread on any of 14 platforms. X, Bluesky, Threads, Mastodon, and Telegram support native threading. Reddit threads via comments. Others degrade to standalone posts.
+Create a multi-post thread on any connected platform. X, Bluesky, Threads, Mastodon, and Telegram support native threading. Others degrade to standalone posts.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `account_id` | string | Yes | Account UUID (any of 14 platforms) |
+| `account_id` | string | Yes | Account UUID |
 | `posts` | array | Yes | Array of `{ text, media_urls? }` objects (2-25). Media limits vary by platform. |
 | `schedule_at` | string | No | ISO 8601 datetime |
 
@@ -192,7 +192,7 @@ Delete a post (also removes from platform if published, except TikTok which has 
 
 ### chirpie_list_accounts
 
-List all connected accounts (all 14 platforms). No parameters.
+List all connected accounts. No parameters.
 
 Returns: `id`, `platform`, `username`, `display_name`, `avatar_url`, `is_active`.
 X accounts also return `byo_keys` — true when the account posts through the

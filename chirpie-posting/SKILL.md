@@ -34,7 +34,7 @@ curl -X POST https://chirpie.ai/api/v1/posts \
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `account_id` | UUID string | Yes | Connected account ID (any of 14 platforms) |
+| `account_id` | UUID string | Yes | Connected account ID |
 | `text` | string | Yes | X: 1-280 (25K Premium). Bluesky: 300. LinkedIn: 3K. Threads: 500. Mastodon: 500. Instagram: 2,200. Facebook: 63,206. Telegram: 4,096. Reddit: 40K. Pinterest: 500. TikTok: 2,200. YouTube: 5K. Google Business: 1,500. Snapchat: 160. |
 | `media_urls` | string[] | No | Public image/video URLs. Limits vary by platform. Instagram, Pinterest, TikTok, YouTube, and Snapchat REQUIRE media. |
 | `schedule_at` | ISO 8601 | No | Future datetime for scheduling. Must carry a timezone (`...Z` or `+02:00`); normalized to UTC |
