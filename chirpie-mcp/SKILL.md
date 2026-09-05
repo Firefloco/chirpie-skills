@@ -1,13 +1,84 @@
 ---
 name: chirpie-mcp
-description: Connect the Chirpie MCP server to Claude Code, Claude Desktop, Cursor, or other AI agents. Lists all available tools and their parameters.
+description: Connect the Chirpie MCP server to Claude, Claude Code, Cursor, ChatGPT, or other AI agents — hosted (one URL) or local. Lists all available tools and their parameters.
 ---
 
 # Chirpie MCP Server
 
 The Chirpie MCP server lets AI agents post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram, Reddit, Pinterest, TikTok, YouTube, Google Business Profile, and Snapchat (14 platforms) through the Model Context Protocol.
 
-## Prerequisites
+There are two ways to connect. Prefer the hosted server unless the user explicitly wants to run it locally.
+
+## Hosted server (recommended)
+
+One URL, nothing to install:
+
+```
+https://chirpie.ai/mcp
+```
+
+The user signs in through their client's connector flow the first time. No API key needed.
+
+### Claude Code
+
+```bash
+claude mcp add --transport http chirpie https://chirpie.ai/mcp
+```
+
+Then `/mcp` → select **chirpie** → sign in.
+
+Or add to `.mcp.json` in the project:
+
+```json
+{
+  "mcpServers": {
+    "chirpie": {
+      "type": "http",
+      "url": "https://chirpie.ai/mcp"
+    }
+  }
+}
+```
+
+### Claude (claude.ai / desktop)
+
+Settings → Connectors → **Add custom connector** → name `Chirpie`, URL `https://chirpie.ai/mcp` → Connect.
+
+### Cursor
+
+Add to `.cursor/mcp.json` (project) or `~/.cursor/mcp.json` (global):
+
+```json
+{
+  "mcpServers": {
+    "chirpie": {
+      "url": "https://chirpie.ai/mcp"
+    }
+  }
+}
+```
+
+### ChatGPT
+
+Settings → Connectors → Create → **MCP server** → URL `https://chirpie.ai/mcp` → OAuth.
+
+### With an API key instead of signing in
+
+For CI, scripts, or clients without an OAuth flow:
+
+```json
+{
+  "mcpServers": {
+    "chirpie": {
+      "type": "http",
+      "url": "https://chirpie.ai/mcp",
+      "headers": { "Authorization": "Bearer chirpie_sk_..." }
+    }
+  }
+}
+```
+
+## Local server (alternative)
 
 Authenticate via the CLI (opens browser — user is typically already logged in):
 
@@ -16,9 +87,7 @@ npm install -g chirpie
 chirpie login
 ```
 
-The MCP server reads saved credentials from `~/.chirpie/config.json` automatically. Alternatively, set `CHIRPIE_API_KEY` as an environment variable (useful for CI/CD).
-
-## Setup
+The local server reads saved credentials from `~/.chirpie/config.json` automatically. Alternatively, set `CHIRPIE_API_KEY` as an environment variable (useful for CI/CD).
 
 ### Claude Code
 
@@ -69,6 +138,8 @@ Add to Cursor MCP settings:
   }
 }
 ```
+
+Both servers expose exactly the same tools.
 
 ## Available Tools
 
@@ -156,9 +227,34 @@ Once configured, ask your AI agent:
 - "List my connected accounts"
 - "Delete the post with ID xyz"
 
+## Connecting social accounts from chat
+
+The user does not need to leave the agent to connect a platform. Call the matching
+`chirpie_connect_*` tool and hand back the `authorization_url` for them to open:
+
+| Tool | Platform | Arguments |
+|------|----------|-----------|
+| `chirpie_connect_x` | X/Twitter | none |
+| `chirpie_connect_linkedin` | LinkedIn | none |
+| `chirpie_connect_threads` | Threads | none |
+| `chirpie_connect_instagram` | Instagram | none |
+| `chirpie_connect_facebook` | Facebook Pages | none |
+| `chirpie_connect_bluesky` | Bluesky | `identifier`, `app_password` |
+| `chirpie_connect_mastodon` | Mastodon | `instance_url` |
+| `chirpie_connect_telegram` | Telegram | `bot_token`, `chat_id` |
+
+## Key management tools
+
+`chirpie_create_key` (returns the key once), `chirpie_list_keys`, `chirpie_revoke_key`.
+
 ## Authentication Priority
 
+**Hosted server** — either:
+1. Sign in through the client's connector flow (recommended)
+2. `Authorization: Bearer chirpie_sk_...` header
+
+**Local server**:
 1. `CHIRPIE_API_KEY` environment variable
 2. `~/.chirpie/config.json` (created by `chirpie login`)
 
-Both CLI and MCP share the same config — `chirpie login` authenticates both.
+Both CLI and the local MCP server share the same config — `chirpie login` authenticates both.

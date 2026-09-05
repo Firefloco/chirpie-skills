@@ -51,8 +51,8 @@ Threads publish atomically — if any post fails, the entire thread retries.
 ## How It Works
 
 1. Posts are stored with `status: "scheduled"`
-2. A cron job runs **every minute** checking for posts due to publish
-3. Posts publish within ~60 seconds of their `schedule_at` time
+2. A cron job runs **every 5 minutes** checking for posts due to publish
+3. Posts publish within ~5 minutes of their `schedule_at` time
 4. All times are **UTC**
 
 ## Cancel a Scheduled Post
