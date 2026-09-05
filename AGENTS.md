@@ -1,20 +1,20 @@
 # Chirpie Skills for AI Agents
 
-A collection of task-based skills enabling AI coding agents to integrate Chirpie — a social media API for posting to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram (with X Premium support for long-form posts).
+A collection of task-based skills enabling AI coding agents to integrate Chirpie, a social media API for posting to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram (with X Premium support for long-form posts).
 
 ## Directory Structure
 
 ```
 skills/
-├── .claude-plugin/marketplace.json  — Plugin registry
-├── chirpie/SKILL.md                 — Router (entry point)
-├── chirpie-setup/SKILL.md           — Project setup & quickstart
-├── chirpie-posting/SKILL.md         — Posts & threads
-├── chirpie-scheduling/SKILL.md      — Scheduled publishing
-├── chirpie-sdk/SKILL.md             — TypeScript SDK reference
-├── chirpie-cli/SKILL.md             — CLI reference
-├── chirpie-mcp/SKILL.md             — MCP server setup
-└── chirpie-openclaw/SKILL.md        — OpenClaw skill + MCP wiring
+├── .claude-plugin/marketplace.json  (Plugin registry)
+├── chirpie/SKILL.md                 (Router, entry point)
+├── chirpie-setup/SKILL.md           (Project setup & quickstart)
+├── chirpie-posting/SKILL.md         (Posts & threads)
+├── chirpie-scheduling/SKILL.md      (Scheduled publishing)
+├── chirpie-sdk/SKILL.md             (TypeScript SDK reference)
+├── chirpie-cli/SKILL.md             (CLI reference)
+├── chirpie-mcp/SKILL.md             (MCP server setup)
+└── chirpie-openclaw/SKILL.md        (OpenClaw skill + MCP wiring)
 ```
 
 ## Routing

@@ -1,6 +1,6 @@
 # Chirpie Skills
 
-AI agent skills for [Chirpie](https://chirpie.ai) — the social media API for AI agents and developers. Post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram from a single API.
+AI agent skills for [Chirpie](https://chirpie.ai), the social media API for AI agents and developers. Post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram from a single API.
 
 ## Install
 
@@ -54,14 +54,14 @@ Once installed, ask your AI agent:
 
 | Skill | Description |
 |-------|-------------|
-| `chirpie` | Router — directs to the right sub-skill |
+| `chirpie` | Router: directs to the right sub-skill |
 | `chirpie-setup` | Install SDK, configure keys, connect accounts |
 | `chirpie-posting` | Create posts and threads, list, delete, analytics |
 | `chirpie-scheduling` | Schedule content for future publishing |
 | `chirpie-sdk` | TypeScript SDK reference |
 | `chirpie-cli` | CLI commands and authentication |
 | `chirpie-mcp` | MCP server setup for Claude, Cursor, etc. |
-| `chirpie-openclaw` | OpenClaw setup — skill install, MCP wiring, agent guardrails |
+| `chirpie-openclaw` | OpenClaw setup: skill install, MCP wiring, agent guardrails |
 
 ## OpenClaw
 
@@ -74,7 +74,7 @@ Set `CHIRPIE_API_KEY` in the agent's environment. See the [OpenClaw guide](https
 
 ## Other Ways to Use Chirpie
 
-- **n8n** — install the `@chirpie/n8n-nodes-chirpie` community node (Settings → Community Nodes → `@chirpie/n8n-nodes-chirpie`) to post, thread, schedule, and pull analytics from a workflow. It also works as a tool for n8n AI Agents. [Docs](https://chirpie.ai/docs/n8n)
+- **n8n**: install the `@chirpie/n8n-nodes-chirpie` community node (Settings → Community Nodes → `@chirpie/n8n-nodes-chirpie`) to post, thread, schedule, and pull analytics from a workflow. It also works as a tool for n8n AI Agents. [Docs](https://chirpie.ai/docs/n8n)
 
 ## Prerequisites
 

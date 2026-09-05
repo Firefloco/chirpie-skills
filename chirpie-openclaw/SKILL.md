@@ -6,7 +6,7 @@ metadata: { "openclaw": { "requires": { "env": ["CHIRPIE_API_KEY"], "bins": ["cu
 
 # Chirpie for OpenClaw
 
-Give this agent a social media account. Chirpie is a single API for posting to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram — with threads, scheduling, deletion, and analytics.
+Give this agent a social media account. Chirpie is a single API for posting to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram, with threads, scheduling, deletion, and analytics.
 
 **Base URL:** `https://chirpie.ai/api/v1`
 **Auth:** `Authorization: Bearer $CHIRPIE_API_KEY`
@@ -27,7 +27,7 @@ openclaw skills install git:Firefloco/chirpie-skills --global   # all agents
 openclaw skills install git:Firefloco/chirpie-skills             # re-run to update
 ```
 
-Prefer tool calls over HTTP? Connect the MCP server instead — same key, same accounts:
+Prefer tool calls over HTTP? Connect the MCP server instead (same key, same accounts):
 
 ```bash
 openclaw mcp add chirpie --url https://chirpie.ai/mcp --transport streamable-http
@@ -43,7 +43,7 @@ curl -s https://chirpie.ai/api/v1/accounts \
   -H "Authorization: Bearer $CHIRPIE_API_KEY"
 ```
 
-Each account returns `id`, `platform`, `username`, `display_name`, `max_post_length`, and `is_active`. Use `max_post_length` — it is authoritative and already accounts for X Premium.
+Each account returns `id`, `platform`, `username`, `display_name`, `max_post_length`, and `is_active`. Use `max_post_length`. It is authoritative and already accounts for X Premium.
 
 If `is_active` is `false`, tell the user to re-authorize at https://chirpie.ai/dashboard/accounts. Do not retry.
 
@@ -137,7 +137,7 @@ Returns impressions, likes, reposts, replies, quotes, bookmarks, and clicks. Tel
 | Facebook | 63,206 | 4 images; Pages only |
 | Telegram | 4,096 | 10 images or 1 video |
 
-Media URLs must be publicly reachable — Chirpie downloads them server-side. `localhost` and short-lived signed URLs will fail.
+Media URLs must be publicly reachable, because Chirpie downloads them server-side. `localhost` and short-lived signed URLs will fail.
 
 ## Response format
 
@@ -159,7 +159,7 @@ Media URLs must be publicly reachable — Chirpie downloads them server-side. `l
 1. **Never invent an `account_id`.** Always list accounts first.
 2. **Check the length** against `max_post_length` before posting. Rewrite rather than truncate mid-word.
 3. **Never post text-only to Instagram.** Ask for an image.
-4. **Prefer scheduling** for anything the user has not explicitly approved — it stays cancellable.
+4. **Prefer scheduling** for anything the user has not explicitly approved, since it stays cancellable.
 5. **Confirm before deleting.** Deletion removes the post from the live platform too.
 6. **Do not echo the API key** into logs or output.
 7. **Report failures plainly** with the `code` and `message` from the response. Do not silently retry `401` or `429`.

@@ -7,7 +7,7 @@ description: Schedule posts and threads for future publishing with Chirpie. Cove
 
 ## Schedule a Post
 
-Add `schedule_at` (ISO 8601, must be in the future and carry a timezone — `...Z`, `+02:00`, `-05:00` — and normalized to UTC) to any create request:
+Add `schedule_at` (ISO 8601, must be in the future and carry a timezone such as `...Z`, `+02:00`, or `-05:00`, and normalized to UTC) to any create request:
 
 ```typescript
 const post = await chirpie.createPost({
@@ -46,7 +46,7 @@ const thread = await chirpie.createThread({
 });
 ```
 
-Threads publish atomically — if any post fails, the entire thread retries.
+Threads publish atomically: if any post fails, the entire thread retries.
 
 ## How It Works
 
@@ -86,8 +86,8 @@ Both `posts` and `scheduled` limits are checked when creating scheduled content.
 
 ## Common Pitfalls
 
-1. **The field is `schedule_at`, not `scheduled_at`.** `scheduled_at` is the field name in the *response*. Sending it returns `400 Unknown field 'scheduled_at' — did you mean 'schedule_at'?`; the post is not published. Only `account_id`, `text`, `media_urls` and `schedule_at` (or `account_id`, `posts`, `schedule_at` for a thread) are accepted — do not send back a whole post object you read from the API.
+1. **The field is `schedule_at`, not `scheduled_at`.** `scheduled_at` is the field name in the *response*. Sending it returns a `400` error naming the unknown field `scheduled_at` and suggesting `schedule_at`; the post is not published. Only `account_id`, `text`, `media_urls` and `schedule_at` (or `account_id`, `posts`, `schedule_at` for a thread) are accepted, so do not send back a whole post object you read from the API.
 2. **`schedule_at` must be in the future.** Past datetimes return 400.
 3. **Times are UTC.** Convert from local time before sending.
-4. **Thread atomicity.** You can't cancel individual posts in a scheduled thread — delete any one post and the whole thread is canceled.
+4. **Thread atomicity.** You can't cancel individual posts in a scheduled thread: delete any one post and the whole thread is canceled.
 5. **Platform rate limits.** If any platform rate-limits your account, scheduled posts will retry automatically.

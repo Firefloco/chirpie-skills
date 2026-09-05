@@ -32,8 +32,8 @@ const chirpie = new ChirpieClient({
 ```
 
 **Environment variables:**
-- `CHIRPIE_API_KEY` — API key (takes precedence over config file)
-- `CHIRPIE_BASE_URL` — Override base URL (optional)
+- `CHIRPIE_API_KEY`: API key (takes precedence over config file)
+- `CHIRPIE_BASE_URL`: Override base URL (optional)
 
 **Config file:** `~/.chirpie/config.json` (created by `chirpie login`)
 

@@ -5,7 +5,7 @@ description: Chirpie social media API router. Use when user asks about posting t
 
 # Chirpie Skills Router
 
-Chirpie is a social media API for AI agents and developers. Post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram via API, CLI, MCP, or SDK — with scheduling, analytics, and multi-account support.
+Chirpie is a social media API for AI agents and developers. Post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram via API, CLI, MCP, or SDK, with scheduling, analytics, and multi-account support.
 
 **Base URL:** `https://chirpie.ai/api/v1`
 **Auth:** `Authorization: Bearer chirpie_sk_YOUR_KEY`
@@ -88,4 +88,4 @@ All endpoints return:
 - **Burst:** 60 requests/minute per API key
 - **Monthly quotas:** Free 50, Agent 300, Starter 1K, Pro 5K, Scale 25K+ / custom posts per month
 - **Overage:** $0.03/post (Agent, Starter), $0.025/post (Pro). Free plan has a hard limit. Scale and Enterprise use custom quotas, not per-post overage.
-- **X link posts:** X charges API operators $0.20 per post containing a URL. Paid plans are billed $0.25 per X link post on top of the monthly allowance; on Free, X posts containing links are rejected with `402 x_link_posts_require_paid_plan`. X accounts connected with your own X API credentials are exempt — you pay X directly. Other platforms are unaffected.
+- **X link posts:** X charges API operators $0.20 per post containing a URL. Paid plans are billed $0.25 per X link post on top of the monthly allowance; on Free, X posts containing links are rejected with `402 x_link_posts_require_paid_plan`. X accounts connected with your own X API credentials are exempt, since you pay X directly. Other platforms are unaffected.

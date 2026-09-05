@@ -39,7 +39,7 @@ curl -X POST https://chirpie.ai/api/v1/posts \
 | `media_urls` | string[] | No | Public image/video URLs. Limits vary by platform. Instagram, Pinterest, TikTok, and YouTube REQUIRE media. |
 | `schedule_at` | ISO 8601 | No | Future datetime for scheduling. Must carry a timezone (`...Z` or `+02:00`); normalized to UTC |
 
-Only these fields are accepted. Any other top-level field returns `400 bad_request` — in particular `scheduled_at` (the field name in the *response*), which is rejected with `Unknown field 'scheduled_at' — did you mean 'schedule_at'?`. Never send back a whole post object you read from the API.
+Only these fields are accepted. Any other top-level field returns `400 bad_request`. That includes `scheduled_at` (the field name in the *response*), which is rejected with an `Unknown field 'scheduled_at'` error suggesting `schedule_at`. Never send back a whole post object you read from the API.
 
 ### Response (201)
 
@@ -71,7 +71,7 @@ const thread = await chirpie.createThread({
   posts: [
     { text: "Thread starts here 🧵" },
     { text: "Second tweet in thread" },
-    { text: "Final tweet — follow for more!" },
+    { text: "Final tweet, follow for more!" },
   ],
 });
 ```
@@ -87,7 +87,7 @@ curl -X POST https://chirpie.ai/api/v1/threads \
     "posts": [
       { "text": "Thread starts here 🧵" },
       { "text": "Second tweet in thread" },
-      { "text": "Final tweet — follow for more!" }
+      { "text": "Final tweet, follow for more!" }
     ]
   }'
 ```
@@ -95,7 +95,7 @@ curl -X POST https://chirpie.ai/api/v1/threads \
 - Min 2 posts, max 25 posts per thread
 - Character limits per platform (same as single posts)
 - X, Bluesky, Threads, Mastodon, and Telegram support native reply threading.
-- LinkedIn, Instagram, Facebook, Pinterest, TikTok, YouTube, and Google Business Profile degrade gracefully — each item is published as a standalone post.
+- LinkedIn, Instagram, Facebook, Pinterest, TikTok, YouTube, and Google Business Profile degrade gracefully: each item is published as a standalone post.
 - Thread counts as N posts against your monthly quota
 
 ## List Posts

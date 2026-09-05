@@ -1,6 +1,6 @@
 ---
 name: chirpie-mcp
-description: Connect the Chirpie MCP server to Claude, Claude Code, Cursor, ChatGPT, or other AI agents — hosted (one URL) or local. Lists all available tools and their parameters.
+description: Connect the Chirpie MCP server to Claude, Claude Code, Cursor, ChatGPT, or other AI agents, hosted (one URL) or local. Lists all available tools and their parameters.
 ---
 
 # Chirpie MCP Server
@@ -80,7 +80,7 @@ For CI, scripts, or clients without an OAuth flow:
 
 ## Local server (alternative)
 
-Authenticate via the CLI (opens browser — user is typically already logged in):
+Authenticate via the CLI (opens a browser; the user is typically already logged in):
 
 ```bash
 npm install -g chirpie
@@ -195,7 +195,7 @@ Delete a post (also removes from platform if published, except TikTok which has 
 List all connected accounts. No parameters.
 
 Returns: `id`, `platform`, `username`, `display_name`, `avatar_url`, `is_active`.
-X accounts also return `byo_keys` — true when the account posts through the
+X accounts also return `byo_keys`, which is true when the account posts through the
 user's own X developer app.
 
 ### chirpie_set_x_keys / chirpie_get_x_keys_status / chirpie_remove_x_keys
@@ -215,7 +215,7 @@ After setting keys, the user must add the returned `redirect_uri` as a callback
 URI on their X app and reconnect each X account (`chirpie_connect_x`).
 
 `chirpie_remove_x_keys` is API-key auth only. On a hosted server signed in with
-OAuth it is not offered — remove the app from
+OAuth it is not offered. Remove the app from
 [account settings](https://chirpie.ai/dashboard/accounts) instead. Setting keys
 and checking their status stay available over OAuth.
 
@@ -270,12 +270,12 @@ The user does not need to leave the agent to connect a platform. Call the matchi
 `chirpie_create_key` (returns the key once), `chirpie_list_keys`, `chirpie_revoke_key`.
 
 These are API-key auth only, along with `chirpie_remove_x_keys`. On a hosted
-server signed in with OAuth they are not offered — manage API keys in the
+server signed in with OAuth they are not offered. Manage API keys in the
 [dashboard](https://chirpie.ai/dashboard/keys) instead.
 
 ## Authentication Priority
 
-**Hosted server** — either:
+**Hosted server** (either):
 1. Sign in through the client's connector flow (recommended)
 2. `Authorization: Bearer chirpie_sk_...` header
 
@@ -283,4 +283,4 @@ server signed in with OAuth they are not offered — manage API keys in the
 1. `CHIRPIE_API_KEY` environment variable
 2. `~/.chirpie/config.json` (created by `chirpie login`)
 
-Both CLI and the local MCP server share the same config — `chirpie login` authenticates both.
+Both CLI and the local MCP server share the same config, so `chirpie login` authenticates both.

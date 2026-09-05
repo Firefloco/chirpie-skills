@@ -1,6 +1,6 @@
 ---
 name: chirpie-setup
-description: Set up Chirpie in your project — install SDK, configure API keys, connect X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram, Pinterest, TikTok, YouTube, and Google Business Profile accounts, send your first post.
+description: Set up Chirpie in your project. Install the SDK, configure API keys, connect X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram, Pinterest, TikTok, YouTube, and Google Business Profile accounts, send your first post.
 ---
 
 # Chirpie Setup
@@ -40,7 +40,7 @@ const chirpie = new ChirpieClient({
 
 ## Step 3: Connect Accounts
 
-**X/Twitter** — Connect via OAuth from the dashboard or API:
+**X/Twitter**: Connect via OAuth from the dashboard or API:
 ```typescript
 const { authorization_url } = await chirpie.connectXAccount();
 // Open URL in browser to authorize
@@ -59,7 +59,7 @@ await chirpie.setXKeys({
 ```
 Full walkthrough: https://chirpie.ai/docs/x-byo-keys
 
-**Bluesky** — Connect with an app password (generate at https://bsky.app/settings/app-passwords):
+**Bluesky**: Connect with an app password (generate at https://bsky.app/settings/app-passwords):
 ```typescript
 await chirpie.connectBlueskyAccount({
   platform: "bluesky",
@@ -74,7 +74,7 @@ chirpie accounts connect-bluesky --handle yourhandle.bsky.social --app-password 
 # --handle is required, --app-password is optional (prompts securely if omitted)
 ```
 
-**LinkedIn** — Connect via OAuth from the dashboard or API:
+**LinkedIn**: Connect via OAuth from the dashboard or API:
 ```typescript
 const { authorization_url } = await chirpie.connectLinkedInAccount();
 // Open URL in browser to authorize via LinkedIn OAuth
@@ -86,7 +86,7 @@ chirpie accounts connect-linkedin
 # Opens browser for LinkedIn OAuth authorization
 ```
 
-**Threads** — Connect via Meta OAuth from the dashboard or API:
+**Threads**: Connect via Meta OAuth from the dashboard or API:
 ```typescript
 const { authorization_url } = await chirpie.connectThreadsAccount();
 // Open URL in browser to authorize via Meta OAuth
@@ -98,7 +98,7 @@ chirpie accounts connect-threads
 # Opens browser for Meta OAuth authorization
 ```
 
-**Mastodon** — Connect via OAuth from the dashboard or API:
+**Mastodon**: Connect via OAuth from the dashboard or API:
 ```typescript
 const { authorization_url } = await chirpie.connectMastodonAccount({
   platform: "mastodon",
@@ -113,7 +113,7 @@ chirpie accounts connect-mastodon --instance https://mastodon.social
 # Opens browser for Mastodon OAuth authorization
 ```
 
-**Instagram** — Connect via Instagram Login from the dashboard or API:
+**Instagram**: Connect via Instagram Login from the dashboard or API:
 ```typescript
 const { authorization_url } = await chirpie.connectInstagramAccount();
 // Open URL in browser to authorize via Instagram Login
@@ -125,7 +125,7 @@ chirpie accounts connect-instagram
 # Opens browser for Instagram Login OAuth authorization
 ```
 
-**Facebook** — Connect a Facebook Page via Facebook Login from the dashboard or API:
+**Facebook**: Connect a Facebook Page via Facebook Login from the dashboard or API:
 ```typescript
 const { authorization_url } = await chirpie.connectFacebookAccount();
 // Open URL in browser to authorize via Facebook Login and select a Page
@@ -137,7 +137,7 @@ chirpie accounts connect-facebook
 # Opens browser for Facebook Login OAuth authorization
 ```
 
-**Telegram** — Connect with a bot token (create via [@BotFather](https://t.me/BotFather)):
+**Telegram**: Connect with a bot token (create via [@BotFather](https://t.me/BotFather)):
 ```typescript
 await chirpie.connectTelegramAccount({
   platform: "telegram",
@@ -152,7 +152,7 @@ chirpie accounts connect-telegram --bot-token TOKEN --chat-id ID
 # --bot-token and --chat-id are optional (prompts securely if omitted)
 ```
 
-**Pinterest, TikTok, YouTube, Google Business Profile** — Coming Soon.
+**Pinterest, TikTok, YouTube, Google Business Profile**: Coming Soon.
 
 ## Step 4: Find Your Account ID
 
