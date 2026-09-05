@@ -46,7 +46,7 @@ Chirpie is a social media API for AI agents and developers. Post to X/Twitter, B
 - Authentication flow
 
 **Using Chirpie in n8n** → See https://chirpie.ai/docs/n8n
-- Install the `n8n-nodes-chirpie` community node (Settings → Community Nodes → `n8n-nodes-chirpie`)
+- Install the `@chirpie/n8n-nodes-chirpie` community node (Settings → Community Nodes → `@chirpie/n8n-nodes-chirpie`)
 - Add a Chirpie API credential, then use the Chirpie node for posts, threads, accounts, and analytics
 - The node is usable as a tool by n8n AI Agents
 
