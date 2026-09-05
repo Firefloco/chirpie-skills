@@ -39,6 +39,8 @@ curl -X POST https://chirpie.ai/api/v1/posts \
 | `media_urls` | string[] | No | Public image/video URLs. Limits vary by platform. Instagram, Pinterest, TikTok, and YouTube REQUIRE media. |
 | `schedule_at` | ISO 8601 | No | Future datetime for scheduling. Must carry a timezone (`...Z` or `+02:00`); normalized to UTC |
 
+Only these fields are accepted. Any other top-level field returns `400 bad_request` — in particular `scheduled_at` (the field name in the *response*), which is rejected with `Unknown field 'scheduled_at' — did you mean 'schedule_at'?`. Never send back a whole post object you read from the API.
+
 ### Response (201)
 
 ```json
