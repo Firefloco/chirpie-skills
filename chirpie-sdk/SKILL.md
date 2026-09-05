@@ -45,8 +45,8 @@ const chirpie = new ChirpieClient({
 // Create a post (immediate or scheduled)
 const post = await chirpie.createPost({
   account_id: "uuid",        // Required
-  text: "Hello!",            // Required. Char limits: X 280 (25K Premium), Bluesky 300, LinkedIn 3K, Threads 500, Mastodon 500, Instagram 2,200, Facebook 63,206, Telegram 4,096, Reddit 40K, Pinterest 500, TikTok 2,200, YouTube 5K, Google Business 1,500, Snapchat 160
-  media_urls: ["url"],       // Optional, limits vary by platform. Instagram/Pinterest/TikTok/YouTube/Snapchat REQUIRE media.
+  text: "Hello!",            // Required. Char limits: X 280 (25K Premium), Bluesky 300, LinkedIn 3K, Threads 500, Mastodon 500, Instagram 2,200, Facebook 63,206, Telegram 4,096, Pinterest 500, TikTok 2,200, YouTube 5K, Google Business 1,500
+  media_urls: ["url"],       // Optional, limits vary by platform. Instagram/Pinterest/TikTok/YouTube REQUIRE media.
   schedule_at: "ISO8601",    // Optional, must be future
 });
 
@@ -130,13 +130,11 @@ await chirpie.connectTelegramAccount({
   chat_id: "CHAT_ID",
 });
 
-// Connect Reddit (OAuth), Pinterest, TikTok, YouTube, Google Business, Snapchat
-const { authorization_url } = await chirpie.connectRedditAccount();
+// Connect Pinterest, TikTok, YouTube, Google Business (OAuth)
 const { authorization_url } = await chirpie.connectPinterestAccount();
 const { authorization_url } = await chirpie.connectTikTokAccount();
 const { authorization_url } = await chirpie.connectYouTubeAccount();
 const { authorization_url } = await chirpie.connectGBPAccount();
-const { authorization_url } = await chirpie.connectSnapchatAccount();
 ```
 
 ### API Keys
@@ -172,12 +170,10 @@ import type {
   ConnectInstagramInput,      // Input for connectInstagramAccount()
   ConnectFacebookInput,       // Input for connectFacebookAccount()
   ConnectTelegramInput,       // Input for connectTelegramAccount()
-  ConnectRedditInput,         // Input for connectRedditAccount()
   ConnectPinterestInput,      // Input for connectPinterestAccount()
   ConnectTikTokInput,         // Input for connectTikTokAccount()
   ConnectYouTubeInput,        // Input for connectYouTubeAccount()
   ConnectGBPInput,            // Input for connectGBPAccount()
-  ConnectSnapchatInput,       // Input for connectSnapchatAccount()
   ListPostsOptions,           // Options for listPosts()
 } from "@chirpie/sdk";
 ```

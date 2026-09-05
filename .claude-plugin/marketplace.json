@@ -16,7 +16,7 @@
       "path": "skills/chirpie",
       "category": "social-media",
       "license": "MIT",
-      "keywords": ["chirpie", "social-media", "x", "twitter", "bluesky", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "reddit", "pinterest", "tiktok", "youtube", "google-business", "snapchat", "fediverse", "posting", "router"]
+      "keywords": ["chirpie", "social-media", "x", "twitter", "bluesky", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "pinterest", "tiktok", "youtube", "google-business", "fediverse", "posting", "router"]
     },
     {
       "name": "chirpie-setup",
@@ -26,7 +26,7 @@
       "category": "social-media",
       "license": "MIT",
       "required_inputs": ["CHIRPIE_API_KEY"],
-      "keywords": ["chirpie", "setup", "quickstart", "api-key", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "reddit", "pinterest", "tiktok", "youtube", "google-business", "snapchat"]
+      "keywords": ["chirpie", "setup", "quickstart", "api-key", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "pinterest", "tiktok", "youtube", "google-business"]
     },
     {
       "name": "chirpie-posting",
@@ -36,7 +36,7 @@
       "category": "social-media",
       "license": "MIT",
       "required_inputs": ["CHIRPIE_API_KEY"],
-      "keywords": ["chirpie", "posts", "threads", "x", "twitter", "bluesky", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "reddit", "pinterest", "tiktok", "youtube", "google-business", "snapchat"]
+      "keywords": ["chirpie", "posts", "threads", "x", "twitter", "bluesky", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "pinterest", "tiktok", "youtube", "google-business"]
     },
     {
       "name": "chirpie-scheduling",
@@ -46,7 +46,7 @@
       "category": "social-media",
       "license": "MIT",
       "required_inputs": ["CHIRPIE_API_KEY"],
-      "keywords": ["chirpie", "scheduling", "cron", "scheduled-posts", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "reddit", "pinterest", "tiktok", "youtube", "google-business", "snapchat"]
+      "keywords": ["chirpie", "scheduling", "cron", "scheduled-posts", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "pinterest", "tiktok", "youtube", "google-business"]
     },
     {
       "name": "chirpie-sdk",
@@ -56,7 +56,7 @@
       "category": "social-media",
       "license": "MIT",
       "required_inputs": ["CHIRPIE_API_KEY"],
-      "keywords": ["chirpie", "sdk", "typescript", "client", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "reddit", "pinterest", "tiktok", "youtube", "google-business", "snapchat"]
+      "keywords": ["chirpie", "sdk", "typescript", "client", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "pinterest", "tiktok", "youtube", "google-business"]
     },
     {
       "name": "chirpie-cli",
@@ -65,7 +65,7 @@
       "path": "skills/chirpie-cli",
       "category": "social-media",
       "license": "MIT",
-      "keywords": ["chirpie", "cli", "terminal", "command-line", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "reddit", "pinterest", "tiktok", "youtube", "google-business", "snapchat"]
+      "keywords": ["chirpie", "cli", "terminal", "command-line", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "pinterest", "tiktok", "youtube", "google-business"]
     },
     {
       "name": "chirpie-mcp",
@@ -74,7 +74,7 @@
       "path": "skills/chirpie-mcp",
       "category": "social-media",
       "license": "MIT",
-      "keywords": ["chirpie", "mcp", "claude", "cursor", "agent", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "reddit", "pinterest", "tiktok", "youtube", "google-business", "snapchat"]
+      "keywords": ["chirpie", "mcp", "claude", "cursor", "agent", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "pinterest", "tiktok", "youtube", "google-business"]
     },
     {
       "name": "chirpie-openclaw",
@@ -84,7 +84,7 @@
       "category": "social-media",
       "license": "MIT",
       "required_inputs": ["CHIRPIE_API_KEY"],
-      "keywords": ["chirpie", "openclaw", "agent", "autonomous", "x", "twitter", "bluesky", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "reddit", "pinterest", "tiktok", "youtube", "google-business", "snapchat"]
+      "keywords": ["chirpie", "openclaw", "agent", "autonomous", "x", "twitter", "bluesky", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "pinterest", "tiktok", "youtube", "google-business"]
     }
   ]
 }

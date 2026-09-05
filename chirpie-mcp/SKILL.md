@@ -150,8 +150,8 @@ Create a single post on any connected platform with optional media. Note: Instag
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `account_id` | string | Yes | Account UUID |
-| `text` | string | Yes | Post text. Max varies: X 280 (25K Premium), Bluesky 300, LinkedIn 3K, Threads 500, Mastodon 500, Instagram 2,200, Facebook 63,206, Telegram 4,096, Reddit 40K, Pinterest 500, TikTok 2,200, YouTube 5K, Google Business 1,500, Snapchat 160. |
-| `media_urls` | string[] | No | Public image/video URLs. Limits vary by platform. Instagram, Pinterest, TikTok, YouTube, and Snapchat REQUIRE media. |
+| `text` | string | Yes | Post text. Max varies: X 280 (25K Premium), Bluesky 300, LinkedIn 3K, Threads 500, Mastodon 500, Instagram 2,200, Facebook 63,206, Telegram 4,096, Pinterest 500, TikTok 2,200, YouTube 5K, Google Business 1,500. |
+| `media_urls` | string[] | No | Public image/video URLs. Limits vary by platform. Instagram, Pinterest, TikTok, and YouTube REQUIRE media. |
 | `schedule_at` | string | No | ISO 8601 datetime, must be future and carry a timezone (`...Z` or `+02:00`); normalized to UTC |
 
 ### chirpie_thread
@@ -241,7 +241,6 @@ Once configured, ask your AI agent:
 - "Post to Instagram with this image" (requires media)
 - "Post to our Facebook Page about the product launch"
 - "Send a message to our Telegram channel"
-- "Post to Reddit in r/programming"
 - "Pin this image to my Pinterest board"
 - "Create a thread about why TypeScript is great"
 - "Show me my recent posts"

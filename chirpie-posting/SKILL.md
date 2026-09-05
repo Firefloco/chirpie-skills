@@ -1,6 +1,6 @@
 ---
 name: chirpie-posting
-description: Create posts and threads on X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram, Reddit, Pinterest, TikTok, YouTube, Google Business Profile, and Snapchat via the Chirpie API. Covers single posts, multi-post threads, listing, deletion, and analytics.
+description: Create posts and threads on X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram, Pinterest, TikTok, YouTube, and Google Business Profile via the Chirpie API. Covers single posts, multi-post threads, listing, deletion, and analytics.
 ---
 
 # Chirpie Posting
@@ -35,8 +35,8 @@ curl -X POST https://chirpie.ai/api/v1/posts \
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `account_id` | UUID string | Yes | Connected account ID |
-| `text` | string | Yes | X: 1-280 (25K Premium). Bluesky: 300. LinkedIn: 3K. Threads: 500. Mastodon: 500. Instagram: 2,200. Facebook: 63,206. Telegram: 4,096. Reddit: 40K. Pinterest: 500. TikTok: 2,200. YouTube: 5K. Google Business: 1,500. Snapchat: 160. |
-| `media_urls` | string[] | No | Public image/video URLs. Limits vary by platform. Instagram, Pinterest, TikTok, YouTube, and Snapchat REQUIRE media. |
+| `text` | string | Yes | X: 1-280 (25K Premium). Bluesky: 300. LinkedIn: 3K. Threads: 500. Mastodon: 500. Instagram: 2,200. Facebook: 63,206. Telegram: 4,096. Pinterest: 500. TikTok: 2,200. YouTube: 5K. Google Business: 1,500. |
+| `media_urls` | string[] | No | Public image/video URLs. Limits vary by platform. Instagram, Pinterest, TikTok, and YouTube REQUIRE media. |
 | `schedule_at` | ISO 8601 | No | Future datetime for scheduling. Must carry a timezone (`...Z` or `+02:00`); normalized to UTC |
 
 ### Response (201)
@@ -92,8 +92,8 @@ curl -X POST https://chirpie.ai/api/v1/threads \
 
 - Min 2 posts, max 25 posts per thread
 - Character limits per platform (same as single posts)
-- X, Bluesky, Threads, Mastodon, and Telegram support native reply threading. Reddit threads via comments.
-- LinkedIn, Instagram, Facebook, Pinterest, TikTok, YouTube, Google Business Profile, and Snapchat degrade gracefully — each item is published as a standalone post.
+- X, Bluesky, Threads, Mastodon, and Telegram support native reply threading.
+- LinkedIn, Instagram, Facebook, Pinterest, TikTok, YouTube, and Google Business Profile degrade gracefully — each item is published as a standalone post.
 - Thread counts as N posts against your monthly quota
 
 ## List Posts

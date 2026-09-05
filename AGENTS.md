@@ -24,7 +24,7 @@ The `chirpie` router skill directs requests to sub-skills:
 | User Intent | Skill |
 |-------------|-------|
 | "Add Chirpie to my project" | chirpie-setup |
-| "Post a tweet" / "Post to Bluesky" / "Post to LinkedIn" / "Post to Threads" / "Post to Mastodon" / "Post to Instagram" / "Post to Facebook" / "Post to Telegram" / "Post to Reddit" / "Post to Pinterest" / "Post to TikTok" / "Post to YouTube" / "Post to Google Business" / "Post to Snapchat" / "Create a thread" | chirpie-posting |
+| "Post a tweet" / "Post to Bluesky" / "Post to LinkedIn" / "Post to Threads" / "Post to Mastodon" / "Post to Instagram" / "Post to Facebook" / "Post to Telegram" / "Post to Pinterest" / "Post to TikTok" / "Post to YouTube" / "Post to Google Business" / "Create a thread" | chirpie-posting |
 | "Schedule a post for tomorrow" | chirpie-scheduling |
 | "Use the Chirpie SDK" | chirpie-sdk |
 | "Post from the terminal" | chirpie-cli |

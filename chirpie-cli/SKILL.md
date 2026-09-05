@@ -1,6 +1,6 @@
 ---
 name: chirpie-cli
-description: Use the Chirpie CLI to post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram, Reddit, Pinterest, TikTok, YouTube, Google Business Profile, and Snapchat from the terminal. Covers installation, browser-based login, and all commands.
+description: Use the Chirpie CLI to post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram, Pinterest, TikTok, YouTube, and Google Business Profile from the terminal. Covers installation, browser-based login, and all commands.
 ---
 
 # Chirpie CLI
@@ -102,12 +102,10 @@ chirpie accounts connect-mastodon --instance https://mastodon.social  # Start Ma
 chirpie accounts connect-instagram     # Start Instagram Login OAuth flow (prints URL to open in browser)
 chirpie accounts connect-facebook      # Start Facebook Login OAuth flow (prints URL to open in browser)
 chirpie accounts connect-telegram --bot-token TOKEN --chat-id ID  # Connect Telegram bot
-chirpie accounts connect-reddit        # Start Reddit OAuth flow
 chirpie accounts connect-pinterest     # Start Pinterest OAuth flow
 chirpie accounts connect-tiktok        # Start TikTok OAuth flow
 chirpie accounts connect-youtube       # Start YouTube/Google OAuth flow
 chirpie accounts connect-google-business  # Start Google Business OAuth flow
-chirpie accounts connect-snapchat      # Start Snapchat OAuth flow
 
 # Optional: connect X through your OWN X developer app, so posts use your X API
 # credits and X link posts are not surcharged.

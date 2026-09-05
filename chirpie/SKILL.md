@@ -1,6 +1,6 @@
 ---
 name: chirpie
-description: Chirpie social media API router. Use when user asks about posting to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram, Reddit, Pinterest, TikTok, YouTube, Google Business Profile, or Snapchat, social media automation, scheduling posts, connecting social accounts, or using the Chirpie API/SDK/CLI/MCP/n8n node. Automatically routes to the specific skill based on their task.
+description: Chirpie social media API router. Use when user asks about posting to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram, Pinterest, TikTok, YouTube, or Google Business Profile, social media automation, scheduling posts, connecting social accounts, or using the Chirpie API/SDK/CLI/MCP/n8n node. Automatically routes to the specific skill based on their task.
 ---
 
 # Chirpie Skills Router
