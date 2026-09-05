@@ -49,6 +49,16 @@ Once installed, ask your AI agent:
 | `chirpie-sdk` | TypeScript SDK reference |
 | `chirpie-cli` | CLI commands and authentication |
 | `chirpie-mcp` | MCP server setup for Claude, Cursor, etc. |
+| `chirpie-openclaw` | OpenClaw setup — skill install, MCP wiring, agent guardrails |
+
+## OpenClaw
+
+```bash
+openclaw skills install git:Firefloco/chirpie-skills
+openclaw skills install git:Firefloco/chirpie-skills --global
+```
+
+Set `CHIRPIE_API_KEY` in the agent's environment. See the [OpenClaw guide](https://chirpie.ai/docs/guides/give-your-openclaw-agent-a-social-media-account).
 
 ## Prerequisites
 

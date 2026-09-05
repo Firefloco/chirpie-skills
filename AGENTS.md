@@ -13,7 +13,8 @@ skills/
 ├── chirpie-scheduling/SKILL.md      — Scheduled publishing
 ├── chirpie-sdk/SKILL.md             — TypeScript SDK reference
 ├── chirpie-cli/SKILL.md             — CLI reference
-└── chirpie-mcp/SKILL.md             — MCP server setup
+├── chirpie-mcp/SKILL.md             — MCP server setup
+└── chirpie-openclaw/SKILL.md        — OpenClaw skill + MCP wiring
 ```
 
 ## Routing
@@ -28,6 +29,7 @@ The `chirpie` router skill directs requests to sub-skills:
 | "Use the Chirpie SDK" | chirpie-sdk |
 | "Post from the terminal" | chirpie-cli |
 | "Set up Chirpie MCP for Claude" | chirpie-mcp |
+| "Give my OpenClaw agent a social account" / "Install Chirpie in OpenClaw" | chirpie-openclaw |
 
 ## Skill Format
 

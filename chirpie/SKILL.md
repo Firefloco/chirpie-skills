@@ -45,6 +45,11 @@ Chirpie is a social media API for AI agents and developers. Post to X/Twitter, B
 - Available tools and parameters
 - Authentication flow
 
+**Running inside OpenClaw** → Use `chirpie-openclaw`
+- Install via `openclaw skills install`
+- Connect the MCP server with `openclaw mcp add`
+- Behaviour rules for autonomous posting agents
+
 ## Quick Reference
 
 | Action | Endpoint | Method |
