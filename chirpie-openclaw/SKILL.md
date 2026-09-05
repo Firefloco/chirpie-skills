@@ -64,7 +64,7 @@ curl -s -X POST https://chirpie.ai/api/v1/posts \
 | `account_id` | yes | UUID from `GET /accounts` |
 | `text` | yes | Must fit the platform limit |
 | `media_urls` | no | Array of **public** image/video URLs |
-| `schedule_at` | no | Future ISO 8601 timestamp, UTC |
+| `schedule_at` | no | Future ISO 8601 timestamp with a timezone (`...Z` or `+02:00`); normalized to UTC |
 
 Returns `201` with the post object. `status` is `published` or `scheduled`.
 

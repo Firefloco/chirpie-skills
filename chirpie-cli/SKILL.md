@@ -67,7 +67,7 @@ chirpie post "JSON output" --json
 | Flag | Description |
 |------|-------------|
 | `-a, --account <id>` | Account ID (auto-selects if only one) |
-| `-s, --schedule <datetime>` | ISO 8601 datetime (UTC) |
+| `-s, --schedule <datetime>` | ISO 8601 datetime with a timezone (`...Z` or `+02:00`); normalized to UTC |
 | `--json` | Machine-readable JSON output |
 
 ### chirpie thread

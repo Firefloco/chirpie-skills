@@ -152,7 +152,7 @@ Create a single post on any of 14 platforms with optional media. Note: Instagram
 | `account_id` | string | Yes | Account UUID (any of 14 platforms) |
 | `text` | string | Yes | Post text. Max varies: X 280 (25K Premium), Bluesky 300, LinkedIn 3K, Threads 500, Mastodon 500, Instagram 2,200, Facebook 63,206, Telegram 4,096, Reddit 40K, Pinterest 500, TikTok 2,200, YouTube 5K, Google Business 1,500, Snapchat 160. |
 | `media_urls` | string[] | No | Public image/video URLs. Limits vary by platform. Instagram, Pinterest, TikTok, YouTube, and Snapchat REQUIRE media. |
-| `schedule_at` | string | No | ISO 8601 datetime (UTC, must be future) |
+| `schedule_at` | string | No | ISO 8601 datetime, must be future and carry a timezone (`...Z` or `+02:00`); normalized to UTC |
 
 ### chirpie_thread
 

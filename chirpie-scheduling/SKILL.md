@@ -7,7 +7,7 @@ description: Schedule posts and threads for future publishing with Chirpie. Cove
 
 ## Schedule a Post
 
-Add `schedule_at` (ISO 8601, UTC, must be in the future) to any create request:
+Add `schedule_at` (ISO 8601, must be in the future and carry a timezone — `...Z`, `+02:00`, `-05:00` — and normalized to UTC) to any create request:
 
 ```typescript
 const post = await chirpie.createPost({
