@@ -194,7 +194,25 @@ Delete a post (also removes from platform if published, except TikTok which has 
 
 List all connected accounts (all 14 platforms). No parameters.
 
-Returns: `id`, `platform`, `username`, `display_name`, `avatar_url`, `is_active`
+Returns: `id`, `platform`, `username`, `display_name`, `avatar_url`, `is_active`.
+X accounts also return `byo_keys` — true when the account posts through the
+user's own X developer app.
+
+### chirpie_set_x_keys / chirpie_get_x_keys_status / chirpie_remove_x_keys
+
+Manage the user's own X developer app, so their X accounts post against their X
+API credits and X link posts are not surcharged.
+Setup guide: https://chirpie.ai/docs/x-byo-keys
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `client_id` | string | Yes (set) | OAuth 2.0 Client ID from developer.x.com |
+| `client_secret` | string | Yes (set) | OAuth 2.0 Client Secret. Stored encrypted, never returned |
+| `label` | string | No | A name for the app |
+
+`chirpie_get_x_keys_status` and `chirpie_remove_x_keys` take no parameters.
+After setting keys, the user must add the returned `redirect_uri` as a callback
+URI on their X app and reconnect each X account (`chirpie_connect_x`).
 
 ### chirpie_analytics
 

@@ -46,6 +46,19 @@ const { authorization_url } = await chirpie.connectXAccount();
 // Open URL in browser to authorize
 ```
 
+Optionally connect X through **your own** X developer app, so posts use your X
+API credits and X link posts are not surcharged. Register the app at
+developer.x.com with `https://chirpie.ai/api/auth/x/callback` as its callback URI
+and the scopes `tweet.read tweet.write users.read offline.access`, then:
+```typescript
+await chirpie.setXKeys({
+  client_id: process.env.X_CLIENT_ID!,
+  client_secret: process.env.X_CLIENT_SECRET!,
+});
+// Then reconnect the X account to move it onto your app.
+```
+Full walkthrough: https://chirpie.ai/docs/x-byo-keys
+
 **Bluesky** — Connect with an app password (generate at https://bsky.app/settings/app-passwords):
 ```typescript
 await chirpie.connectBlueskyAccount({

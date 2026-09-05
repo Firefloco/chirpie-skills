@@ -108,6 +108,14 @@ chirpie accounts connect-tiktok        # Start TikTok OAuth flow
 chirpie accounts connect-youtube       # Start YouTube/Google OAuth flow
 chirpie accounts connect-google-business  # Start Google Business OAuth flow
 chirpie accounts connect-snapchat      # Start Snapchat OAuth flow
+
+# Optional: connect X through your OWN X developer app, so posts use your X API
+# credits and X link posts are not surcharged.
+# Setup guide: https://chirpie.ai/docs/x-byo-keys
+chirpie accounts x-keys set --client-id ID   # Prompts for the secret (no echo)
+chirpie accounts x-keys status               # Shows config status, never the secret
+chirpie accounts x-keys remove
+# Then run `chirpie accounts connect-x` to move an account onto your app.
 ```
 
 ### chirpie keys

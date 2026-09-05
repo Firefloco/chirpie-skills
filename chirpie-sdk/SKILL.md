@@ -88,6 +88,16 @@ const accounts = await chirpie.listAccounts();
 // Connect X account (OAuth flow)
 const { authorization_url } = await chirpie.connectAccount();
 
+// Optional: use your own X developer app so posts bill your X API credits
+// (and X link posts are not surcharged). Setup: https://chirpie.ai/docs/x-byo-keys
+await chirpie.setXKeys({
+  client_id: process.env.X_CLIENT_ID!,
+  client_secret: process.env.X_CLIENT_SECRET!,
+});
+await chirpie.getXKeysStatus();  // { configured, client_id_last4, redirect_uri, ... }
+await chirpie.removeXKeys();
+// Reconnect each X account afterwards to move it onto your app.
+
 // Connect Bluesky account (app password)
 await chirpie.connectBlueskyAccount({
   platform: "bluesky",
