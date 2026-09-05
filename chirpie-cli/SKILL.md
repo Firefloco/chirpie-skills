@@ -93,7 +93,9 @@ chirpie posts --json                   # JSON output
 ### chirpie accounts
 
 ```bash
-chirpie accounts                       # List connected accounts
+chirpie accounts                       # List connected accounts (inactive ones included)
+chirpie accounts activate <id>         # Switch an account on so it can publish
+chirpie accounts deactivate <id>       # Switch it off (stays connected, frees a plan slot)
 chirpie accounts connect              # Start X OAuth flow (prints URL)
 chirpie accounts connect-bluesky --handle yourhandle.bsky.social --app-password xxxx-xxxx-xxxx-xxxx
 chirpie accounts connect-linkedin     # Start LinkedIn OAuth flow (prints URL to open in browser)
@@ -115,6 +117,12 @@ chirpie accounts x-keys status               # Shows config status, never the se
 chirpie accounts x-keys remove
 # Then run `chirpie accounts connect-x` to move an account onto your app.
 ```
+
+One Facebook authorization can grant several Pages at once. Every granted Page is imported
+as its own account; any beyond the plan's account limit are stored inactive (shown as
+`over plan limit`) rather than dropped. Use `chirpie accounts activate <id>` to choose which
+Pages publish, and `chirpie accounts deactivate <id>` to free a slot for a different one.
+Re-running `chirpie accounts connect-facebook` re-imports, picking up newly added Pages.
 
 ### chirpie keys
 

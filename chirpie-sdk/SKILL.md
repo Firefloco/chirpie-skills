@@ -81,9 +81,16 @@ const thread = await chirpie.createThread({
 ### Accounts
 
 ```typescript
-// List all connected accounts
+// List all connected accounts, active and inactive
 const accounts = await chirpie.listAccounts();
 // Each account: { id, platform, username, display_name, avatar_url, is_active }
+// Inactive accounts may carry inactive_reason: "plan_limit", meaning they are
+// connected but were not switched on because the plan's account limit was full.
+// One Facebook authorization can grant several Pages; all of them are stored.
+
+// Choose which accounts publish
+await chirpie.deactivateAccount(id);  // stays connected, frees a plan slot
+await chirpie.activateAccount(id);    // fails if no slot is free
 
 // Connect X account (OAuth flow)
 const { authorization_url } = await chirpie.connectAccount();

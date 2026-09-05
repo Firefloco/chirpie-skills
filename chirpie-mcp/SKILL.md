@@ -196,7 +196,28 @@ List all connected accounts. No parameters.
 
 Returns: `id`, `platform`, `username`, `display_name`, `avatar_url`, `is_active`.
 X accounts also return `byo_keys`, which is true when the account posts through the
-user's own X developer app.
+user's own X developer app. Inactive accounts are included; `inactive_reason:
+"plan_limit"` means the account is connected but was not switched on because the
+plan's account limit was already full (one Facebook authorization can grant
+several Pages, and all of them are stored rather than dropped).
+
+### chirpie_activate_account
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `account_id` | string | Yes | Account UUID |
+
+Switch an account on so it can publish. Fails with a plan-limit error when no
+slot is free, so deactivate another account first.
+
+### chirpie_deactivate_account
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `account_id` | string | Yes | Account UUID |
+
+Switch an account off. It stays connected and frees a slot against the plan's
+account limit, so another one can be activated without reauthorizing.
 
 ### chirpie_set_x_keys / chirpie_get_x_keys_status / chirpie_remove_x_keys
 

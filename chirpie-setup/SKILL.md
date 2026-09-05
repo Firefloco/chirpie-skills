@@ -125,10 +125,10 @@ chirpie accounts connect-instagram
 # Opens browser for Instagram Login OAuth authorization
 ```
 
-**Facebook**: Connect a Facebook Page via Facebook Login from the dashboard or API:
+**Facebook**: Connect Facebook Pages via Facebook Login from the dashboard or API:
 ```typescript
 const { authorization_url } = await chirpie.connectFacebookAccount();
-// Open URL in browser to authorize via Facebook Login and select a Page
+// Open URL in browser to authorize via Facebook Login and choose which Pages to grant
 ```
 
 Or via CLI:
@@ -136,6 +136,18 @@ Or via CLI:
 chirpie accounts connect-facebook
 # Opens browser for Facebook Login OAuth authorization
 ```
+
+One authorization can grant many Pages ("all current and future Pages" grants every Page you
+manage). Each granted Page becomes its own Chirpie account. If you grant more Pages than your
+plan's account limit allows, Chirpie switches on as many as it can and stores the rest with
+`is_active: false` and `inactive_reason: "plan_limit"`, so nothing is dropped. Choose which
+Pages publish:
+```typescript
+await chirpie.deactivateAccount(currentlyActiveId);  // frees a plan slot
+await chirpie.activateAccount(parkedPageId);
+```
+Reconnecting Facebook re-runs the import, so Pages added later are picked up without
+disconnecting anything.
 
 **Telegram**: Connect with a bot token (create via [@BotFather](https://t.me/BotFather)):
 ```typescript
@@ -159,8 +171,11 @@ chirpie accounts connect-telegram --bot-token TOKEN --chat-id ID
 ```typescript
 const accounts = await chirpie.listAccounts();
 console.log(accounts);
-// Each account has: id, platform, username, display_name, avatar_url
-// Use the `id` field as your account_id for posting
+// Each account has: id, platform, username, display_name, avatar_url, is_active
+// Use the `id` field as your account_id for posting.
+// Accounts with is_active: false are not publishing. inactive_reason: "plan_limit"
+// means the account is connected but over your plan's account limit. Activate it
+// with chirpie.activateAccount(id) rather than reconnecting.
 ```
 
 ## Step 5: Send Your First Post
