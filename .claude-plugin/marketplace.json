@@ -1,90 +1,42 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "chirpie-skills",
-  "description": "Official Chirpie skills for AI coding agents — post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram via API, SDK, CLI, or MCP",
+  "description": "Official Chirpie plugin for AI coding agents. Post, thread, schedule, and track analytics on X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram through one API.",
   "owner": {
     "name": "Fireflo LLC",
     "email": "support@chirpie.ai"
   },
-  "metadata_version": "2.0.0",
-  "repository": "https://github.com/Firefloco/chirpie",
   "plugins": [
     {
       "name": "chirpie",
-      "version": "1.1.0",
-      "description": "Chirpie router — automatically routes to the right skill based on your task",
-      "path": "skills/chirpie",
-      "category": "social-media",
+      "source": "./",
+      "displayName": "Chirpie",
+      "description": "Post to X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook and Telegram from Claude. Schedule, thread, and track analytics through one API.",
+      "author": {
+        "name": "Fireflo LLC",
+        "email": "support@chirpie.ai",
+        "url": "https://chirpie.ai"
+      },
+      "homepage": "https://chirpie.ai",
+      "repository": "https://github.com/Firefloco/chirpie-skills",
       "license": "MIT",
-      "keywords": ["chirpie", "social-media", "x", "twitter", "bluesky", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "pinterest", "tiktok", "youtube", "google-business", "fediverse", "posting", "router"]
-    },
-    {
-      "name": "chirpie-setup",
-      "version": "1.1.0",
-      "description": "Set up Chirpie in your project — install SDK, configure API keys, connect accounts",
-      "path": "skills/chirpie-setup",
       "category": "social-media",
-      "license": "MIT",
-      "required_inputs": ["CHIRPIE_API_KEY"],
-      "keywords": ["chirpie", "setup", "quickstart", "api-key", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "pinterest", "tiktok", "youtube", "google-business"]
-    },
-    {
-      "name": "chirpie-posting",
-      "version": "1.1.0",
-      "description": "Create posts and threads across every connected platform via the Chirpie API",
-      "path": "skills/chirpie-posting",
-      "category": "social-media",
-      "license": "MIT",
-      "required_inputs": ["CHIRPIE_API_KEY"],
-      "keywords": ["chirpie", "posts", "threads", "x", "twitter", "bluesky", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "pinterest", "tiktok", "youtube", "google-business"]
-    },
-    {
-      "name": "chirpie-scheduling",
-      "version": "1.1.0",
-      "description": "Schedule posts and threads for future publishing with Chirpie",
-      "path": "skills/chirpie-scheduling",
-      "category": "social-media",
-      "license": "MIT",
-      "required_inputs": ["CHIRPIE_API_KEY"],
-      "keywords": ["chirpie", "scheduling", "cron", "scheduled-posts", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "pinterest", "tiktok", "youtube", "google-business"]
-    },
-    {
-      "name": "chirpie-sdk",
-      "version": "1.1.0",
-      "description": "Use the @chirpie/sdk TypeScript client in your application",
-      "path": "skills/chirpie-sdk",
-      "category": "social-media",
-      "license": "MIT",
-      "required_inputs": ["CHIRPIE_API_KEY"],
-      "keywords": ["chirpie", "sdk", "typescript", "client", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "pinterest", "tiktok", "youtube", "google-business"]
-    },
-    {
-      "name": "chirpie-cli",
-      "version": "1.1.0",
-      "description": "Use the Chirpie CLI to post to every connected platform from the terminal",
-      "path": "skills/chirpie-cli",
-      "category": "social-media",
-      "license": "MIT",
-      "keywords": ["chirpie", "cli", "terminal", "command-line", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "pinterest", "tiktok", "youtube", "google-business"]
-    },
-    {
-      "name": "chirpie-mcp",
-      "version": "1.1.0",
-      "description": "Connect the Chirpie MCP server to Claude, Cursor, or other AI agents",
-      "path": "skills/chirpie-mcp",
-      "category": "social-media",
-      "license": "MIT",
-      "keywords": ["chirpie", "mcp", "claude", "cursor", "agent", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "pinterest", "tiktok", "youtube", "google-business"]
-    },
-    {
-      "name": "chirpie-openclaw",
-      "version": "1.0.0",
-      "description": "Give an OpenClaw agent a social media account — post, thread, and schedule across every connected platform",
-      "path": "skills/chirpie-openclaw",
-      "category": "social-media",
-      "license": "MIT",
-      "required_inputs": ["CHIRPIE_API_KEY"],
-      "keywords": ["chirpie", "openclaw", "agent", "autonomous", "x", "twitter", "bluesky", "linkedin", "threads", "mastodon", "instagram", "facebook", "telegram", "pinterest", "tiktok", "youtube", "google-business"]
+      "keywords": [
+        "social-media",
+        "x",
+        "twitter",
+        "bluesky",
+        "linkedin",
+        "threads",
+        "mastodon",
+        "instagram",
+        "facebook",
+        "telegram",
+        "mcp",
+        "posting",
+        "scheduling",
+        "agent"
+      ]
     }
   ]
 }

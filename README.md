@@ -4,6 +4,19 @@ AI agent skills for [Chirpie](https://chirpie.ai) — the social media API for A
 
 ## Install
 
+### Claude Code (recommended)
+
+Install the Chirpie plugin. It bundles the hosted MCP server **and** all eight skills, so Claude gets the Chirpie tools and the know-how in one step:
+
+```
+/plugin marketplace add Firefloco/chirpie-skills
+/plugin install chirpie@chirpie-skills
+```
+
+The plugin registers `https://chirpie.ai/mcp` and signs you in with OAuth the first time a Chirpie tool runs. There is no API key to paste.
+
+### Any other agent
+
 ```bash
 npx skills add Firefloco/chirpie-skills
 ```

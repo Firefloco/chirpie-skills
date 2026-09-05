@@ -1,0 +1,47 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "chirpie",
+  "displayName": "Chirpie",
+  "version": "1.1.0",
+  "description": "Post to X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook and Telegram from Claude. Schedule, thread, and track analytics through one API.",
+  "author": {
+    "name": "Fireflo LLC",
+    "email": "support@chirpie.ai",
+    "url": "https://chirpie.ai"
+  },
+  "homepage": "https://chirpie.ai",
+  "repository": "https://github.com/Firefloco/chirpie-skills",
+  "license": "MIT",
+  "keywords": [
+    "social-media",
+    "x",
+    "twitter",
+    "bluesky",
+    "linkedin",
+    "threads",
+    "mastodon",
+    "instagram",
+    "facebook",
+    "telegram",
+    "mcp",
+    "posting",
+    "scheduling",
+    "agent"
+  ],
+  "skills": [
+    "./chirpie",
+    "./chirpie-setup",
+    "./chirpie-posting",
+    "./chirpie-scheduling",
+    "./chirpie-sdk",
+    "./chirpie-cli",
+    "./chirpie-mcp",
+    "./chirpie-openclaw"
+  ],
+  "mcpServers": {
+    "chirpie": {
+      "type": "http",
+      "url": "https://chirpie.ai/mcp"
+    }
+  }
+}
