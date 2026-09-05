@@ -189,6 +189,7 @@ See `chirpie-mcp` skill for Claude/Cursor/AI agent configuration.
 | Plan | Posts/mo | Scheduled/mo | Accounts | Price |
 |------|----------|-------------|----------|-------|
 | Free | 50 | 25 | 1 | $0 |
+| Agent | 300 | 150 | 1 | $9/mo |
 | Starter | 1,000 | 500 | 3 | $19/mo |
 | Pro | 5,000 | 2,500 | 10 | $49/mo |
 | Scale | 25,000+ | 12,500+ | 25+ | Custom |

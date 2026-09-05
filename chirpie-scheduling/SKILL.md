@@ -76,6 +76,7 @@ Scheduled posts have a separate monthly quota:
 | Plan | Scheduled/mo |
 |------|-------------|
 | Free | 25 |
+| Agent | 150 |
 | Starter | 500 |
 | Pro | 2,500 |
 | Scale | 12,500 |

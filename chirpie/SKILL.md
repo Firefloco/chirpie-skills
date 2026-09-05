@@ -81,5 +81,6 @@ All endpoints return:
 ## Rate Limits
 
 - **Burst:** 60 requests/minute per API key
-- **Monthly quotas:** Free 50, Starter 1K, Pro 5K, Scale 25K posts/month
-- **Overage:** $0.01/post (Starter), $0.008/post (Pro). Free plan has hard limit. Scale is custom pricing.
+- **Monthly quotas:** Free 50, Agent 300, Starter 1K, Pro 5K, Scale 25K+ / custom posts per month
+- **Overage:** $0.03/post (Agent, Starter), $0.025/post (Pro). Free plan has a hard limit. Scale and Enterprise use custom quotas, not per-post overage.
+- **X link posts:** X charges API operators $0.20 per post containing a URL. Paid plans are billed $0.25 per X link post on top of the monthly allowance; on Free, X posts containing links are rejected with `402 x_link_posts_require_paid_plan`. X accounts connected with your own X API credentials are exempt — you pay X directly. Other platforms are unaffected.
