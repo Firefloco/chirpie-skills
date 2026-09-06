@@ -63,6 +63,24 @@ Delete it before the scheduled time:
 await chirpie.deletePost("post-uuid");
 ```
 
+## Disconnecting or Deactivating an Account Cancels Its Queue
+
+A disconnected or deactivated account cannot publish, so **every scheduled post queued
+against it is canceled**, and both quota counters (posts and scheduled posts) are returned.
+
+```typescript
+const accounts = await chirpie.listAccounts();
+const account = accounts.find((a) => a.id === id)!;
+// How many scheduled posts deactivating would cancel.
+console.log(account.scheduled_posts);
+
+const updated = await chirpie.deactivateAccount(id);
+console.log(updated.canceled_posts); // how many actually went
+```
+
+Reactivating (or reconnecting) does **not** restore them, so schedule them afresh. Check
+`scheduled_posts` and confirm with the user before deactivating an account that has any.
+
 ## Retry Behavior
 
 - Failed posts retry up to **3 times** with 5-minute delays

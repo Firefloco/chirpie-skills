@@ -88,7 +88,10 @@ const accounts = await chirpie.listAccounts();
 // connected but were not switched on because the plan's account limit was full.
 // One Facebook authorization can grant several Pages; all of them are stored.
 
-// Choose which accounts publish
+// Choose which accounts publish. Deactivating CANCELS the account's scheduled
+// posts (a switched-off account cannot publish) and returns their quota;
+// `scheduled_posts` on the account says how many would go, `canceled_posts` on
+// the result says how many did. Activating again does not restore them.
 await chirpie.deactivateAccount(id);  // stays connected, frees a plan slot
 await chirpie.activateAccount(id);    // fails if no slot is free
 

@@ -95,7 +95,7 @@ chirpie posts --json                   # JSON output
 ```bash
 chirpie accounts                       # List connected accounts (inactive ones included)
 chirpie accounts activate <id>         # Switch an account on so it can publish
-chirpie accounts deactivate <id>       # Switch it off (stays connected, frees a plan slot)
+chirpie accounts deactivate <id>       # Switch it off (frees a plan slot, CANCELS its scheduled posts)
 chirpie accounts connect              # Start X OAuth flow (prints URL)
 chirpie accounts connect-bluesky --handle yourhandle.bsky.social --app-password xxxx-xxxx-xxxx-xxxx
 chirpie accounts connect-linkedin     # Start LinkedIn OAuth flow (prints URL to open in browser)
@@ -123,6 +123,11 @@ as its own account; any beyond the plan's account limit are stored inactive (sho
 `over plan limit`) rather than dropped. Use `chirpie accounts activate <id>` to choose which
 Pages publish, and `chirpie accounts deactivate <id>` to free a slot for a different one.
 Re-running `chirpie accounts connect-facebook` re-imports, picking up newly added Pages.
+
+Deactivating cancels the account's scheduled posts (a switched-off account cannot publish),
+returning them to the monthly quota. The `scheduled` column in `chirpie accounts` shows how
+many would go; activating the account again does not bring them back. Confirm with the user
+before deactivating an account whose `scheduled` count is above zero.
 
 ### chirpie keys
 

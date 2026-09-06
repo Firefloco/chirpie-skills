@@ -219,6 +219,12 @@ slot is free, so deactivate another account first.
 Switch an account off. It stays connected and frees a slot against the plan's
 account limit, so another one can be activated without reauthorizing.
 
+**This cancels the account's scheduled posts.** A deactivated account cannot
+publish, so every post queued against it is cancelled and its monthly quota
+returned; `canceled_posts` in the response says how many. Activating the account
+again does not restore them. Read `scheduled_posts` from `chirpie_list_accounts`
+first and confirm with the user before deactivating an account that has any.
+
 ### chirpie_set_x_keys / chirpie_get_x_keys_status / chirpie_remove_x_keys
 
 Manage the user's own X developer app, so their X accounts post against their X
