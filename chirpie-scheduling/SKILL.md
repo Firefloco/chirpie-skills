@@ -87,7 +87,7 @@ Both `posts` and `scheduled` limits are checked when creating scheduled content.
 ## Common Pitfalls
 
 1. **The field is `schedule_at`, not `scheduled_at`.** `scheduled_at` is the field name in the *response*. Sending it returns a `400` error naming the unknown field `scheduled_at` and suggesting `schedule_at`; the post is not published. Only `account_id`, `text`, `media_urls` and `schedule_at` (or `account_id`, `posts`, `schedule_at` for a thread) are accepted, so do not send back a whole post object you read from the API.
-2. **`schedule_at` must be in the future.** Past datetimes return 400.
+2. **`schedule_at` must be in the future, absolute, and carry a timezone.** Each failure has its own 400 message: no timezone ("schedule_at is missing a timezone, so the instant it names is ambiguous. Add 'Z' for UTC or an offset like '+02:00'."), a relative offset such as `+30m` ("schedule_at must be an absolute ISO 8601 timestamp, not a relative offset like '+30m'."), anything else malformed ("schedule_at must be an ISO 8601 timestamp."). Past datetimes also return 400.
 3. **Times are UTC.** Convert from local time before sending.
 4. **Thread atomicity.** You can't cancel individual posts in a scheduled thread: delete any one post and the whole thread is canceled.
 5. **Platform rate limits.** If any platform rate-limits your account, scheduled posts will retry automatically.

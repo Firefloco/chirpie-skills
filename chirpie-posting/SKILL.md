@@ -37,7 +37,9 @@ curl -X POST https://chirpie.ai/api/v1/posts \
 | `account_id` | UUID string | Yes | Connected account ID |
 | `text` | string | Yes | X: 1-280 (25K Premium). Bluesky: 300. LinkedIn: 3K. Threads: 500. Mastodon: 500. Instagram: 2,200. Facebook: 63,206. Telegram: 4,096. Pinterest: 500. TikTok: 2,200. YouTube: 5K. Google Business: 1,500. |
 | `media_urls` | string[] | No | Public image/video URLs. Limits vary by platform. Instagram, Pinterest, TikTok, and YouTube REQUIRE media. |
-| `schedule_at` | ISO 8601 | No | Future datetime for scheduling. Must carry a timezone (`...Z` or `+02:00`); normalized to UTC |
+| `schedule_at` | ISO 8601 | No | Future datetime for scheduling. Must be absolute and carry a timezone (`...Z` or `+02:00`); normalized to UTC |
+
+A missing required field is named: `POST /api/v1/posts {}` returns `account_id and text are required`.
 
 Only these fields are accepted. Any other top-level field returns `400 bad_request`. That includes `scheduled_at` (the field name in the *response*), which is rejected with an `Unknown field 'scheduled_at'` error suggesting `schedule_at`. Never send back a whole post object you read from the API.
 
@@ -52,6 +54,7 @@ Only these fields are accepted. Any other top-level field returns `400 bad_reque
     "media_urls": null,
     "platform": "x",
     "platform_post_id": "1234567890",
+    "platform_post_url": "https://x.com/chirpie_ai/status/1234567890",
     "status": "published",
     "scheduled_at": null,
     "published_at": "2026-03-23T10:00:00.000Z",
@@ -62,6 +65,8 @@ Only these fields are accepted. Any other top-level field returns `400 bad_reque
   }
 }
 ```
+
+`platform_post_url` is the public permalink, or `null` when the platform has none that can be derived. X, Bluesky, Mastodon, LinkedIn, Facebook, and public Telegram channels get a URL; Threads and Instagram are always `null`. Thread responses carry it on each post too.
 
 ## Create a Thread
 
@@ -143,7 +148,7 @@ try {
       case 400: // Invalid request (check err.message for details)
       case 401: // Invalid API key
       case 404: // Account not found or inactive
-      case 429: // Rate limited (monthly quota or burst)
+      case 429: // Rate limited (monthly quota or burst), or account_limit_reached
       case 502: // Platform API error (temporary, retry)
     }
   }
@@ -159,3 +164,7 @@ deleted:    → deleted (also removed from platform if published, except Instagr
 ```
 
 Failed posts: check `error_message` field for details.
+
+## Rate Limit Headers
+
+Every authenticated `/api/v1/*` response carries `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset` (unix seconds). A `429` from the burst limiter also carries `Retry-After` (seconds): sleep that long and retry once. A `429` with no `Retry-After` is a quota or account-limit refusal, so do not retry it.

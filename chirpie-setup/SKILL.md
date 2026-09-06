@@ -171,6 +171,9 @@ chirpie accounts connect-telegram --bot-token TOKEN --chat-id ID
 ```typescript
 const accounts = await chirpie.listAccounts();
 console.log(accounts);
+// listAccountsWithLimits() returns the same accounts plus accounts_limit
+// (your plan's max, or null when the plan sets no limit) and accounts_active
+// (how many are currently on).
 // Each account has: id, platform, username, display_name, avatar_url, is_active
 // Use the `id` field as your account_id for posting.
 // Accounts with is_active: false are not publishing. inactive_reason: "plan_limit"
@@ -211,6 +214,8 @@ See `chirpie-mcp` skill for Claude/Cursor/AI agent configuration.
 1. **API key format:** Keys must start with `chirpie_sk_`. If you get 401 errors, check the prefix.
 2. **Account not active:** If OAuth tokens expired or were revoked, `is_active` will be `false`. Re-authorize from the dashboard. For Bluesky, generate a new app password. For Telegram, verify bot token and chat ID.
 3. **Environment variable loading:** In Next.js, server-side env vars don't need `NEXT_PUBLIC_` prefix. Don't expose your API key to the browser.
+4. **Platform names are validated.** `POST /api/v1/accounts` rejects an unrecognised `platform` with `400 bad_request` (for example `twitter`; the value is `x`). Omitting `platform` still means `x`.
+5. **Account limit applies to new connections only.** Connecting a platform you have no account on returns `429 account_limit_reached` when your plan is full. Reconnecting a platform you already hold (re-authorizing an expired X token, or moving an X account onto your own developer app) needs no free slot and works on every plan, Free included.
 
 ## Plan Limits
 
