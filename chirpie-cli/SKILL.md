@@ -152,6 +152,13 @@ By default, output is human-readable (tables and messages). Add `--json` for mac
 chirpie posts --json | jq '.[].text'
 ```
 
+On a subcommand the flag works in either position, before or after the arguments:
+
+```bash
+chirpie accounts deactivate ACCOUNT_UUID --json    # includes canceled_posts
+chirpie accounts --json deactivate ACCOUNT_UUID    # identical
+```
+
 ## Config File
 
 Location: `~/.chirpie/config.json` (0600 permissions)
