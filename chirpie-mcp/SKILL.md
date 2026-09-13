@@ -150,8 +150,8 @@ Create a single post on any connected platform with optional media. Note: Instag
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `account_id` | string | Yes | Account UUID |
-| `text` | string | Yes | Post text. Max varies: X 280 (25K Premium), Bluesky 300, LinkedIn 3K, Threads 500, Mastodon 500, Instagram 2,200, Facebook 63,206, Telegram 4,096, Pinterest 500, TikTok 2,200, YouTube 5K, Google Business 1,500. |
-| `media_urls` | string[] | No | Public image/video URLs. Limits vary by platform. Instagram, Pinterest, TikTok, and YouTube REQUIRE media. |
+| `text` | string | Yes | Post text. Max varies: X 280 (25,000 on Premium), Bluesky 300, LinkedIn 3,000, Threads 500, Mastodon 500, Instagram 2,200, Facebook 63,206, Telegram 4,096. |
+| `media_urls` | string[] | No | Public image/video URLs. Max per post: X 4, Bluesky 4, LinkedIn 4, Threads 1, Mastodon 4, Instagram 10, Facebook 10, Telegram 10. Instagram REQUIRES media. |
 | `schedule_at` | string | No | ISO 8601 datetime, must be future and carry a timezone (`...Z` or `+02:00`); normalized to UTC |
 
 ### chirpie_thread
@@ -184,7 +184,7 @@ Get a single post by ID.
 
 ### chirpie_delete_post
 
-Delete a post (also removes from platform if published, except TikTok which has no delete API).
+Delete a post (also removes it from the platform if published, except Instagram, which has no delete API). Deleting any post of a scheduled thread cancels the whole thread.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -268,7 +268,6 @@ Once configured, ask your AI agent:
 - "Post to Instagram with this image" (requires media)
 - "Post to our Facebook Page about the product launch"
 - "Send a message to our Telegram channel"
-- "Pin this image to my Pinterest board"
 - "Create a thread about why TypeScript is great"
 - "Show me my recent posts"
 - "What are the analytics for my last published post?"

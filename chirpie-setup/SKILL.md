@@ -1,6 +1,6 @@
 ---
 name: chirpie-setup
-description: Set up Chirpie in your project. Install the SDK, configure API keys, connect X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram, Pinterest, TikTok, YouTube, and Google Business Profile accounts, send your first post.
+description: Set up Chirpie in your project. Install the SDK, configure API keys, connect X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram accounts, send your first post.
 ---
 
 # Chirpie Setup
@@ -166,7 +166,7 @@ chirpie accounts connect-telegram --bot-token TOKEN --chat-id channelname
 # --chat-id also accepts @channelname, a t.me link, or a numeric chat ID
 ```
 
-**Pinterest, TikTok, YouTube, Google Business Profile**: Coming Soon.
+**Pinterest, TikTok, YouTube, Google Business Profile**: Coming soon. Connecting one today returns `501 platform_coming_soon`.
 
 ## Step 4: Find Your Account ID
 

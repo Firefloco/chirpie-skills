@@ -44,7 +44,6 @@ Once installed, ask your AI agent:
 - "Post to Instagram with this photo"
 - "Post to our Facebook Page about the launch"
 - "Send a message to our Telegram channel"
-- "Pin this image to my Pinterest board"
 - "Create a thread about TypeScript"
 - "Schedule a post for tomorrow at 9am"
 - "Set up the Chirpie MCP server"
@@ -79,7 +78,7 @@ Set `CHIRPIE_API_KEY` in the agent's environment. See the [OpenClaw guide](https
 ## Prerequisites
 
 1. Sign up at [chirpie.ai](https://chirpie.ai/auth/signup)
-2. Connect your social accounts (X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram, Pinterest, TikTok, YouTube, and/or Google Business Profile)
+2. Connect your social accounts (X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram)
 3. Get an API key
 
 ## Links

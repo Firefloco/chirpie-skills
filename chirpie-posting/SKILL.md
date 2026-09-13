@@ -1,6 +1,6 @@
 ---
 name: chirpie-posting
-description: Create posts and threads on X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram, Pinterest, TikTok, YouTube, and Google Business Profile via the Chirpie API. Covers single posts, multi-post threads, listing, deletion, and analytics.
+description: Create posts and threads on X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram via the Chirpie API. Covers single posts, multi-post threads, listing, deletion, and analytics.
 ---
 
 # Chirpie Posting
@@ -35,8 +35,8 @@ curl -X POST https://chirpie.ai/api/v1/posts \
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `account_id` | UUID string | Yes | Connected account ID |
-| `text` | string | Yes | X: 1-280 (25K Premium). Bluesky: 300. LinkedIn: 3K. Threads: 500. Mastodon: 500. Instagram: 2,200. Facebook: 63,206. Telegram: 4,096. Pinterest: 500. TikTok: 2,200. YouTube: 5K. Google Business: 1,500. |
-| `media_urls` | string[] | No | Public image/video URLs. Limits vary by platform. Instagram, Pinterest, TikTok, and YouTube REQUIRE media. |
+| `text` | string | Yes | X: 1-280 (25,000 on Premium). Bluesky: 300. LinkedIn: 3,000. Threads: 500. Mastodon: 500. Instagram: 2,200. Facebook: 63,206. Telegram: 4,096. |
+| `media_urls` | string[] | No | Public image/video URLs. Max per post: X 4, Bluesky 4, LinkedIn 4, Threads 1, Mastodon 4, Instagram 10, Facebook 10, Telegram 10. Instagram REQUIRES at least one image. |
 | `schedule_at` | ISO 8601 | No | Future datetime for scheduling. Must be absolute and carry a timezone (`...Z` or `+02:00`); normalized to UTC |
 
 A missing required field is named: `POST /api/v1/posts {}` returns `account_id and text are required`.
@@ -100,7 +100,7 @@ curl -X POST https://chirpie.ai/api/v1/threads \
 - Min 2 posts, max 25 posts per thread
 - Character limits per platform (same as single posts)
 - X, Bluesky, Threads, Mastodon, and Telegram support native reply threading.
-- LinkedIn, Instagram, Facebook, Pinterest, TikTok, YouTube, and Google Business Profile degrade gracefully: each item is published as a standalone post.
+- LinkedIn, Instagram, and Facebook degrade gracefully: each item is published as a standalone post.
 - Thread counts as N posts against your monthly quota
 
 ## List Posts
@@ -124,15 +124,16 @@ const post = await chirpie.getPost("post-uuid");
 
 ```typescript
 const result = await chirpie.deletePost("post-uuid");
-// Also deletes from the platform if published (except Instagram and TikTok, which have no delete API)
+// Also deletes from the platform if published (except Instagram, which has no delete API)
 ```
 
 ## Get Analytics
 
 ```typescript
 const analytics = await chirpie.getPostAnalytics("post-uuid");
-// Returns: impressions, likes, retweets, replies, quotes, bookmarks, clicks
-// Cached for 1 hour
+// Returns: post_id, platform, impressions, likes, retweets, replies, quotes,
+// bookmarks, clicks, fetched_at. Metrics a platform does not expose come back as 0.
+// Cached for 1 hour. Telegram exposes no metrics API, so it returns 502.
 ```
 
 ## Error Handling
@@ -160,7 +161,7 @@ try {
 ```
 immediate:  → published | failed
 scheduled:  → scheduled → publishing → published | failed
-deleted:    → deleted (also removed from platform if published, except Instagram and TikTok)
+deleted:    → deleted (also removed from platform if published, except Instagram)
 ```
 
 Failed posts: check `error_message` field for details.

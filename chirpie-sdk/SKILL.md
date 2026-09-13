@@ -45,8 +45,8 @@ const chirpie = new ChirpieClient({
 // Create a post (immediate or scheduled)
 const post = await chirpie.createPost({
   account_id: "uuid",        // Required
-  text: "Hello!",            // Required. Char limits: X 280 (25K Premium), Bluesky 300, LinkedIn 3K, Threads 500, Mastodon 500, Instagram 2,200, Facebook 63,206, Telegram 4,096, Pinterest 500, TikTok 2,200, YouTube 5K, Google Business 1,500
-  media_urls: ["url"],       // Optional, limits vary by platform. Instagram/Pinterest/TikTok/YouTube REQUIRE media.
+  text: "Hello!",            // Required. Char limits: X 280 (25,000 Premium), Bluesky 300, LinkedIn 3,000, Threads 500, Mastodon 500, Instagram 2,200, Facebook 63,206, Telegram 4,096
+  media_urls: ["url"],       // Optional. Max per post: X 4, Bluesky 4, LinkedIn 4, Threads 1, Mastodon 4, Instagram 10, Facebook 10, Telegram 10. Instagram REQUIRES media.
   schedule_at: "ISO8601",    // Optional, must be future
 });
 
@@ -61,7 +61,7 @@ const posts = await chirpie.listPosts({
 // Get a single post
 const post = await chirpie.getPost("post-uuid");
 
-// Delete a post (also deletes from platform if published, except Instagram and TikTok)
+// Delete a post (also deletes from platform if published, except Instagram)
 const result = await chirpie.deletePost("post-uuid");
 ```
 
@@ -96,7 +96,7 @@ await chirpie.deactivateAccount(id);  // stays connected, frees a plan slot
 await chirpie.activateAccount(id);    // fails if no slot is free
 
 // Connect X account (OAuth flow)
-const { authorization_url } = await chirpie.connectAccount();
+const { authorization_url } = await chirpie.connectXAccount();
 
 // Optional: use your own X developer app so posts bill your X API credits
 // (and X link posts are not surcharged). Setup: https://chirpie.ai/docs/x-byo-keys
@@ -141,17 +141,15 @@ await chirpie.connectTelegramAccount({
   chat_id: "CHAT_ID",
 });
 
-// Connect Pinterest, TikTok, YouTube, Google Business (OAuth)
-const { authorization_url } = await chirpie.connectPinterestAccount();
-const { authorization_url } = await chirpie.connectTikTokAccount();
-const { authorization_url } = await chirpie.connectYouTubeAccount();
-const { authorization_url } = await chirpie.connectGBPAccount();
+// Pinterest, TikTok, YouTube, and Google Business Profile are coming soon. Their
+// connect methods exist on the client but reject with `platform_coming_soon`.
 ```
 
 ### API Keys
 
 ```typescript
-const { key, prefix, name } = await chirpie.createKey("My Bot");
+const { key, prefix, name, expires_at } = await chirpie.createKey("My Bot");
+// `key` is shown once. Keys expire after 90 days; max 25 active keys.
 const keys = await chirpie.listKeys();
 await chirpie.revokeKey("key-uuid");
 ```
@@ -181,10 +179,6 @@ import type {
   ConnectInstagramInput,      // Input for connectInstagramAccount()
   ConnectFacebookInput,       // Input for connectFacebookAccount()
   ConnectTelegramInput,       // Input for connectTelegramAccount()
-  ConnectPinterestInput,      // Input for connectPinterestAccount()
-  ConnectTikTokInput,         // Input for connectTikTokAccount()
-  ConnectYouTubeInput,        // Input for connectYouTubeAccount()
-  ConnectGBPInput,            // Input for connectGBPAccount()
   ListPostsOptions,           // Options for listPosts()
 } from "@chirpie/sdk";
 ```

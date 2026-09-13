@@ -1,6 +1,6 @@
 ---
 name: chirpie-cli
-description: Use the Chirpie CLI to post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram, Pinterest, TikTok, YouTube, and Google Business Profile from the terminal. Covers installation, browser-based login, and all commands.
+description: Use the Chirpie CLI to post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram from the terminal. Covers installation, browser-based login, and all commands.
 ---
 
 # Chirpie CLI
@@ -96,7 +96,7 @@ chirpie posts --json                   # JSON output
 chirpie accounts                       # List connected accounts (inactive ones included)
 chirpie accounts activate <id>         # Switch an account on so it can publish
 chirpie accounts deactivate <id>       # Switch it off (frees a plan slot, CANCELS its scheduled posts)
-chirpie accounts connect              # Start X OAuth flow (prints URL)
+chirpie accounts connect-x             # Start X OAuth flow (prints URL)
 chirpie accounts connect-bluesky --handle yourhandle --app-password xxxx-xxxx-xxxx-xxxx  # --handle also takes a full handle, a custom domain, or the account email
 chirpie accounts connect-linkedin     # Start LinkedIn OAuth flow (prints URL to open in browser)
 chirpie accounts connect-threads      # Start Threads Meta OAuth flow (prints URL to open in browser)
@@ -104,10 +104,8 @@ chirpie accounts connect-mastodon --instance mastodon.social  # Start Mastodon O
 chirpie accounts connect-instagram     # Start Instagram Login OAuth flow (prints URL to open in browser)
 chirpie accounts connect-facebook      # Start Facebook Login OAuth flow (prints URL to open in browser)
 chirpie accounts connect-telegram --bot-token TOKEN --chat-id channelname  # Connect Telegram bot (@channelname, a t.me link, or a numeric ID also work)
-chirpie accounts connect-pinterest     # Start Pinterest OAuth flow
-chirpie accounts connect-tiktok        # Start TikTok OAuth flow
-chirpie accounts connect-youtube       # Start YouTube/Google OAuth flow
-chirpie accounts connect-google-business  # Start Google Business OAuth flow
+# Pinterest, TikTok, YouTube, and Google Business Profile are coming soon. Their
+# connect-* commands exist but exit with a "coming soon" message.
 
 # Optional: connect X through your OWN X developer app, so posts use your X API
 # credits and X link posts are not surcharged.

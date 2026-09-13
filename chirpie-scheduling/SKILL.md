@@ -55,6 +55,12 @@ Threads publish atomically: if any post fails, the entire thread retries.
 3. Posts publish within ~5 minutes of their `schedule_at` time
 4. All times are **UTC**
 
+## Minimum Spacing
+
+Two scheduled posts on the **same account** must be at least 5 minutes apart. A closer
+time returns `400 bad_request`:
+`Scheduled posts must be at least 5 minutes apart for the same account.`
+
 ## Cancel a Scheduled Post
 
 Delete it before the scheduled time:
