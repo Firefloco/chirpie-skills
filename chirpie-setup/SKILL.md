@@ -87,6 +87,12 @@ chirpie accounts connect-linkedin
 # Opens browser for LinkedIn OAuth authorization
 ```
 
+One LinkedIn connection can produce several accounts: your own profile, plus any
+LinkedIn Page you administer where Page posting is available. Each is a separate
+account with its own `id`, and `account_type` says which it is (`"member"` for
+your profile, `"organization"` for a Page). Post to either by passing that
+account's `id`.
+
 **Threads**: Connect via Meta OAuth from the dashboard or API:
 ```typescript
 const { authorization_url } = await chirpie.connectThreadsAccount();

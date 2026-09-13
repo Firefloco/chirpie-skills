@@ -87,6 +87,8 @@ const accounts = await chirpie.listAccounts();
 // Inactive accounts may carry inactive_reason: "plan_limit", meaning they are
 // connected but were not switched on because the plan's account limit was full.
 // One Facebook authorization can grant several Pages; all of them are stored.
+// LinkedIn is the same: your profile plus every Page you administer, each with
+// its own id. account_type is "member" for a profile, "organization" for a Page.
 
 // Choose which accounts publish. Deactivating CANCELS the account's scheduled
 // posts (a switched-off account cannot publish) and returns their quota;

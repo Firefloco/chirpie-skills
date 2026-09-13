@@ -199,7 +199,9 @@ X accounts also return `byo_keys`, which is true when the account posts through 
 user's own X developer app. Inactive accounts are included; `inactive_reason:
 "plan_limit"` means the account is connected but was not switched on because the
 plan's account limit was already full (one Facebook authorization can grant
-several Pages, and all of them are stored rather than dropped).
+several Pages, and all of them are stored rather than dropped). LinkedIn accounts
+also return `account_type`: `"member"` for the user's own profile,
+`"organization"` for a LinkedIn Page they administer. Both publish the same way.
 
 ### chirpie_activate_account
 
