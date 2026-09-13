@@ -59,7 +59,7 @@ await chirpie.setXKeys({
 ```
 Full walkthrough: https://chirpie.ai/docs/x-byo-keys
 
-**Bluesky**: Connect with an app password (generate at https://bsky.app/settings/app-passwords):
+**Bluesky**: Connect with an app password (generate at https://bsky.app/settings/app-passwords). The `identifier` takes the first part of the handle on its own (`yourhandle`), a full handle, a handle on your own domain, or the email on the account:
 ```typescript
 await chirpie.connectBlueskyAccount({
   platform: "bluesky",
@@ -70,8 +70,9 @@ await chirpie.connectBlueskyAccount({
 
 Or via CLI:
 ```bash
-chirpie accounts connect-bluesky --handle yourhandle.bsky.social --app-password xxxx-xxxx-xxxx-xxxx
+chirpie accounts connect-bluesky --handle yourhandle --app-password xxxx-xxxx-xxxx-xxxx
 # --handle is required, --app-password is optional (prompts securely if omitted)
+# --handle also accepts yourhandle.bsky.social, a custom-domain handle, or the account email
 ```
 
 **LinkedIn**: Connect via OAuth from the dashboard or API:
@@ -98,18 +99,18 @@ chirpie accounts connect-threads
 # Opens browser for Meta OAuth authorization
 ```
 
-**Mastodon**: Connect via OAuth from the dashboard or API:
+**Mastodon**: Connect via OAuth from the dashboard or API. The `instance_url` takes a bare host (`mastodon.social`), a full URL, or an `@you@fosstodon.org` address:
 ```typescript
 const { authorization_url } = await chirpie.connectMastodonAccount({
   platform: "mastodon",
-  instance_url: "https://mastodon.social",
+  instance_url: "mastodon.social",
 });
 // Open URL in browser to authorize via Mastodon OAuth
 ```
 
 Or via CLI:
 ```bash
-chirpie accounts connect-mastodon --instance https://mastodon.social
+chirpie accounts connect-mastodon --instance mastodon.social
 # Opens browser for Mastodon OAuth authorization
 ```
 
@@ -149,7 +150,7 @@ await chirpie.activateAccount(parkedPageId);
 Reconnecting Facebook re-runs the import, so Pages added later are picked up without
 disconnecting anything.
 
-**Telegram**: Connect with a bot token (create via [@BotFather](https://t.me/BotFather)):
+**Telegram**: Connect with a bot token (create via [@BotFather](https://t.me/BotFather)). The `chat_id` takes a bare channel name (`channelname`), `@channelname`, a `https://t.me/channelname` link, or the numeric chat ID:
 ```typescript
 await chirpie.connectTelegramAccount({
   platform: "telegram",
@@ -160,8 +161,9 @@ await chirpie.connectTelegramAccount({
 
 Or via CLI:
 ```bash
-chirpie accounts connect-telegram --bot-token TOKEN --chat-id ID
+chirpie accounts connect-telegram --bot-token TOKEN --chat-id channelname
 # --bot-token and --chat-id are optional (prompts securely if omitted)
+# --chat-id also accepts @channelname, a t.me link, or a numeric chat ID
 ```
 
 **Pinterest, TikTok, YouTube, Google Business Profile**: Coming Soon.

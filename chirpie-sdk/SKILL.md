@@ -108,7 +108,8 @@ await chirpie.getXKeysStatus();  // { configured, client_id_last4, redirect_uri,
 await chirpie.removeXKeys();
 // Reconnect each X account afterwards to move it onto your app.
 
-// Connect Bluesky account (app password)
+// Connect Bluesky account (app password). The identifier takes the first part
+// of the handle alone, a full handle, a custom-domain handle, or the account email.
 await chirpie.connectBlueskyAccount({
   platform: "bluesky",
   identifier: "yourhandle.bsky.social",
