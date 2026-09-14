@@ -120,6 +120,8 @@ await chirpie.connectBlueskyAccount({
 
 // Connect LinkedIn account (OAuth flow)
 const { authorization_url } = await chirpie.connectLinkedInAccount();
+// LinkedIn Pages you administer are a separate connection (coming soon):
+const { authorization_url: pagesUrl } = await chirpie.connectLinkedInPagesAccount();
 
 // Connect Threads account (Meta OAuth flow)
 const { authorization_url } = await chirpie.connectThreadsAccount();
@@ -176,6 +178,7 @@ import type {
   CreateThreadInput,          // Input for createThread()
   ConnectBlueskyInput,        // Input for connectBlueskyAccount()
   ConnectLinkedInInput,       // Input for connectLinkedInAccount()
+  LinkedInConnectTarget,      // "profile" | "pages"
   ConnectThreadsInput,        // Input for connectThreadsAccount()
   ConnectMastodonInput,       // Input for connectMastodonAccount()
   ConnectInstagramInput,      // Input for connectInstagramAccount()

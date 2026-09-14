@@ -87,11 +87,21 @@ chirpie accounts connect-linkedin
 # Opens browser for LinkedIn OAuth authorization
 ```
 
-One LinkedIn connection can produce several accounts: your own profile, plus any
-LinkedIn Page you administer where Page posting is available. Each is a separate
-account with its own `id`, and `account_type` says which it is (`"member"` for
-your profile, `"organization"` for a Page). Post to either by passing that
-account's `id`.
+LinkedIn has two kinds of account, connected separately. The call above
+connects your own profile. The LinkedIn Pages you administer are a second
+connection, coming soon:
+
+```typescript
+const { authorization_url } = await chirpie.connectLinkedInPagesAccount();
+```
+
+```bash
+chirpie accounts connect-linkedin --pages
+```
+
+Each Page is an account with its own `id`, and `account_type` says which kind
+it is (`"member"` for your profile, `"organization"` for a Page). Post to
+either by passing that account's `id`.
 
 **Threads**: Connect via Meta OAuth from the dashboard or API:
 ```typescript

@@ -285,7 +285,8 @@ The user does not need to leave the agent to connect a platform. Call the matchi
 | Tool | Platform | Arguments |
 |------|----------|-----------|
 | `chirpie_connect_x` | X/Twitter | none |
-| `chirpie_connect_linkedin` | LinkedIn | none |
+| `chirpie_connect_linkedin` | LinkedIn profile | none |
+| `chirpie_connect_linkedin_pages` | LinkedIn Pages (coming soon) | none |
 | `chirpie_connect_threads` | Threads | none |
 | `chirpie_connect_instagram` | Instagram | none |
 | `chirpie_connect_facebook` | Facebook Pages | none |
