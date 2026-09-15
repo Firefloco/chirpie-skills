@@ -103,7 +103,7 @@ Each Page is an account with its own `id`, and `account_type` says which kind
 it is (`"member"` for your profile, `"organization"` for a Page). Post to
 either by passing that account's `id`.
 
-**Threads**: Connect via Meta OAuth from the dashboard or API:
+**Threads** (coming soon): Connect via Meta OAuth from the dashboard or API:
 ```typescript
 const { authorization_url } = await chirpie.connectThreadsAccount();
 // Open URL in browser to authorize via Meta OAuth
@@ -130,7 +130,7 @@ chirpie accounts connect-mastodon --instance mastodon.social
 # Opens browser for Mastodon OAuth authorization
 ```
 
-**Instagram**: Connect via Instagram Login from the dashboard or API. Requires an Instagram professional account (Business or Creator); personal accounts cannot be connected. Instagram posts always need at least one image.
+**Instagram** (coming soon): Connect via Instagram Login from the dashboard or API. Requires an Instagram professional account (Business or Creator); personal accounts cannot be connected. Instagram posts always need at least one image.
 ```typescript
 const { authorization_url } = await chirpie.connectInstagramAccount();
 // Open URL in browser to authorize via Instagram Login
@@ -142,7 +142,7 @@ chirpie accounts connect-instagram
 # Opens browser for Instagram Login OAuth authorization
 ```
 
-**Facebook**: Connect Facebook Pages via Facebook Login from the dashboard or API:
+**Facebook** (coming soon): Connect Facebook Pages via Facebook Login from the dashboard or API:
 ```typescript
 const { authorization_url } = await chirpie.connectFacebookAccount();
 // Open URL in browser to authorize via Facebook Login and choose which Pages to grant
@@ -182,7 +182,7 @@ chirpie accounts connect-telegram --bot-token TOKEN --chat-id channelname
 # --chat-id also accepts @channelname, a t.me link, or a numeric chat ID
 ```
 
-**Pinterest, TikTok, YouTube, Google Business Profile**: Coming soon. Connecting one today returns `501 platform_coming_soon`.
+**Threads, Instagram, Facebook, Pinterest, TikTok, YouTube, Google Business Profile**: Coming soon. Connecting one today returns `501 platform_coming_soon`. Accounts already connected keep posting, scheduling and reporting analytics as normal.
 
 ## Step 4: Find Your Account ID
 

@@ -123,7 +123,7 @@ const { authorization_url } = await chirpie.connectLinkedInAccount();
 // LinkedIn Pages you administer are a separate connection (coming soon):
 const { authorization_url: pagesUrl } = await chirpie.connectLinkedInPagesAccount();
 
-// Connect Threads account (Meta OAuth flow)
+// Connect Threads account (Meta OAuth flow, coming soon)
 const { authorization_url } = await chirpie.connectThreadsAccount();
 
 // Connect Mastodon account (OAuth flow)
@@ -132,10 +132,10 @@ const { authorization_url } = await chirpie.connectMastodonAccount({
   instance_url: "https://mastodon.social",
 });
 
-// Connect Instagram account (Instagram Login OAuth flow)
+// Connect Instagram account (Instagram Login OAuth flow, coming soon)
 const { authorization_url } = await chirpie.connectInstagramAccount();
 
-// Connect Facebook Page (Facebook Login OAuth flow)
+// Connect Facebook Page (Facebook Login OAuth flow, coming soon)
 const { authorization_url } = await chirpie.connectFacebookAccount();
 
 // Connect Telegram bot (bot token auth)
@@ -145,7 +145,8 @@ await chirpie.connectTelegramAccount({
   chat_id: "CHAT_ID",
 });
 
-// Pinterest, TikTok, YouTube, and Google Business Profile are coming soon. Their
+// Threads, Instagram, Facebook, Pinterest, TikTok, YouTube, and Google Business
+// Profile are coming soon. Their
 // connect methods exist on the client but reject with `platform_coming_soon`.
 ```
 

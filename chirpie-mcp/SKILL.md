@@ -287,9 +287,9 @@ The user does not need to leave the agent to connect a platform. Call the matchi
 | `chirpie_connect_x` | X/Twitter | none |
 | `chirpie_connect_linkedin` | LinkedIn profile | none |
 | `chirpie_connect_linkedin_pages` | LinkedIn Pages (coming soon) | none |
-| `chirpie_connect_threads` | Threads | none |
-| `chirpie_connect_instagram` | Instagram | none |
-| `chirpie_connect_facebook` | Facebook Pages | none |
+| `chirpie_connect_threads` | Threads (coming soon) | none |
+| `chirpie_connect_instagram` | Instagram (coming soon) | none |
+| `chirpie_connect_facebook` | Facebook Pages (coming soon) | none |
 | `chirpie_connect_bluesky` | Bluesky | `identifier`, `app_password` |
 | `chirpie_connect_mastodon` | Mastodon | `instance_url` |
 | `chirpie_connect_telegram` | Telegram | `bot_token`, `chat_id` |

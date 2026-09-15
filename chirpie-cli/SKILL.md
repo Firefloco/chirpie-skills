@@ -100,13 +100,14 @@ chirpie accounts connect-x             # Start X OAuth flow (prints URL)
 chirpie accounts connect-bluesky --handle yourhandle --app-password xxxx-xxxx-xxxx-xxxx  # --handle also takes a full handle, a custom domain, or the account email
 chirpie accounts connect-linkedin     # Start LinkedIn OAuth flow (prints URL to open in browser)
 chirpie accounts connect-linkedin --pages  # Connect the LinkedIn Pages you administer instead (COMING SOON)
-chirpie accounts connect-threads      # Start Threads Meta OAuth flow (prints URL to open in browser)
+chirpie accounts connect-threads      # Start Threads Meta OAuth flow (COMING SOON)
 chirpie accounts connect-mastodon --instance mastodon.social  # Start Mastodon OAuth flow (a full URL or @you@server also works)
-chirpie accounts connect-instagram     # Start Instagram Login OAuth flow (prints URL to open in browser)
-chirpie accounts connect-facebook      # Start Facebook Login OAuth flow (prints URL to open in browser)
+chirpie accounts connect-instagram     # Start Instagram Login OAuth flow (COMING SOON)
+chirpie accounts connect-facebook      # Start Facebook Login OAuth flow (COMING SOON)
 chirpie accounts connect-telegram --bot-token TOKEN --chat-id channelname  # Connect Telegram bot (@channelname, a t.me link, or a numeric ID also work)
-# Pinterest, TikTok, YouTube, and Google Business Profile are coming soon. Their
-# connect-* commands exist but exit with a "coming soon" message.
+# Threads, Instagram, Facebook, Pinterest, TikTok, YouTube, and Google Business
+# Profile are coming soon. Their connect-* commands answer with a "coming soon"
+# message. Accounts already connected keep posting and scheduling as normal.
 
 # Optional: connect X through your OWN X developer app, so posts use your X API
 # credits and X link posts are not surcharged.
