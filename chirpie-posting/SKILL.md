@@ -35,8 +35,8 @@ curl -X POST https://chirpie.ai/api/v1/posts \
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `account_id` | UUID string | Yes | Connected account ID |
-| `text` | string | Yes | X: 1-280 (25,000 on Premium). Bluesky: 300. LinkedIn: 3,000. Threads: 500. Mastodon: 500. Instagram: 2,200. Facebook: 63,206. Telegram: 4,096. |
-| `media_urls` | string[] | No | Public image/video URLs. Max per post: X 4, Bluesky 4, LinkedIn 4, Threads 1, Mastodon 4, Instagram 10, Facebook 10, Telegram 10. Instagram REQUIRES at least one image. |
+| `text` | string | Yes | X: 1-280 (25,000 on Premium). Bluesky: 300. LinkedIn: 3,000. Threads: 500. Mastodon: 500. Instagram: 2,200. Facebook: 63,206. Telegram: 4,096, or 1,024 when the post carries media. |
+| `media_urls` | string[] | No | Public image/video URLs. Max images per post: X 4, Bluesky 4, LinkedIn 4, Threads 1, Mastodon 4, Instagram 10, Facebook 10, Telegram 10. Video: X, Mastodon and Telegram only, 1 per post and never alongside images. Instagram REQUIRES at least one image. Anything a platform cannot take is refused with `400 unsupported_media`, never dropped. |
 | `schedule_at` | ISO 8601 | No | Future datetime for scheduling. Must be absolute and carry a timezone (`...Z` or `+02:00`); normalized to UTC |
 
 A missing required field is named: `POST /api/v1/posts {}` returns `account_id and text are required`.
