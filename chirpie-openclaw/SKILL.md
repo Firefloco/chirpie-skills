@@ -153,6 +153,7 @@ Media URLs must be publicly reachable, because Chirpie downloads them server-sid
 | 404 | `not_found` | Wrong or inactive `account_id` | Re-list accounts |
 | 429 | `rate_limited` | Monthly quota or 60 req/min burst | Stop; tell the user |
 | 502 | `upstream_error` | Platform API failed | Retry once, then report |
+| 503 | `media_storage_failed` | Media could not be stored | Retry in a moment; nothing was published |
 
 ## Behaviour rules for this agent
 

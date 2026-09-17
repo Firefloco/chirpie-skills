@@ -151,6 +151,7 @@ try {
       case 404: // Account not found or inactive
       case 429: // Rate limited (monthly quota or burst), or account_limit_reached
       case 502: // Platform API error (temporary, retry)
+      case 503: // Media could not be stored (temporary, retry; nothing was published)
     }
   }
 }
