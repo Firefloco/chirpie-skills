@@ -170,7 +170,7 @@ curl -X POST https://chirpie.ai/api/v1/posts/POST_ID/comments/COMMENT_ID/reply \
 | X/Twitter | Yes | Yes | No | Your own replies |
 | Bluesky | Yes | Yes | No | Your own replies |
 | Mastodon | Yes | Yes | No | Your own replies |
-| LinkedIn (Page) | Yes | Yes | No | Your own comments |
+| LinkedIn (Page) _(Coming Soon)_ | Yes | Yes | No | Your own comments |
 | LinkedIn (profile) | No | No | No | No |
 | Facebook _(Coming Soon)_ | Yes | Yes | Yes | Any comment |
 | Instagram _(Coming Soon)_ | Yes | Yes | Yes | Any comment |
