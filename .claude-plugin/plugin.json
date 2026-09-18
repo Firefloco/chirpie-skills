@@ -2,7 +2,7 @@
   "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
   "name": "chirpie",
   "displayName": "Chirpie",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Post to X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook and Telegram from Claude. Schedule, thread, and track analytics through one API.",
   "author": {
     "name": "Fireflo LLC",

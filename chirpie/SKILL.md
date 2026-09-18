@@ -25,6 +25,11 @@ Chirpie is a social media API for AI agents and developers. Post to X/Twitter, B
 - Post listing, retrieval, deletion
 - Analytics and metrics
 
+**Reading or answering comments on a post** → Use `chirpie-posting`
+- List the comments a published post received
+- Reply to a comment (counts as one post against the monthly quota)
+- Hide or delete a comment, where the platform allows it
+
 **Scheduling content for later** → Use `chirpie-scheduling`
 - Schedule posts and threads
 - Understand timing, retries, and limits
@@ -70,6 +75,10 @@ Chirpie is a social media API for AI agents and developers. Post to X/Twitter, B
 | List keys | `/api/v1/keys` | GET |
 | Revoke key | `/api/v1/keys?id=ID` | DELETE |
 | Post analytics | `/api/v1/analytics/posts/:id` | GET |
+| List comments | `/api/v1/posts/:id/comments` | GET |
+| Reply to comment | `/api/v1/posts/:id/comments/:comment_id/reply` | POST |
+| Hide comment | `/api/v1/posts/:id/comments/:comment_id/hide` | POST |
+| Delete comment | `/api/v1/posts/:id/comments/:comment_id` | DELETE |
 
 ## Response Format
 
@@ -88,4 +97,5 @@ All endpoints return:
 - **Burst:** 60 requests/minute per API key
 - **Monthly quotas:** Free 50, Agent 300, Starter 1K, Pro 5K, Scale 25K+ / custom posts per month
 - **Overage:** $0.03/post (Agent, Starter), $0.025/post (Pro). Free plan has a hard limit. Scale and Enterprise use custom quotas, not per-post overage.
+- **Comment syncs:** refreshing a post's comments from the platform is metered per month: Free 200, Agent 1,000, Starter 5,000, Pro 25,000, Scale and Enterprise custom. Listing comments Chirpie already stored is unlimited, and a reply counts as one post against the monthly post quota. X comment reads are metered per reply returned as well, and are not included on Free.
 - **X link posts:** X charges API operators $0.20 per post containing a URL. Paid plans are billed $0.25 per X link post on top of the monthly allowance; on Free, X posts containing links are rejected with `402 x_link_posts_require_paid_plan`. X accounts connected with your own X API credentials are exempt, since you pay X directly. Other platforms are unaffected.

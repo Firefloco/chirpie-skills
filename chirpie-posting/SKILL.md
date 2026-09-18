@@ -1,6 +1,6 @@
 ---
 name: chirpie-posting
-description: Create posts and threads on X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram via the Chirpie API. Covers single posts, multi-post threads, listing, deletion, and analytics.
+description: Create posts and threads on X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram via the Chirpie API. Covers single posts, multi-post threads, listing, deletion, comments and replies, and analytics.
 ---
 
 # Chirpie Posting
@@ -128,6 +128,68 @@ const result = await chirpie.deletePost("post-uuid");
 // refuses, nothing changes and the call throws upstream_error: retry the same call.
 // Instagram and TikTok have no delete API, so posts there stay live.
 ```
+
+## Comments and Replies
+
+For a post Chirpie published, list the comments it received, reply to one, hide one, or delete one.
+
+```typescript
+// List. Newest first. Page with next_cursor until it comes back null.
+const { comments, next_cursor, capabilities, sync } = await chirpie.listComments(
+  "post-uuid",
+  { limit: 25, include_hidden: false }
+);
+
+// Reply. Published to the platform, so it counts as ONE POST against the monthly quota.
+await chirpie.replyToComment("post-uuid", "comment-uuid", "Thanks, that is on the roadmap.");
+
+// Hide and unhide. Facebook, Instagram and Threads only.
+await chirpie.hideComment("post-uuid", "comment-uuid");
+await chirpie.unhideComment("post-uuid", "comment-uuid");
+
+// Delete.
+await chirpie.deleteComment("post-uuid", "comment-uuid");
+```
+
+### curl
+
+```bash
+curl "https://chirpie.ai/api/v1/posts/POST_ID/comments?limit=25" \
+  -H "Authorization: Bearer chirpie_sk_YOUR_KEY"
+
+curl -X POST https://chirpie.ai/api/v1/posts/POST_ID/comments/COMMENT_ID/reply \
+  -H "Authorization: Bearer chirpie_sk_YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "text": "Thanks, that is on the roadmap." }'
+```
+
+### What each platform allows
+
+| Platform | List | Reply | Hide | Delete |
+|----------|------|-------|------|--------|
+| X/Twitter | Yes | Yes | No | Your own replies |
+| Bluesky | Yes | Yes | No | Your own replies |
+| Mastodon | Yes | Yes | No | Your own replies |
+| LinkedIn (Page) | Yes | Yes | No | Your own comments |
+| LinkedIn (profile) | No | No | No | No |
+| Facebook _(Coming Soon)_ | Yes | Yes | Yes | Any comment |
+| Instagram _(Coming Soon)_ | Yes | Yes | Yes | Any comment |
+| Threads _(Coming Soon)_ | Yes | Yes | Yes | Your own replies |
+| Telegram | No | No | No | No |
+
+**Never hard-code that table.** Every listing carries `meta.capabilities` for the post you asked about: `{ reply, hide, delete_own, delete_any }`. Check it before offering a control. An action the platform does not have returns `501 comment_action_unsupported` rather than silently doing nothing.
+
+### Freshness
+
+A listing answers from comments Chirpie has stored, refreshed on a schedule. `meta.sync.status` says how fresh they are: `ok`, or one of `unsupported`, `permission`, `rate_limited`, `budget`, `plan`, `error`. Anything but `ok` carries a ready-worded sentence in `meta.sync.reason` that can be shown to a user as is. Pass `sync=true` to ask for a refresh now, and `sync=false` to skip one. A refused refresh is still a `200` with the stored comments.
+
+`409 comment_permission_required` means the account has to be reconnected at https://chirpie.ai/dashboard/accounts before its comments can be read or managed. Posting and analytics keep working meanwhile.
+
+### Cost
+
+- Listing and hiding cost nothing.
+- **A reply is a post**, so it uses one from the monthly quota, and an X reply containing a link carries the same X link-post charge a normal X post does.
+- Refreshing is metered per plan: 200 syncs/mo on Free, 1,000 on Agent, 5,000 on Starter, 25,000 on Pro. X is metered a second time per reply returned, and is not included on Free.
 
 ## Get Analytics
 
