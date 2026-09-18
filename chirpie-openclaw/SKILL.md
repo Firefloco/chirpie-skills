@@ -151,7 +151,8 @@ Media URLs must be publicly reachable, because Chirpie downloads them server-sid
 | 400 | `bad_request` | Text too long, past `schedule_at`, spacing violation | Fix and retry once |
 | 401 | `unauthorized` | Bad or revoked key | Stop; tell the user |
 | 404 | `not_found` | Wrong or inactive `account_id` | Re-list accounts |
-| 429 | `rate_limited` | Monthly quota or 60 req/min burst | Stop; tell the user |
+| 429 | `usage_limit_exceeded` | Monthly post or scheduled-post quota spent | Stop; tell the user |
+| 429 | `rate_limited` | 60 req/min burst limit | Sleep for `Retry-After`, then retry once |
 | 502 | `upstream_error` | Platform API failed | Retry once, then report |
 | 503 | `media_storage_failed` | Media could not be stored | Retry in a moment; nothing was published |
 

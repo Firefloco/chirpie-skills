@@ -213,7 +213,7 @@ try {
       case 400: // Invalid request (check err.message for details)
       case 401: // Invalid API key
       case 404: // Account not found or inactive
-      case 429: // Rate limited (monthly quota or burst), or account_limit_reached
+      case 429: // usage_limit_exceeded (quota), rate_limited (burst), or account_limit_reached
       case 502: // Platform API error (temporary, retry)
       case 503: // Media could not be stored (temporary, retry; nothing was published)
     }
@@ -233,4 +233,4 @@ Failed posts: check `error_message` field for details.
 
 ## Rate Limit Headers
 
-Every authenticated `/api/v1/*` response carries `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset` (unix seconds). A `429` from the burst limiter also carries `Retry-After` (seconds): sleep that long and retry once. A `429` with no `Retry-After` is a quota or account-limit refusal, so do not retry it.
+Every authenticated `/api/v1/*` response carries `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset` (unix seconds). A `429` from the burst limiter also carries `Retry-After` (seconds): sleep that long and retry once. A `429` with no `Retry-After` is a quota (`usage_limit_exceeded`) or account-limit (`account_limit_reached`) refusal, so do not retry it.

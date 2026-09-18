@@ -199,7 +199,7 @@ try {
   await chirpie.createPost({ ... });
 } catch (err) {
   if (err instanceof ChirpieApiError) {
-    console.error(err.code);     // "rate_limited", "not_found", "x_link_posts_require_paid_plan", etc.
+    console.error(err.code);     // "usage_limit_exceeded", "rate_limited", "not_found", etc.
     console.error(err.message);  // Human-readable description
     console.error(err.status);   // HTTP status code (400, 401, 402, 404, 429, 502, 503)
   } else if (err instanceof ChirpieError) {
