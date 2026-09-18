@@ -124,7 +124,9 @@ const post = await chirpie.getPost("post-uuid");
 
 ```typescript
 const result = await chirpie.deletePost("post-uuid");
-// Also deletes from the platform if published (except Instagram, which has no delete API)
+// Removes it from the platform first, and only then from Chirpie. If the platform
+// refuses, nothing changes and the call throws upstream_error: retry the same call.
+// Instagram and TikTok have no delete API, so posts there stay live.
 ```
 
 ## Get Analytics

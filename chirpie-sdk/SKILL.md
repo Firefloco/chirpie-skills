@@ -61,7 +61,8 @@ const posts = await chirpie.listPosts({
 // Get a single post
 const post = await chirpie.getPost("post-uuid");
 
-// Delete a post (also deletes from platform if published, except Instagram)
+// Delete a post. Removes it from the platform first, and only then from Chirpie.
+// If the platform refuses, nothing changes and the call throws: just retry.
 const result = await chirpie.deletePost("post-uuid");
 ```
 
