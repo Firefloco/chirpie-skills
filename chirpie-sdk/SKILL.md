@@ -98,6 +98,15 @@ const accounts = await chirpie.listAccounts();
 await chirpie.deactivateAccount(id);  // stays connected, frees a plan slot
 await chirpie.activateAccount(id);    // fails if no slot is free
 
+// Disconnect an account for good. It stops publishing straight away, stops
+// counting against the plan's account limit, and the stored credential is
+// removed, so connecting it again means authorizing it on the platform again.
+// It CANCELS the account's scheduled posts too (`canceled_posts` says how many,
+// and they are not restored); posts it already published are kept.
+// Confirm with the user first: this cannot be undone.
+const gone = await chirpie.disconnectAccount(id);  // ApiAccountDisconnect
+console.log(gone.disconnected, gone.canceled_posts);
+
 // Connect X account (OAuth flow)
 const { authorization_url } = await chirpie.connectXAccount();
 

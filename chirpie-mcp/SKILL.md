@@ -227,6 +227,24 @@ returned; `canceled_posts` in the response says how many. Activating the account
 again does not restore them. Read `scheduled_posts` from `chirpie_list_accounts`
 first and confirm with the user before deactivating an account that has any.
 
+### chirpie_disconnect_account
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `account_id` | string | Yes | Account UUID |
+
+End the connection. The account stops publishing straight away and stops counting
+against the plan's account limit, and the credential Chirpie stored for it is
+removed, so connecting it again means authorizing it on the platform again.
+
+**This cancels the account's scheduled posts too.** Every post queued against it is
+cancelled and its monthly quota returned; `canceled_posts` in the response says how
+many, and they are not restored. Posts the account already published are kept.
+
+This cannot be undone, so always confirm with the user first. Use
+`chirpie_deactivate_account` instead when the account should come back later
+without reauthorizing.
+
 ### chirpie_set_x_keys / chirpie_get_x_keys_status / chirpie_remove_x_keys
 
 Manage the user's own X developer app, so their X accounts post against their X

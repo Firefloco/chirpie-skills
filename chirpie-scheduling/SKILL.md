@@ -82,10 +82,16 @@ console.log(account.scheduled_posts);
 
 const updated = await chirpie.deactivateAccount(id);
 console.log(updated.canceled_posts); // how many actually went
+
+// Disconnecting cancels the queue the same way, and also removes the stored
+// credential, so connecting the account again means authorizing it on the platform.
+const gone = await chirpie.disconnectAccount(id);
+console.log(gone.canceled_posts);
 ```
 
 Reactivating (or reconnecting) does **not** restore them, so schedule them afresh. Check
-`scheduled_posts` and confirm with the user before deactivating an account that has any.
+`scheduled_posts` and confirm with the user before deactivating or disconnecting an account
+that has any.
 
 ## Retry Behavior
 

@@ -96,6 +96,7 @@ chirpie posts --json                   # JSON output
 chirpie accounts                       # List connected accounts (inactive ones included)
 chirpie accounts activate <id>         # Switch an account on so it can publish
 chirpie accounts deactivate <id>       # Switch it off (frees a plan slot, CANCELS its scheduled posts)
+chirpie accounts disconnect <id>       # End the connection (asks first; -y to skip, CANCELS its scheduled posts)
 chirpie accounts connect-x             # Start X OAuth flow (prints URL)
 chirpie accounts connect-bluesky --handle yourhandle --app-password xxxx-xxxx-xxxx-xxxx  # --handle also takes a full handle, a custom domain, or the account email
 chirpie accounts connect-linkedin     # Start LinkedIn OAuth flow (prints URL to open in browser)
@@ -129,6 +130,12 @@ returning them to the monthly quota. The `scheduled` column in `chirpie accounts
 many would go; activating the account again does not bring them back. Confirm with the user
 before deactivating an account whose `scheduled` count is above zero.
 
+`chirpie accounts disconnect <id>` cancels that queue the same way, and goes further: it ends
+the connection, so the stored credential is removed and connecting the account again means
+authorizing it on the platform again. Posts it already published are kept. It cannot be
+undone, so it asks first; pass `-y` in a non-interactive shell or it stops without
+disconnecting anything. Prefer `deactivate` when the account should come back later.
+
 ### chirpie keys
 
 ```bash
@@ -157,6 +164,7 @@ On a subcommand the flag works in either position, before or after the arguments
 ```bash
 chirpie accounts deactivate ACCOUNT_UUID --json    # includes canceled_posts
 chirpie accounts --json deactivate ACCOUNT_UUID    # identical
+chirpie accounts disconnect ACCOUNT_UUID -y --json  # includes disconnected and canceled_posts
 ```
 
 ## Config File

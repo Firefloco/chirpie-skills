@@ -163,6 +163,13 @@ Pages publish:
 await chirpie.deactivateAccount(currentlyActiveId);  // frees a plan slot
 await chirpie.activateAccount(parkedPageId);
 ```
+
+To end a connection altogether, `await chirpie.disconnectAccount(id)` (CLI:
+`chirpie accounts disconnect <id>`, MCP: `chirpie_disconnect_account`). It frees a plan slot
+like deactivating and cancels the account's scheduled posts the same way, but the stored
+credential is removed, so connecting the account again means authorizing it on the platform
+again. Posts it already published are kept. Confirm with the user first: it cannot be undone.
+
 Reconnecting Facebook re-runs the import, so Pages added later are picked up without
 disconnecting anything.
 
