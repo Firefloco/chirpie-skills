@@ -77,6 +77,7 @@ Only a post that has not published yet can be edited. A `publishing`, `published
     "thread_id": null,
     "thread_order": null,
     "error_message": null,
+    "retry_count": 0,
     "created_at": "2026-03-23T10:00:00.000Z"
   }
 }
@@ -245,7 +246,9 @@ scheduled:  → scheduled → publishing → published | failed
 deleted:    → deleted (also removed from platform if published, except Instagram)
 ```
 
-Failed posts: check `error_message` field for details.
+Failed posts: check `error_message` for the platform's refusal and `retry_count` for how many attempts were made.
+
+A post with `status: "deleted"` and `error_message` of `"account_disconnected"`, `"account_deactivated"` or `"connection_lost"` was cancelled by Chirpie, not by you, and its quota was returned. `"connection_lost"` means the platform stopped accepting that account's credential: check `inactive_reason` on the account, stop posting to it, and tell the user to reconnect. See https://chirpie.ai/docs/connection-dies.
 
 ## Rate Limit Headers
 

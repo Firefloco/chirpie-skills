@@ -43,9 +43,9 @@ curl -s https://chirpie.ai/api/v1/accounts \
   -H "Authorization: Bearer $CHIRPIE_API_KEY"
 ```
 
-Each account returns `id`, `platform`, `username`, `display_name`, `max_post_length`, and `is_active`. Use `max_post_length`. It is authoritative and already accounts for X Premium.
+Each account returns `id`, `platform`, `username`, `display_name`, `max_post_length`, `is_active`, and `inactive_reason` when it is switched off. Use `max_post_length`. It is authoritative and already accounts for X Premium.
 
-If `is_active` is `false`, tell the user to re-authorize at https://chirpie.ai/dashboard/accounts. Do not retry.
+If `is_active` is `false`, do not retry. `inactive_reason` of `plan_limit` means the account can be switched on once a slot is free, so the user deactivates another account or upgrades first; `token_revoked`, `token_expired` or `reauth_required` means it has to be connected again; no `inactive_reason` at all means the user switched it off themselves and only has to switch it back on. Either way, tell the user, at https://chirpie.ai/dashboard/accounts.
 
 ## Create a post
 

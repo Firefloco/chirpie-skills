@@ -97,9 +97,16 @@ const thread = await chirpie.createThread({
 ```typescript
 // List all connected accounts, active and inactive
 const accounts = await chirpie.listAccounts();
-// Each account: { id, platform, username, display_name, avatar_url, is_active }
-// Inactive accounts may carry inactive_reason: "plan_limit", meaning they are
-// connected but were not switched on because the plan's account limit was full.
+// Each account: { id, platform, username, display_name, avatar_url, is_active,
+//                 inactive_reason }
+// inactive_reason: "plan_limit" means connected but not switched on because the
+// plan's account limit was full. "token_revoked", "token_expired" and
+// "reauth_required" mean the platform stopped accepting the credential, so the
+// account has to be connected again and its scheduled posts were cancelled.
+// Pause on is_active === false rather than retrying, then read inactive_reason
+// to decide between activateAccount() and a fresh connect. A deliberately
+// deactivated account carries no inactive_reason at all, so pausing only when
+// that field is present would keep posting into a dead account.
 // One Facebook authorization can grant several Pages; all of them are stored.
 // LinkedIn is the same: your profile plus every Page you administer, each with
 // its own id. account_type is "member" for a profile, "organization" for a Page.

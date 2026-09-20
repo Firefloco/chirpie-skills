@@ -219,7 +219,7 @@ Delete a post (also removes it from the platform if published, except Instagram,
 
 List all connected accounts. No parameters.
 
-Returns: `id`, `platform`, `username`, `display_name`, `avatar_url`, `is_active`.
+Returns: `id`, `platform`, `username`, `display_name`, `avatar_url`, `is_active`, and `inactive_reason`. Pause on `is_active: false`, then read the reason: `plan_limit` means switch it on with `chirpie_activate_account` once a slot is free, `token_revoked` / `token_expired` / `reauth_required` mean it has to be connected again, and **no reason at all** means the customer switched it off deliberately, so `chirpie_activate_account` is the fix there too.
 X accounts also return `byo_keys`, which is true when the account posts through the
 user's own X developer app. Inactive accounts are included; `inactive_reason:
 "plan_limit"` means the account is connected but was not switched on because the
