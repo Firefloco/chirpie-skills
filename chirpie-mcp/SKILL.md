@@ -157,11 +157,13 @@ The file type is read from the file's own first bytes, so a wrong extension does
 
 ### chirpie_post
 
-Create a single post on any connected platform with optional media. Note: Instagram REQUIRES media. Facebook is Pages only.
+Create a single post on any connected platform with optional media, on one account or on several at once. Note: Instagram REQUIRES media. Facebook is Pages only.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `account_id` | string | Yes | Account UUID |
+| `account_id` | string | Yes, unless `account_ids` is given | Account UUID |
+| `account_ids` | string[] | Yes, unless `account_id` is given | 1 to 25 account UUIDs. Publishes to all of them in one call and answers with a `group_id` plus one result per account, in the order given |
+| `account_configurations` | object | No | Per-account overrides keyed by account UUID, each taking `text` and media. Only with `account_ids`, and every key must be in it. A field left out inherits the call's own; media replaces rather than merges, and `media: []` publishes that account with none |
 | `text` | string | Yes | Post text. Max varies: X 280 (25,000 on Premium), Bluesky 300, LinkedIn 3,000, Threads 500, Mastodon 500, Instagram 2,200, Facebook 63,206, Telegram 4,096. |
 | `media` | object[] | No | Uploaded files and public links, each `{ id? , url?, alt? }`, with **either** `id` (from `chirpie_upload_media`) **or** `url` per item, never both. `alt` describes the item for screen readers. Use this **or** `media_urls`, not both. |
 | `media_urls` | string[] | No | Public image/video URLs, for a post that needs no alt text. Max per post: X 4, Bluesky 4, LinkedIn 4, Threads 1, Mastodon 4, Instagram 10, Facebook 10, Telegram 10. Instagram REQUIRES media. |
@@ -169,13 +171,17 @@ Create a single post on any connected platform with optional media. Note: Instag
 
 ### chirpie_thread
 
-Create a multi-post thread on any connected platform. X, Bluesky, Threads, Mastodon, and Telegram support native threading. Others degrade to standalone posts.
+Create a multi-post thread on any connected platform, on one account or on several at once. X, Bluesky, Threads, Mastodon, and Telegram support native threading. Others degrade to standalone posts.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `account_id` | string | Yes | Account UUID |
-| `posts` | array | Yes | Array of `{ text, media?, media_urls? }` objects (2-25). Media limits vary by platform. |
-| `schedule_at` | string | No | ISO 8601 datetime |
+| `account_id` | string | Yes, unless `account_ids` is given | Account UUID |
+| `account_ids` | string[] | Yes, unless `account_id` is given | 1 to 25 account UUIDs. Publishes the thread to all of them in one call and answers with a `group_id` plus one result per account |
+| `account_configurations` | object | No | Per-account overrides keyed by account UUID, each taking `posts`, which replaces the whole array for that account (still 2-25 parts). Only with `account_ids`, and every key must be one of the ids named there |
+| `posts` | array | Yes | Array of `{ text, media?, media_ids?, media_urls? }` objects (2-25). Media limits vary by platform. |
+| `schedule_at` | string | No | ISO 8601 datetime. Applies to the whole group |
+
+**Reading a multi-account result.** `results` is in the order the accounts were named, and each entry carries `account_id`, `platform`, `success`, `platform_post_url`, `status`, `error`, plus `post_id`/`post` for a post and `thread_id`/`thread` for a thread. Some accounts can succeed while others fail, so report per account rather than declaring the whole send done. A validation problem (character limit, media rules, the X link-post rule) refuses the whole call with a message prefixed `Account <id>: ` and publishes nothing; only a platform failure is per account, and the quota for that account is given back.
 
 ### chirpie_list_posts
 
@@ -185,6 +191,7 @@ List posts with optional filters.
 |-----------|------|----------|-------------|
 | `status` | string | No | Filter: draft, scheduled, published, failed, deleted |
 | `account_id` | string | No | Filter by account |
+| `group_id` | string | No | Every post of one multi-account send, by the `group_id` its create call returned |
 | `limit` | number | No | Results to return |
 
 ### chirpie_get_post

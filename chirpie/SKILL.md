@@ -30,6 +30,11 @@ Chirpie is a social media API for AI agents and developers. Post to X/Twitter, B
 - Reply to a comment (counts as one post against the monthly quota)
 - Hide or delete a comment, where the platform allows it
 
+**Posting the same thing to several accounts at once** → Use `chirpie-posting`
+- `account_ids` (1-25) instead of `account_id` on posts and threads
+- Per-account text and media with `account_configurations`
+- Reading the `group_id` and per-account `results` back
+
 **Scheduling content for later** → Use `chirpie-scheduling`
 - Schedule posts and threads
 - Understand timing, retries, and limits
@@ -65,7 +70,7 @@ Chirpie is a social media API for AI agents and developers. Post to X/Twitter, B
 | Action | Endpoint | Method |
 |--------|----------|--------|
 | Create post | `/api/v1/posts` | POST |
-| List posts | `/api/v1/posts` | GET |
+| List posts (also by `group_id`) | `/api/v1/posts` | GET |
 | Get post | `/api/v1/posts/:id` | GET |
 | Update post | `/api/v1/posts/:id` | PATCH |
 | Delete post | `/api/v1/posts/:id` | DELETE |

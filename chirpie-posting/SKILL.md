@@ -1,6 +1,6 @@
 ---
 name: chirpie-posting
-description: Create posts and threads on X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram via the Chirpie API. Covers single posts, multi-post threads, listing, deletion, comments and replies, and analytics.
+description: Create posts and threads on X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram via the Chirpie API. Covers single posts, posting to several accounts at once with per-account overrides, multi-post threads, listing, deletion, comments and replies, and analytics.
 ---
 
 # Chirpie Posting
@@ -40,7 +40,9 @@ The file type is read from the file's own first bytes, never from its name. Uplo
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `account_id` | UUID string | Yes | Connected account ID |
+| `account_id` | UUID string | Yes, unless `account_ids` is given | Connected account ID |
+| `account_ids` | UUID string[] | Yes, unless `account_id` is given | 1 to 25 connected accounts, published to in one request. Duplicates are refused. Naming it selects the fan-out response, even for one account. See "Post to several accounts at once" below |
+| `account_configurations` | object | No | Per-account overrides keyed by account ID. Only with `account_ids`, and every key must be in it. Each value takes `text` and one of `media`, `media_ids`, `media_urls` |
 | `text` | string | Yes | X: 1-280 (25,000 on Premium). Bluesky: 300. LinkedIn: 3,000. Threads: 500. Mastodon: 500. Instagram: 2,200. Facebook: 63,206. Telegram: 4,096, or 1,024 when the post carries media. |
 | `media` | object[] | No | Uploaded files and public links, each `{ id? , url?, alt? }`. `id` comes from `POST /api/v1/media`; `alt` describes the item for screen readers and is sent to X, Bluesky, LinkedIn, Mastodon, Instagram and Facebook. Use one of `media`, `media_ids` and `media_urls`, not several. |
 | `media_ids` | string[] | No | Ids from `POST /api/v1/media`, when no alt text is needed. |
@@ -49,7 +51,7 @@ The file type is read from the file's own first bytes, never from its name. Uplo
 
 A missing required field is named: `POST /api/v1/posts {}` returns `account_id and text are required`.
 
-Only these fields are accepted. Any other top-level field returns `400 bad_request`. That includes `scheduled_at` (the field name in the *response*), which is rejected with an `Unknown field 'scheduled_at'` error suggesting `schedule_at`. Never send back a whole post object you read from the API.
+Only these fields are accepted. Any other top-level field returns `400 bad_request`. That includes `scheduled_at` (the field name in the *response*), which is rejected with an `Unknown field 'scheduled_at'` error suggesting `schedule_at`, and `group_id`, which every returned post carries but no request may send. Never send back a whole post object you read from the API.
 
 ### Editing a post that has not gone out
 
@@ -76,6 +78,7 @@ Only a post that has not published yet can be edited. A `publishing`, `published
     "published_at": "2026-03-23T10:00:00.000Z",
     "thread_id": null,
     "thread_order": null,
+    "group_id": null,
     "error_message": null,
     "retry_count": 0,
     "created_at": "2026-03-23T10:00:00.000Z"
@@ -84,6 +87,97 @@ Only a post that has not published yet can be edited. A `publishing`, `published
 ```
 
 `platform_post_url` is the public permalink, or `null` when the platform has none that can be derived. X, Bluesky, Mastodon, LinkedIn, Facebook, and public Telegram channels get a URL; Threads and Instagram are always `null`. Thread responses carry it on each post too.
+
+## Post to Several Accounts at Once
+
+Name `account_ids` instead of `account_id` on `POST /api/v1/posts` or `POST /api/v1/threads`. One request publishes to up to 25 connected accounts and answers with a `group_id` plus one result per account, in the order the accounts were named.
+
+```typescript
+const { group_id, results } = await chirpie.createPost({
+  account_ids: ["uuid-a", "uuid-b"],
+  text: "Shared text",
+  account_configurations: {
+    "uuid-b": { text: "Text for just this account" },
+  },
+});
+
+for (const r of results) {
+  if (!r.success) console.error(r.account_id, r.error.code, r.error.message);
+}
+```
+
+```bash
+curl -X POST https://chirpie.ai/api/v1/posts \
+  -H "Authorization: Bearer chirpie_sk_YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "account_ids": ["ACCOUNT_A", "ACCOUNT_B"],
+    "text": "Shared text",
+    "account_configurations": {
+      "ACCOUNT_B": { "text": "Text for just this account" }
+    }
+  }'
+```
+
+### Overrides
+
+- A field left out of an override inherits the request's own value. `text` at the top level is still required: it is what an account without an override publishes.
+- **Media replaces, it never merges.** An account whose override names any media spelling (`media`, `media_ids` or `media_urls`, one at a time) replaces the shared media outright for that account. `"media": []` is how one account publishes with no media while the others carry it.
+- On `POST /api/v1/threads` the override field is `posts`, and it replaces the whole array for that account, still 2 to 25 parts.
+
+### Response
+
+`201 Created` when every account succeeded, `207 Multi-Status` when at least one did not. Both carry the same body, so **branch on `results[].success`, not on the status code**.
+
+```json
+{
+  "data": {
+    "group_id": "uuid",
+    "results": [
+      {
+        "account_id": "uuid",
+        "platform": "x",
+        "success": true,
+        "post_id": "uuid",
+        "platform_post_url": "https://x.com/...",
+        "status": "published",
+        "post": { "...": "the usual post object" },
+        "error": null
+      },
+      {
+        "account_id": "uuid",
+        "platform": "bluesky",
+        "success": false,
+        "post_id": null,
+        "platform_post_url": null,
+        "status": null,
+        "post": null,
+        "error": { "code": "upstream_error", "message": "Bluesky API error: ..." }
+      }
+    ]
+  }
+}
+```
+
+Thread results carry `thread_id` and `thread` where post results carry `post_id` and `post`, and `platform_post_url` is the first part's permalink.
+
+### What is refused whole, and what fails per account
+
+Before anything publishes, every account is resolved and its body, with that account's overrides applied, is run through the same rules a single-account create runs: character limit, media caps, per-platform media rules, alt-text limits, the platforms that require media, and the X link-post rule. Any of those refuses the **whole request** with its usual status and code, and the message is prefixed `Account <id>: `. Nothing publishes and no quota is taken.
+
+Only the platform call itself fails per account. Those land in `results[].error` and the accounts that worked stay published.
+
+A duplicate id in `account_ids`, or an `account_configurations` key that is not in `account_ids`, is `400 bad_request`.
+
+### Quota
+
+One reservation for the whole group: one unit per account for a post, one per part per account for a thread. If the group does not fit the plan the request is `429 usage_limit_exceeded` and nothing publishes. Each account that fails to publish gives back exactly its own share, once.
+
+### Scheduling and reading a group back
+
+`schedule_at` applies to the whole group, so every account is queued for the same time and every scheduled post shares the group id.
+
+Every post payload carries `group_id`: the fan-out it belongs to, or `null` for a post created with a single `account_id`. Read a whole group back with `GET /api/v1/posts?group_id=...` (`listPosts({ group_id })`). It must be a UUID; anything else is `400`.
 
 ## Create a Thread
 
@@ -126,6 +220,7 @@ curl -X POST https://chirpie.ai/api/v1/threads \
 const posts = await chirpie.listPosts({
   status: "published",  // Optional: draft|scheduled|publishing|published|failed|deleted
   account_id: "uuid",   // Optional
+  group_id: "uuid",     // Optional: every post of one multi-account send
   limit: 20,            // Max 100
   offset: 0,
 });

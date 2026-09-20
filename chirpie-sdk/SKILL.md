@@ -1,6 +1,6 @@
 ---
 name: chirpie-sdk
-description: Use the @chirpie/sdk TypeScript client in your application. Covers installation, configuration, all methods, types, and error handling.
+description: Use the @chirpie/sdk TypeScript client in your application. Covers installation, configuration, all methods including posting to several accounts at once, types, and error handling.
 ---
 
 # Chirpie TypeScript SDK
@@ -58,10 +58,25 @@ const post = await chirpie.createPost({
   schedule_at: "ISO8601",    // Optional, must be future
 });
 
+// Post to several accounts in one call. Naming `account_ids` (1-25) instead of
+// `account_id` returns `{ group_id, results }` instead of a single post, even
+// for one account. `results` is in the order the accounts were named, and each
+// entry carries `success`, `post_id`, `platform_post_url`, `status`, `post`
+// and `error`. Status is 201 when every account succeeded, 207 when one did
+// not, so branch on `success`, never on the status code.
+const { group_id, results } = await chirpie.createPost({
+  account_ids: ["uuid-a", "uuid-b"],
+  text: "Shared text",                 // Required: what an account with no override publishes
+  account_configurations: {            // Optional, keyed by account id, every key must be in account_ids
+    "uuid-b": { text: "Text for just this account" },
+  },
+});
+
 // List posts with filters
 const posts = await chirpie.listPosts({
   status: "published",       // Optional
   account_id: "uuid",        // Optional
+  group_id: "uuid",          // Optional: every post of one multi-account send
   limit: 20,                 // Optional, max 100
   offset: 0,                 // Optional
 });
@@ -90,7 +105,26 @@ const thread = await chirpie.createThread({
   ],
   schedule_at: "ISO8601",    // Optional
 });
+
+// The same thread to several accounts. An override's `posts` replaces the whole
+// array for that account (still 2-25 parts). Result entries carry `thread_id`
+// and `thread` where a post fan-out carries `post_id` and `post`.
+const { group_id, results } = await chirpie.createThread({
+  account_ids: ["uuid-a", "uuid-b"],
+  posts: [{ text: "one" }, { text: "two" }],
+  account_configurations: {
+    "uuid-b": { posts: [{ text: "a" }, { text: "b" }, { text: "c" }] },
+  },
+});
 ```
+
+A multi-account send reserves quota once for the whole group (one unit per
+account for a post, one per part per account for a thread). If it does not fit
+the plan the call throws `429 usage_limit_exceeded` and nothing publishes.
+Validation (character limits, media rules, the X link-post rule) is run for
+every account up front, so a failure there refuses the whole request with a
+message prefixed `Account <id>: `. Only the platform call itself fails per
+account, and those land in `results[].error`.
 
 ### Accounts
 
