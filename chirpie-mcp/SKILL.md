@@ -143,6 +143,18 @@ Both servers expose exactly the same tools.
 
 ## Available Tools
 
+### chirpie_upload_media
+
+Upload an image or a video and get back the id a post can attach. Use it whenever the file is not already on a public URL.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `url` | string | No | A public image or video URL for Chirpie to fetch and store |
+| `data` | string | No | The file's bytes, base64 encoded. Use this or `url`, not both |
+| `filename` | string | No | A name to show in the dashboard. Never used to decide the file type |
+
+The file type is read from the file's own first bytes, so a wrong extension does not matter and a mislabelled file is refused. The id is valid for 7 days; attach it with `media: [{ "id": "...", "alt": "..." }]`. Uploads are limited to 3 MB of file when sent as `data`, so a larger file goes in `media_urls` instead, which has no such limit.
+
 ### chirpie_post
 
 Create a single post on any connected platform with optional media. Note: Instagram REQUIRES media. Facebook is Pages only.
@@ -151,7 +163,8 @@ Create a single post on any connected platform with optional media. Note: Instag
 |-----------|------|----------|-------------|
 | `account_id` | string | Yes | Account UUID |
 | `text` | string | Yes | Post text. Max varies: X 280 (25,000 on Premium), Bluesky 300, LinkedIn 3,000, Threads 500, Mastodon 500, Instagram 2,200, Facebook 63,206, Telegram 4,096. |
-| `media_urls` | string[] | No | Public image/video URLs. Max per post: X 4, Bluesky 4, LinkedIn 4, Threads 1, Mastodon 4, Instagram 10, Facebook 10, Telegram 10. Instagram REQUIRES media. |
+| `media` | object[] | No | Uploaded files and public links, each `{ id? , url?, alt? }`, with **either** `id` (from `chirpie_upload_media`) **or** `url` per item, never both. `alt` describes the item for screen readers. Use this **or** `media_urls`, not both. |
+| `media_urls` | string[] | No | Public image/video URLs, for a post that needs no alt text. Max per post: X 4, Bluesky 4, LinkedIn 4, Threads 1, Mastodon 4, Instagram 10, Facebook 10, Telegram 10. Instagram REQUIRES media. |
 | `schedule_at` | string | No | ISO 8601 datetime, must be future and carry a timezone (`...Z` or `+02:00`); normalized to UTC |
 
 ### chirpie_thread
@@ -161,7 +174,7 @@ Create a multi-post thread on any connected platform. X, Bluesky, Threads, Masto
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `account_id` | string | Yes | Account UUID |
-| `posts` | array | Yes | Array of `{ text, media_urls? }` objects (2-25). Media limits vary by platform. |
+| `posts` | array | Yes | Array of `{ text, media?, media_urls? }` objects (2-25). Media limits vary by platform. |
 | `schedule_at` | string | No | ISO 8601 datetime |
 
 ### chirpie_list_posts
@@ -190,6 +203,7 @@ Edit a post that has not published yet. Leaving `schedule_at` out keeps the time
 |-----------|------|----------|-------------|
 | `id` | string | Yes | Post UUID |
 | `text` | string | No | Replacement text |
+| `media` | object[] | No | Replacement media, each `{ id? , url?, alt? }`. An empty array removes the media |
 | `media_urls` | string[] | No | Replacement media URLs. An empty array removes the media |
 | `schedule_at` | string | No | New ISO 8601 publish time, in the future and carrying a timezone |
 

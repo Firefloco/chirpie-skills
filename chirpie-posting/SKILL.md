@@ -30,12 +30,20 @@ curl -X POST https://chirpie.ai/api/v1/posts \
   }'
 ```
 
+### Uploading a file
+
+`POST /api/v1/media` takes a `multipart/form-data` body with the file in a part named `file`, or a JSON body naming a public `url`, and answers `201` with `{ "data": { "id", "url", "mime_type", "media_type", "bytes", "expires_at", ... } }`. Attach the id with `media: [{ "id": "...", "alt": "..." }]` or `media_ids: ["..."]`.
+
+The file type is read from the file's own first bytes, never from its name. Uploads are limited to 4 MB as a `file` part, or 3 MB of file as base64 `data`, which bounds the request rather than the post; a larger file is attached by URL instead, which has no such limit. An id is good for 7 days, and a post keeps its own copy of the bytes, so it publishes as written whatever happens to the id. A post still waiting to publish also keeps its id alive, so it stays editable; a post reads back as `media: [{ url, alt, media_id }]`, and an edit should send an uploaded item back as `{ "id": media_id }` rather than by its URL.
+
 ### Request Body
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `account_id` | UUID string | Yes | Connected account ID |
 | `text` | string | Yes | X: 1-280 (25,000 on Premium). Bluesky: 300. LinkedIn: 3,000. Threads: 500. Mastodon: 500. Instagram: 2,200. Facebook: 63,206. Telegram: 4,096, or 1,024 when the post carries media. |
+| `media` | object[] | No | Uploaded files and public links, each `{ id? , url?, alt? }`. `id` comes from `POST /api/v1/media`; `alt` describes the item for screen readers and is sent to X, Bluesky, LinkedIn, Mastodon, Instagram and Facebook. Use one of `media`, `media_ids` and `media_urls`, not several. |
+| `media_ids` | string[] | No | Ids from `POST /api/v1/media`, when no alt text is needed. |
 | `media_urls` | string[] | No | Public image/video URLs. Max images per post: X 4, Bluesky 4, LinkedIn 4, Threads 1, Mastodon 4, Instagram 10, Facebook 10, Telegram 10. Video: X, Mastodon and Telegram only, 1 per post and never alongside images. Instagram REQUIRES at least one image. Anything a platform cannot take is refused with `400 unsupported_media`, never dropped. |
 | `schedule_at` | ISO 8601 | No | Future datetime for scheduling. Must be absolute and carry a timezone (`...Z` or `+02:00`); normalized to UTC |
 
@@ -45,7 +53,7 @@ Only these fields are accepted. Any other top-level field returns `400 bad_reque
 
 ### Editing a post that has not gone out
 
-`PATCH /api/v1/posts/:id` changes `text`, `media_urls` or `schedule_at` on a post still waiting to publish. All three are optional, and it accepts only those three: `account_id` is not among them, because an edit never moves a post to another account.
+`PATCH /api/v1/posts/:id` changes `text`, the media (`media`, `media_ids` or `media_urls`) or `schedule_at` on a post still waiting to publish. All are optional, and it accepts only those: `account_id` is not among them, because an edit never moves a post to another account.
 
 **Leaving `schedule_at` out keeps the time the post already has.** The call never publishes anything.
 

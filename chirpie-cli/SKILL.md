@@ -61,12 +61,15 @@ chirpie logout
 chirpie post "Your tweet text"
 chirpie post "Scheduled!" -s "2026-04-01T14:00:00Z"
 chirpie post "Specific account" -a ACCOUNT_UUID
+chirpie post "With a local file" -m ./shot.png --alt "The new dashboard"
 chirpie post "JSON output" --json
 ```
 
 | Flag | Description |
 |------|-------------|
 | `-a, --account <id>` | Account ID (auto-selects if only one) |
+| `-m, --media <files...>` | Image or video files on this machine, or public URLs. Files are uploaded first |
+| `--alt <text...>` | Describe each item for screen readers, in the same order as `--media` |
 | `-s, --schedule <datetime>` | ISO 8601 datetime with a timezone (`...Z` or `+02:00`); normalized to UTC |
 | `--json` | Machine-readable JSON output |
 

@@ -63,7 +63,11 @@ curl -s -X POST https://chirpie.ai/api/v1/posts \
 |---|---|---|
 | `account_id` | yes | UUID from `GET /accounts` |
 | `text` | yes | Must fit the platform limit |
+| `media` | no | Array of `{ id?, url?, alt? }`. Each item carries **either** `id` (from `POST /api/v1/media`) **or** `url`, never both. `alt` describes the item for screen readers |
+| `media_ids` | no | Array of ids from `POST /api/v1/media`, when no alt text is needed |
 | `media_urls` | no | Array of **public** image/video URLs |
+
+Use exactly one of `media`, `media_ids` and `media_urls`. Sending two is a `400`.
 | `schedule_at` | no | Future ISO 8601 timestamp with a timezone (`...Z` or `+02:00`); normalized to UTC |
 
 Returns `201` with the post object. `status` is `published` or `scheduled`.

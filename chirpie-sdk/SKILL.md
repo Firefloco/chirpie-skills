@@ -42,11 +42,19 @@ const chirpie = new ChirpieClient({
 ### Posts
 
 ```typescript
+// Upload a file and attach it. The id is valid for 7 days, and a post keeps
+// its own copy of the bytes, so an expired id never breaks a queued post.
+const media = await chirpie.uploadMedia({
+  data: await readFile("./screenshot.png"),
+  filename: "screenshot.png",
+});
+// Or: await chirpie.uploadMedia({ url: "https://example.com/a.png" })
+
 // Create a post (immediate or scheduled)
 const post = await chirpie.createPost({
   account_id: "uuid",        // Required
   text: "Hello!",            // Required. Char limits: X 280 (25,000 Premium), Bluesky 300, LinkedIn 3,000, Threads 500, Mastodon 500, Instagram 2,200, Facebook 63,206, Telegram 4,096
-  media_urls: ["url"],       // Optional. Max per post: X 4, Bluesky 4, LinkedIn 4, Threads 1, Mastodon 4, Instagram 10, Facebook 10, Telegram 10. Instagram REQUIRES media.
+  media: [{ url: "https://example.com/a.png", alt: "A bird" }],  // Optional. An entry takes `id` (from uploadMedia) or `url`, plus optional alt text. Max per post: X 4, Bluesky 4, LinkedIn 4, Threads 1, Mastodon 4, Instagram 10, Facebook 10, Telegram 10. Instagram REQUIRES media.
   schedule_at: "ISO8601",    // Optional, must be future
 });
 
@@ -77,7 +85,7 @@ const result = await chirpie.deletePost("post-uuid");
 const thread = await chirpie.createThread({
   account_id: "uuid",
   posts: [
-    { text: "First", media_urls: [] },
+    { text: "First", media: [{ id: "media-uuid", alt: "A bird" }] },
     { text: "Second" },
   ],
   schedule_at: "ISO8601",    // Optional
