@@ -195,6 +195,9 @@ List posts with optional filters.
 | `account_id` | string | No | Filter by account |
 | `group_id` | string | No | Every post of one multi-account send, by the `group_id` its create call returned |
 | `limit` | number | No | Results to return |
+| `include_hidden` | boolean | No | Include posts the user hid with `chirpie_hide_post`. Off by default on every filter |
+
+A post the user deleted stays in the listing with `status: "deleted"` and no cancel reason: Chirpie never removes a post's history. Every post carries `hidden`.
 
 ### chirpie_get_post
 
@@ -228,11 +231,39 @@ Promote with `chirpie_update_post`: `schedule_at` queues it, `publish: true` sen
 
 ### chirpie_delete_post
 
-Delete a post (also removes it from the platform if published, except Instagram, which has no delete API). Deleting any post of a scheduled thread cancels the whole thread.
+Take a post down from the platform. The platform is told first, and the post is reported deleted only once the platform confirms it is gone. Deleting any post of a scheduled thread cancels the whole thread.
+
+**The post is never removed from Chirpie**: it keeps its id and its history with `status: "deleted"`, so `chirpie_get_post` still returns it.
+
+Instagram and TikTok publish no delete API, so a published post there is refused with `delete_unsupported`. Tell the user to delete it in the platform's own app, and offer `chirpie_hide_post` to keep it out of their Chirpie listings.
+
+This reaches the platform and cannot be undone, so confirm with the user first.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `id` | string | Yes | Post UUID |
+
+### chirpie_hide_post
+
+Hide a post from the user's Chirpie listings. **Nothing reaches the platform**: the post stays exactly as it is, keeps its analytics and its comments, and `chirpie_unhide_post` puts it back. Nothing is charged and no quota moves.
+
+Hide is the answer when the user wants a post out of their way; `chirpie_delete_post` is the answer when they want it taken down, and the two are never the same request. A hidden post is left out of `chirpie_list_posts` unless `include_hidden` is true, and is always readable by id with `chirpie_get_post`.
+
+**Hiding a queued post does not stop it publishing.** Hide only decides what Chirpie shows; the scheduler pays no attention to it. Use `chirpie_delete_post` to stop a scheduled post going out.
+
+A thread, or a multi-account send, is hidden as the one thing it was made as, so `hidden_ids` can name more posts than the id you passed.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | string | Yes | Post UUID. A thread or fan-out moves whole |
+
+### chirpie_unhide_post
+
+Put a hidden post back in the user's Chirpie listings. The exact undo of `chirpie_hide_post`, and as with hide, nothing reaches the platform. Unhiding a post that was never hidden succeeds and changes nothing.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | string | Yes | Post UUID. A thread or fan-out moves whole |
 
 ### chirpie_list_accounts
 

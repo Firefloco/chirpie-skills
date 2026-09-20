@@ -102,9 +102,18 @@ chirpie posts --group GROUP_UUID       # Every post of one multi-account send
 chirpie posts get POST_UUID            # Get single post
 chirpie posts update POST_UUID --text "Fixed"   # Edit a queued post, keeping its time
 chirpie posts update POST_UUID --schedule-at 2027-04-02T09:00:00Z  # Move it
-chirpie posts delete POST_UUID         # Delete a post
+chirpie posts delete POST_UUID         # Take it down from the platform
+chirpie posts hide POST_UUID           # Hide it from Chirpie only, reversibly
+chirpie posts unhide POST_UUID         # Show it again
+chirpie posts --include-hidden         # Include the ones that are hidden
 chirpie posts --json                   # JSON output
 ```
+
+On a published post, delete takes it down from the platform and succeeds only once the platform confirms it is gone. On one that has not gone out, nothing reaches a platform: a queued post is cancelled and its quota returned, while a draft is simply marked deleted, since a draft never counted against any quota. Chirpie keeps the post either way, marked deleted, so `chirpie posts --status deleted` still lists it. Instagram and TikTok publish no delete API, so a published post there is refused with `delete_unsupported`: delete it in the platform's own app.
+
+Hide reaches no platform at all. It only decides whether Chirpie shows the post, and `unhide` is the exact undo. A thread, or a multi-account send, is hidden as the one thing it was made as.
+
+A thread is atomic: if any part fails, the parts already published are deleted and the quota refunded. If a part could not be removed the CLI prints it under "Still live on the platform, delete these yourself", and the code is `thread_rollback_incomplete` rather than `upstream_error`, so do not retry blindly.
 
 ### Drafts
 

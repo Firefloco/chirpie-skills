@@ -89,12 +89,39 @@ const post = await chirpie.getPost("post-uuid");
 await chirpie.updatePost("post-uuid", { text: "Now with the typo fixed" });
 await chirpie.updatePost("post-uuid", { schedule_at: "2027-04-02T09:00:00Z" });
 
-// Delete a post. Removes it from the platform first, and only then from Chirpie.
-// If the platform refuses, nothing changes and the call throws: just retry.
+// Delete a post. Takes it down from the platform first, and reports it deleted
+// only once the platform confirms it is gone. If the platform refuses, nothing
+// changes and the call throws: just retry. Chirpie keeps the post, marked
+// deleted, so it stays in the user's history. Instagram and TikTok publish
+// no delete API and throw `501 delete_unsupported`.
 const result = await chirpie.deletePost("post-uuid");
+
+// Hide a post from the user's Chirpie listings. Nothing reaches the platform:
+// the post stays exactly as it is, and unhidePost puts it back. A thread or a
+// multi-account send moves whole, and `hidden_ids` names every post that moved.
+await chirpie.hidePost("post-uuid");
+await chirpie.unhidePost("post-uuid");
+
+// Hidden posts are left out of every listing unless you ask for them.
+await chirpie.listPosts({ include_hidden: true });
 ```
 
 ### Threads
+
+A thread is atomic. If any part fails, every part that had already published is deleted from the platform and the whole thread's quota is refunded. `ChirpieApiError.threadRollback()` says what happened; `upstream_error` means nothing is left on the platform and a retry is safe, while `thread_rollback_incomplete` means the posts in `still_live` are really still up and a retry would publish them twice.
+
+```typescript
+import { ChirpieApiError } from "@chirpie/sdk";
+
+try {
+  await chirpie.createThread({ account_id: "uuid", posts });
+} catch (err) {
+  const rollback = err instanceof ChirpieApiError ? err.threadRollback() : null;
+  for (const part of rollback?.still_live ?? []) {
+    console.error("still live:", part.platform_post_url ?? part.platform_post_id);
+  }
+}
+```
 
 ```typescript
 const thread = await chirpie.createThread({

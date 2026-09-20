@@ -215,6 +215,30 @@ curl -X POST https://chirpie.ai/api/v1/threads \
 - LinkedIn, Instagram, and Facebook degrade gracefully: each item is published as a standalone post.
 - Thread counts as N posts against your monthly quota
 
+### A thread is all or nothing
+
+If any part fails to publish, every part that had already published is deleted from the platform and the whole thread's quota is refunded. That holds on every path: immediate, scheduled, promoting a draft, and each account of a multi-account publish. On LinkedIn, Instagram and Facebook the same rule covers the standalone posts made so far.
+
+The error carries `thread_rollback` saying what was removed, and the code tells you whether a retry is safe:
+
+- `502 upstream_error`: `still_live` is empty. Nothing of the thread is on the platform, so repeating the same call is safe.
+- `502 thread_rollback_incomplete`: the posts in `still_live` are really still up, with their ids and public URLs. Repeating the call would publish them twice, so remove them first, or send only the remaining parts.
+
+```typescript
+import { ChirpieApiError } from "@chirpie/sdk";
+
+try {
+  await chirpie.createThread({ account_id: "uuid", posts });
+} catch (err) {
+  const rollback = err instanceof ChirpieApiError ? err.threadRollback() : null;
+  for (const part of rollback?.still_live ?? []) {
+    console.error("still live:", part.platform_post_url ?? part.platform_post_id);
+  }
+}
+```
+
+`rollback_supported: false` means the platform publishes no delete API at all, so nothing could be removed. That is always the case on Instagram. A **scheduled** thread that fails is retried three times, unless the rollback left posts live: then it fails at once, because a retry would publish them twice.
+
 ## Drafts
 
 `draft: true` on `POST /api/v1/posts` or `POST /api/v1/threads` saves the content and sends nothing. The post is stored with `status: "draft"`, never publishes on its own, never enters the scheduler queue, and costs neither the monthly post quota nor the scheduled-post quota until it is promoted.
@@ -268,8 +292,11 @@ const posts = await chirpie.listPosts({
   group_id: "uuid",     // Optional: every post of one multi-account send
   limit: 20,            // Max 100
   offset: 0,
+  include_hidden: false, // Optional: posts the user hid are left out by default
 });
 ```
+
+A post the user deleted stays in the listing with `status: "deleted"`: a delete takes the post down from the platform and never removes the record of it.
 
 ## Get a Post
 
@@ -281,10 +308,30 @@ const post = await chirpie.getPost("post-uuid");
 
 ```typescript
 const result = await chirpie.deletePost("post-uuid");
-// Removes it from the platform first, and only then from Chirpie. If the platform
-// refuses, nothing changes and the call throws upstream_error: retry the same call.
-// Instagram and TikTok have no delete API, so posts there stay live.
 ```
+
+On a published post, delete means delete on the platform: Chirpie tells the platform first and reports the post deleted only once the platform confirms it is gone. If the platform refuses, nothing changes and the call throws `502 upstream_error`: retry the same call. On a post that has not gone out, nothing reaches a platform. A queued post is cancelled and its quota returned, named in `cancelled_ids`. A draft is simply marked deleted, named in `deleted_ids`, and nothing is returned, because a draft never counted against any quota: do not tell the user a deleted draft gave them quota back.
+
+**The post is never removed from Chirpie.** It keeps its id and its history with `status: "deleted"`, so `getPost` still returns it.
+
+Instagram and TikTok publish no delete API, so a published post there throws `501 delete_unsupported` and nothing changes. Tell the user to delete it in the platform's own app, and offer to hide it.
+
+Delete reaches the platform and cannot be undone, so confirm with the user first. Hiding is the reversible alternative.
+
+## Hide a Post
+
+```typescript
+await chirpie.hidePost("post-uuid");
+await chirpie.unhidePost("post-uuid");
+```
+
+Hiding takes a post out of the user's Chirpie listings and nothing else. **Nothing reaches the platform**: the post stays exactly as it is, keeps its analytics and its comments, and `unhidePost` puts it back. Nothing is charged and no quota moves.
+
+Hide is the answer when the user wants a post out of their way; delete is the answer when they want it taken down. A hidden post is left out of `listPosts` unless `include_hidden: true`, and is always readable by id with `getPost`.
+
+**Hiding a queued post does not stop it publishing.** Hide only decides what Chirpie shows; the scheduler pays no attention to it. To stop a scheduled post going out, delete it, which cancels it and returns its quota.
+
+A thread, or a multi-account send, is hidden as the one thing it was made as, so `hidden_ids` can name more posts than the id you passed. Unhiding a post that was never hidden succeeds and changes nothing.
 
 ## Comments and Replies
 
