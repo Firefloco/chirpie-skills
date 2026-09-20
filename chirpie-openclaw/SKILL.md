@@ -108,6 +108,12 @@ curl -s "https://chirpie.ai/api/v1/posts?status=scheduled&limit=50" \
 curl -s https://chirpie.ai/api/v1/posts/POST_ID \
   -H "Authorization: Bearer $CHIRPIE_API_KEY"
 
+# Edit one that has not gone out yet. Leaving schedule_at out keeps its time.
+curl -s -X PATCH https://chirpie.ai/api/v1/posts/POST_ID \
+  -H "Authorization: Bearer $CHIRPIE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Now with the typo fixed"}'
+
 # Delete (also removes it from the platform, except Instagram)
 curl -s -X DELETE https://chirpie.ai/api/v1/posts/POST_ID \
   -H "Authorization: Bearer $CHIRPIE_API_KEY"

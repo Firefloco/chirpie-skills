@@ -86,6 +86,8 @@ chirpie posts                           # List recent posts
 chirpie posts --status published        # Filter by status
 chirpie posts --limit 50               # More results
 chirpie posts get POST_UUID            # Get single post
+chirpie posts update POST_UUID --text "Fixed"   # Edit a queued post, keeping its time
+chirpie posts update POST_UUID --schedule-at 2027-04-02T09:00:00Z  # Move it
 chirpie posts delete POST_UUID         # Delete a post
 chirpie posts --json                   # JSON output
 ```

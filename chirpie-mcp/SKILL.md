@@ -182,6 +182,17 @@ Get a single post by ID.
 |-----------|------|----------|-------------|
 | `id` | string | Yes | Post UUID |
 
+### chirpie_update_post
+
+Edit a post that has not published yet. Leaving `schedule_at` out keeps the time the post already has, so this never publishes anything. Only a post that has not published yet can be edited: one that is publishing, published, failed or deleted answers `409 post_not_editable`. Editing does not count against the monthly quota. Rescheduling one post of a thread moves every part of it, and the response lists them in `rescheduled_post_ids`.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | string | Yes | Post UUID |
+| `text` | string | No | Replacement text |
+| `media_urls` | string[] | No | Replacement media URLs. An empty array removes the media |
+| `schedule_at` | string | No | New ISO 8601 publish time, in the future and carrying a timezone |
+
 ### chirpie_delete_post
 
 Delete a post (also removes it from the platform if published, except Instagram, which has no delete API). Deleting any post of a scheduled thread cancels the whole thread.

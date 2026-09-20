@@ -43,6 +43,14 @@ A missing required field is named: `POST /api/v1/posts {}` returns `account_id a
 
 Only these fields are accepted. Any other top-level field returns `400 bad_request`. That includes `scheduled_at` (the field name in the *response*), which is rejected with an `Unknown field 'scheduled_at'` error suggesting `schedule_at`. Never send back a whole post object you read from the API.
 
+### Editing a post that has not gone out
+
+`PATCH /api/v1/posts/:id` changes `text`, `media_urls` or `schedule_at` on a post still waiting to publish. All three are optional, and it accepts only those three: `account_id` is not among them, because an edit never moves a post to another account.
+
+**Leaving `schedule_at` out keeps the time the post already has.** The call never publishes anything.
+
+Only a post that has not published yet can be edited. A `publishing`, `published`, `failed` or `deleted` post answers `409 post_not_editable`. Editing does not count against the monthly quota. Rescheduling one post of a thread moves every part of it, and `rescheduled_post_ids` names them.
+
 ### Response (201)
 
 ```json

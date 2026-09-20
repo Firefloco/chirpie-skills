@@ -61,6 +61,11 @@ const posts = await chirpie.listPosts({
 // Get a single post
 const post = await chirpie.getPost("post-uuid");
 
+// Edit a post that has not published yet. Leaving `schedule_at` out keeps the
+// time it already has, so this never publishes anything.
+await chirpie.updatePost("post-uuid", { text: "Now with the typo fixed" });
+await chirpie.updatePost("post-uuid", { schedule_at: "2027-04-02T09:00:00Z" });
+
 // Delete a post. Removes it from the platform first, and only then from Chirpie.
 // If the platform refuses, nothing changes and the call throws: just retry.
 const result = await chirpie.deletePost("post-uuid");

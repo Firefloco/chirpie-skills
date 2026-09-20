@@ -99,6 +99,30 @@ that has any.
 - After 3 failures → `status: "failed"` with `error_message`
 - Threads: if any post fails, the whole thread is rescheduled
 
+## Changing a Scheduled Post
+
+`PATCH /api/v1/posts/:id` edits a post that has not gone out yet. `text`, `media_urls` and `schedule_at` are all optional, and only what is sent changes.
+
+```bash
+# Fix the words, keep the time
+curl -X PATCH https://chirpie.ai/api/v1/posts/POST_ID \
+  -H "Authorization: Bearer $CHIRPIE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Now with the typo fixed"}'
+
+# Move it, keep the words
+curl -X PATCH https://chirpie.ai/api/v1/posts/POST_ID \
+  -H "Authorization: Bearer $CHIRPIE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"schedule_at": "2027-04-02T09:00:00Z"}'
+```
+
+**Leaving `schedule_at` out keeps the time the post already has.** The call never publishes anything.
+
+A new time obeys the same rules as the original: in the future, and at least 5 minutes from any other scheduled post on the same account (the post being moved does not count against itself). Rescheduling one post of a thread moves every part of it, and `rescheduled_post_ids` names them.
+
+Only a post that has not published yet can be edited: `409 post_not_editable` otherwise. Editing does not count against the monthly quota.
+
 ## Scheduled Post Limits
 
 Scheduled posts have a separate monthly quota:
