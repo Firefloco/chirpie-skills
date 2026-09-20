@@ -1,6 +1,6 @@
 ---
 name: chirpie-scheduling
-description: Schedule posts and threads for future publishing with Chirpie. Covers timing, retries, cancellation, and scheduled post limits.
+description: Schedule posts and threads for future publishing with Chirpie. Covers timing, retries, cancellation, drafts and promoting them, and scheduled post limits.
 ---
 
 # Chirpie Scheduling
@@ -102,7 +102,7 @@ that has any.
 
 ## Changing a Scheduled Post
 
-`PATCH /api/v1/posts/:id` edits a post that has not gone out yet. `text`, the media (`media`, `media_ids` or `media_urls`) and `schedule_at` are all optional, and only what is sent changes.
+`PATCH /api/v1/posts/:id` edits a post that has not gone out yet. `text`, the media (`media`, `media_ids` or `media_urls`) and `schedule_at` are all optional, and only what is sent changes. On a draft it also takes `draft` and `publish`: see "Drafts" below.
 
 ```bash
 # Fix the words, keep the time
@@ -118,11 +118,41 @@ curl -X PATCH https://chirpie.ai/api/v1/posts/POST_ID \
   -d '{"schedule_at": "2027-04-02T09:00:00Z"}'
 ```
 
-**Leaving `schedule_at` out keeps the time the post already has.** The call never publishes anything.
+**Leaving `schedule_at` out keeps the time the post already has.** The call never publishes a queued post. Promoting a draft is the one thing it does publish, and only when the request asks for it.
 
 A new time obeys the same rules as the original: in the future, and at least 5 minutes from any other scheduled post on the same account (the post being moved does not count against itself). Rescheduling one post of a thread moves every part of it, and `rescheduled_post_ids` names them.
 
-Only a post that has not published yet can be edited: `409 post_not_editable` otherwise. Editing does not count against the monthly quota.
+Only a post that has not published yet can be edited, a scheduled post or a draft: `409 post_not_editable` otherwise, which includes a draft somebody else already promoted. Editing does not count against the monthly quota.
+
+## Drafts
+
+`draft: true` on a create saves the content and sends nothing. A draft never publishes on its own and never enters the scheduler queue, so it costs neither quota until it is promoted. A `schedule_at` on a draft is only the time the customer has in mind, and need not be in the future.
+
+```typescript
+const draft = await chirpie.createPost({
+  account_id: "YOUR_ACCOUNT_ID",
+  text: "Half an idea. Finish it later.",
+  schedule_at: "2026-03-24T12:00:00Z",
+  draft: true,
+});
+// draft.status === "draft"; draft.warnings says what would go wrong if it were sent
+
+const drafts = await chirpie.listPosts({ status: "draft" });
+
+// Change only the time it remembers
+await chirpie.updatePost(draft.id, { schedule_at: "2027-03-25T12:00:00Z", draft: true });
+
+// Promote it: queue it, or send it now. Promoting needs a future time.
+await chirpie.updatePost(draft.id, { schedule_at: "2027-03-25T12:00:00Z" });
+await chirpie.updatePost(draft.id, { publish: true });
+```
+
+Rules to hold on to:
+
+- `publish: true` and `schedule_at` are never valid together (400). `draft: false` is refused with a 400 saying to send one of them. On a post that is not a draft, both `publish` and `draft` are 400.
+- Promotion runs every rule a create runs, the 5 minute spacing and the two-post thread minimum included, and spends the quota the draft never spent. Anything refused leaves the draft exactly as it was.
+- The answer is a **new** post carrying `promoted_from_draft_id`, or `promoted_from_draft_ids` for a draft thread, which is promoted whole. The draft's own id is gone.
+- A draft whose remembered time passes stays a draft. Nothing publishes late and nothing is cancelled.
 
 ## Scheduled Post Limits
 
@@ -141,8 +171,8 @@ Both `posts` and `scheduled` limits are checked when creating scheduled content.
 
 ## Common Pitfalls
 
-1. **The field is `schedule_at`, not `scheduled_at`.** `scheduled_at` is the field name in the *response*. Sending it returns a `400` error naming the unknown field `scheduled_at` and suggesting `schedule_at`; the post is not published. Only `account_id`, `text`, `media`, `media_ids`, `media_urls` and `schedule_at` (or `account_id`, `posts`, `schedule_at` for a thread) are accepted, so do not send back a whole post object you read from the API.
-2. **`schedule_at` must be in the future, absolute, and carry a timezone.** Each failure has its own 400 message: no timezone ("schedule_at is missing a timezone, so the instant it names is ambiguous. Add 'Z' for UTC or an offset like '+02:00'."), a relative offset such as `+30m` ("schedule_at must be an absolute ISO 8601 timestamp, not a relative offset like '+30m'."), anything else malformed ("schedule_at must be an ISO 8601 timestamp."). Past datetimes also return 400.
+1. **The field is `schedule_at`, not `scheduled_at`.** `scheduled_at` is the field name in the *response*. Sending it returns a `400` error naming the unknown field `scheduled_at` and suggesting `schedule_at`; the post is not published. Only `account_id`, `account_ids`, `account_configurations`, `text`, `media`, `media_ids`, `media_urls`, `schedule_at` and `draft` (or `account_id`, `account_ids`, `account_configurations`, `posts`, `schedule_at`, `draft` for a thread) are accepted, so do not send back a whole post object you read from the API.
+2. **`schedule_at` must be in the future, absolute, and carry a timezone**, except on a draft, where it is only a remembered time. Each failure has its own 400 message: no timezone ("schedule_at is missing a timezone, so the instant it names is ambiguous. Add 'Z' for UTC or an offset like '+02:00'."), a relative offset such as `+30m` ("schedule_at must be an absolute ISO 8601 timestamp, not a relative offset like '+30m'."), anything else malformed ("schedule_at must be an ISO 8601 timestamp."). Past datetimes also return 400.
 3. **Times are UTC.** Convert from local time before sending.
 4. **Thread atomicity.** You can't cancel individual posts in a scheduled thread: delete any one post and the whole thread is canceled.
 5. **Platform rate limits.** If any platform rate-limits your account, scheduled posts will retry automatically.

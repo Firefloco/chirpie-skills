@@ -1,6 +1,6 @@
 ---
 name: chirpie-cli
-description: Use the Chirpie CLI to post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram from the terminal, one account or several at once. Covers installation, browser-based login, and all commands.
+description: Use the Chirpie CLI to post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram from the terminal, one account or several at once. Covers installation, browser-based login, drafts, and all commands.
 ---
 
 # Chirpie CLI
@@ -62,6 +62,7 @@ chirpie post "Your tweet text"
 chirpie post "Scheduled!" -s "2026-04-01T14:00:00Z"
 chirpie post "Specific account" -a ACCOUNT_UUID
 chirpie post "With a local file" -m ./shot.png --alt "The new dashboard"
+chirpie post "Half an idea" --draft
 chirpie post "JSON output" --json
 chirpie post "To two accounts at once" -a ACCOUNT_A -a ACCOUNT_B
 chirpie post "With its own text for one" -a ACCOUNT_A -a ACCOUNT_B \
@@ -75,6 +76,7 @@ chirpie post "With its own text for one" -a ACCOUNT_A -a ACCOUNT_B \
 | `-m, --media <files...>` | Image or video files on this machine, or public URLs. Files are uploaded first |
 | `--alt <text...>` | Describe each item for screen readers, in the same order as `--media` |
 | `-s, --schedule <datetime>` | ISO 8601 datetime with a timezone (`...Z` or `+02:00`); normalized to UTC |
+| `--draft` | Save without publishing. Nothing is sent and nothing counts against the quota. Anything that would go wrong is printed, one warning per line |
 | `--json` | Machine-readable JSON output |
 
 ### chirpie thread
@@ -86,7 +88,7 @@ chirpie thread "First post" "Second post" -a ACCOUNT_A -a ACCOUNT_B \
   --config '{"ACCOUNT_B":{"posts":[{"text":"a"},{"text":"b"},{"text":"c"}]}}'
 ```
 
-Min 2 posts, max 25. Same flags as `chirpie post`. Repeat `-a` to publish the thread to several accounts at once; a `--config` override's `posts` replaces the whole thread for that account.
+Min 2 posts, max 25, or 1 to 25 with `--draft`. Same flags as `chirpie post`. Repeat `-a` to publish the thread to several accounts at once; a `--config` override's `posts` replaces the whole thread for that account.
 
 A multi-account send reports per account: some can publish while others fail, and an account that fails gives its quota back. A problem the platform rules catch up front (character limit, media rules, the X link-post rule) refuses the whole call and publishes nothing. Full detail: https://chirpie.ai/docs/multi-account
 
@@ -103,6 +105,24 @@ chirpie posts update POST_UUID --schedule-at 2027-04-02T09:00:00Z  # Move it
 chirpie posts delete POST_UUID         # Delete a post
 chirpie posts --json                   # JSON output
 ```
+
+### Drafts
+
+```bash
+chirpie post "Half an idea" --draft     # Save it, send nothing
+chirpie thread "Opening line" --draft   # A draft thread may be one post
+chirpie posts --status draft            # See what is saved
+chirpie posts update POST_UUID --schedule-at 2027-04-02T09:00:00Z --keep-draft  # Change only the remembered time
+chirpie posts update POST_UUID --schedule-at 2027-04-02T09:00:00Z  # Promote: queue it
+chirpie posts publish POST_UUID         # Promote: send it now
+chirpie posts publish POST_UUID -t "The final wording"
+```
+
+A draft reaches no platform and costs no quota until it is promoted. Saving one
+prints, one per line, anything that would go wrong if it were sent as it stands.
+Promotion runs every rule a create runs and takes the quota, so a draft that
+would be refused stays a draft, unchanged. A draft thread is promoted whole.
+`--keep-draft` is valid on its own as well.
 
 ### chirpie accounts
 

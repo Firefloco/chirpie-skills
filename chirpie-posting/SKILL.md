@@ -1,6 +1,6 @@
 ---
 name: chirpie-posting
-description: Create posts and threads on X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram via the Chirpie API. Covers single posts, posting to several accounts at once with per-account overrides, multi-post threads, listing, deletion, comments and replies, and analytics.
+description: Create posts and threads on X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram via the Chirpie API. Covers single posts, posting to several accounts at once with per-account overrides, multi-post threads, drafts, listing, deletion, comments and replies, and analytics.
 ---
 
 # Chirpie Posting
@@ -43,11 +43,12 @@ The file type is read from the file's own first bytes, never from its name. Uplo
 | `account_id` | UUID string | Yes, unless `account_ids` is given | Connected account ID |
 | `account_ids` | UUID string[] | Yes, unless `account_id` is given | 1 to 25 connected accounts, published to in one request. Duplicates are refused. Naming it selects the fan-out response, even for one account. See "Post to several accounts at once" below |
 | `account_configurations` | object | No | Per-account overrides keyed by account ID. Only with `account_ids`, and every key must be in it. Each value takes `text` and one of `media`, `media_ids`, `media_urls` |
-| `text` | string | Yes | X: 1-280 (25,000 on Premium). Bluesky: 300. LinkedIn: 3,000. Threads: 500. Mastodon: 500. Instagram: 2,200. Facebook: 63,206. Telegram: 4,096, or 1,024 when the post carries media. |
+| `text` | string | Yes, unless `draft` is true | X: 1-280 (25,000 on Premium). Bluesky: 300. LinkedIn: 3,000. Threads: 500. Mastodon: 500. Instagram: 2,200. Facebook: 63,206. Telegram: 4,096, or 1,024 when the post carries media. |
 | `media` | object[] | No | Uploaded files and public links, each `{ id? , url?, alt? }`. `id` comes from `POST /api/v1/media`; `alt` describes the item for screen readers and is sent to X, Bluesky, LinkedIn, Mastodon, Instagram and Facebook. Use one of `media`, `media_ids` and `media_urls`, not several. |
 | `media_ids` | string[] | No | Ids from `POST /api/v1/media`, when no alt text is needed. |
 | `media_urls` | string[] | No | Public image/video URLs. Max images per post: X 4, Bluesky 4, LinkedIn 4, Threads 1, Mastodon 4, Instagram 10, Facebook 10, Telegram 10. Video: X, Mastodon and Telegram only, 1 per post and never alongside images. Instagram REQUIRES at least one image. Anything a platform cannot take is refused with `400 unsupported_media`, never dropped. |
-| `schedule_at` | ISO 8601 | No | Future datetime for scheduling. Must be absolute and carry a timezone (`...Z` or `+02:00`); normalized to UTC |
+| `schedule_at` | ISO 8601 | No | Future datetime for scheduling. Must be absolute and carry a timezone (`...Z` or `+02:00`); normalized to UTC. On a draft it is only the time to remember, and may be any time at all |
+| `draft` | boolean | No | Save without sending. Nothing reaches the platform and nothing counts against the quota. See "Drafts" below |
 
 A missing required field is named: `POST /api/v1/posts {}` returns `account_id and text are required`.
 
@@ -55,11 +56,11 @@ Only these fields are accepted. Any other top-level field returns `400 bad_reque
 
 ### Editing a post that has not gone out
 
-`PATCH /api/v1/posts/:id` changes `text`, the media (`media`, `media_ids` or `media_urls`) or `schedule_at` on a post still waiting to publish. All are optional, and it accepts only those: `account_id` is not among them, because an edit never moves a post to another account.
+`PATCH /api/v1/posts/:id` changes `text`, the media (`media`, `media_ids` or `media_urls`) or `schedule_at` on a post still waiting to publish, and on a draft also takes `draft` and `publish`. All are optional, and it accepts only those: `account_id` is not among them, because an edit never moves a post to another account.
 
-**Leaving `schedule_at` out keeps the time the post already has.** The call never publishes anything.
+**Leaving `schedule_at` out keeps the time the post already has.** The call never publishes a queued post. A draft is the one thing it can send, and only when asked: see "Drafts" below.
 
-Only a post that has not published yet can be edited. A `publishing`, `published`, `failed` or `deleted` post answers `409 post_not_editable`. Editing does not count against the monthly quota. Rescheduling one post of a thread moves every part of it, and `rescheduled_post_ids` names them.
+Only a post that has not published yet can be edited, which means a scheduled post or a draft. A `publishing`, `published`, `failed` or `deleted` post answers `409 post_not_editable`, and so does a draft that has already been promoted. Editing does not count against the monthly quota. Rescheduling one post of a thread moves every part of it, and `rescheduled_post_ids` names them.
 
 ### Response (201)
 
@@ -214,6 +215,50 @@ curl -X POST https://chirpie.ai/api/v1/threads \
 - LinkedIn, Instagram, and Facebook degrade gracefully: each item is published as a standalone post.
 - Thread counts as N posts against your monthly quota
 
+## Drafts
+
+`draft: true` on `POST /api/v1/posts` or `POST /api/v1/threads` saves the content and sends nothing. The post is stored with `status: "draft"`, never publishes on its own, never enters the scheduler queue, and costs neither the monthly post quota nor the scheduled-post quota until it is promoted.
+
+A draft is held to far less than a post: the text may be empty or absent, media may be missing even where the platform requires it, a draft thread may be 1 to 25 parts where a real thread needs 2, and a `schedule_at` is only the time the customer has in mind, so it need not be in the future. Still refused as always: an account that is not yours or not active (404), a media id you do not hold (`404 media_not_found`), an unknown top-level field, text over 25,000 characters, more than 25 ids in `account_ids`, a duplicate id, and two media spellings at once (400).
+
+```typescript
+const draft = await chirpie.createPost({
+  account_id: "YOUR_ACCOUNT_ID",
+  text: "Half an idea. Finish it later.",
+  draft: true,
+});
+for (const w of draft.warnings) console.log(w.account_id, w.code, w.message);
+
+// Ask for them by name: a listing with no status leaves drafts out.
+const drafts = await chirpie.listPosts({ status: "draft" });
+```
+
+### `warnings`
+
+Every draft answer carries `warnings`, always present and empty when nothing would go wrong. Each entry is `{ account_id, platform, code, message }` and says what would happen to that account if the draft were sent as it stands. Anything that would really be refused carries the **same code and the same sentence** the API would answer the send with (`bad_request`, `unsupported_media`, `x_link_posts_require_paid_plan`). Three codes describe a change rather than a refusal:
+
+| Code | Meaning |
+|------|---------|
+| `thread_not_native` | The platform has no reply chain, so each part publishes as its own standalone post |
+| `x_link_post_billed` | The post contains a link, so X bills it on top of the monthly quota |
+| `schedule_at_in_past` | The remembered time has already passed |
+
+Warnings never stop the save. An edit that leaves the post a draft answers with `warnings` too, rather than an error.
+
+### Promoting a draft
+
+`PATCH /api/v1/posts/:id` promotes, and only when asked:
+
+- `schedule_at` queues it as a real scheduled post at that time.
+- `publish: true` publishes it now. Never valid together with `schedule_at` (400).
+- `draft: true` alongside `schedule_at` keeps it a draft and only changes the time it remembers.
+- `draft: false` is refused with a 400 saying to send `schedule_at` or `publish: true` instead.
+- On a post that is not a draft, `publish` and `draft` are both 400.
+
+Promotion runs every rule a create runs (character limits, media rules, X link billing, the 5 minute schedule spacing, the two-post thread minimum) and spends the quota the draft never spent. Anything refused leaves the draft exactly as it was. The answer is the **new** post plus `promoted_from_draft_id`, or `promoted_from_draft_ids` for a draft thread, which is promoted whole: promoting any part queues or publishes all of it. The draft itself is gone, so do not reuse its id.
+
+Deleting a draft refunds nothing, because nothing was charged, and it deletes the whole draft: every account it was addressed to and every part of it, returning `deleted_ids`.
+
 ## List Posts
 
 ```typescript
@@ -338,6 +383,7 @@ try {
 ```
 immediate:  → published | failed
 scheduled:  → scheduled → publishing → published | failed
+draft:      → draft (stays there until promoted: schedule_at → scheduled, publish → published)
 deleted:    → deleted (also removed from platform if published, except Instagram)
 ```
 

@@ -1,6 +1,6 @@
 ---
 name: chirpie-mcp
-description: Connect the Chirpie MCP server to Claude, Claude Code, Cursor, ChatGPT, or other AI agents, hosted (one URL) or local. Lists all available tools and their parameters.
+description: Connect the Chirpie MCP server to Claude, Claude Code, Cursor, ChatGPT, or other AI agents, hosted (one URL) or local. Lists all available tools and their parameters, including saving and promoting drafts.
 ---
 
 # Chirpie MCP Server
@@ -164,10 +164,11 @@ Create a single post on any connected platform with optional media, on one accou
 | `account_id` | string | Yes, unless `account_ids` is given | Account UUID |
 | `account_ids` | string[] | Yes, unless `account_id` is given | 1 to 25 account UUIDs. Publishes to all of them in one call and answers with a `group_id` plus one result per account, in the order given |
 | `account_configurations` | object | No | Per-account overrides keyed by account UUID, each taking `text` and media. Only with `account_ids`, and every key must be in it. A field left out inherits the call's own; media replaces rather than merges, and `media: []` publishes that account with none |
-| `text` | string | Yes | Post text. Max varies: X 280 (25,000 on Premium), Bluesky 300, LinkedIn 3,000, Threads 500, Mastodon 500, Instagram 2,200, Facebook 63,206, Telegram 4,096. |
+| `text` | string | Yes, unless `draft` is true | Post text. Max varies: X 280 (25,000 on Premium), Bluesky 300, LinkedIn 3,000, Threads 500, Mastodon 500, Instagram 2,200, Facebook 63,206, Telegram 4,096. |
 | `media` | object[] | No | Uploaded files and public links, each `{ id? , url?, alt? }`, with **either** `id` (from `chirpie_upload_media`) **or** `url` per item, never both. `alt` describes the item for screen readers. Use this **or** `media_urls`, not both. |
 | `media_urls` | string[] | No | Public image/video URLs, for a post that needs no alt text. Max per post: X 4, Bluesky 4, LinkedIn 4, Threads 1, Mastodon 4, Instagram 10, Facebook 10, Telegram 10. Instagram REQUIRES media. |
-| `schedule_at` | string | No | ISO 8601 datetime, must be future and carry a timezone (`...Z` or `+02:00`); normalized to UTC |
+| `schedule_at` | string | No | ISO 8601 datetime, must be future and carry a timezone (`...Z` or `+02:00`); normalized to UTC. On a draft it is only the time to remember |
+| `draft` | boolean | No | Save the post without sending it. Nothing reaches the platform and nothing counts against the quota. The answer carries `warnings`: see "Drafts" below |
 
 ### chirpie_thread
 
@@ -177,9 +178,10 @@ Create a multi-post thread on any connected platform, on one account or on sever
 |-----------|------|----------|-------------|
 | `account_id` | string | Yes, unless `account_ids` is given | Account UUID |
 | `account_ids` | string[] | Yes, unless `account_id` is given | 1 to 25 account UUIDs. Publishes the thread to all of them in one call and answers with a `group_id` plus one result per account |
-| `account_configurations` | object | No | Per-account overrides keyed by account UUID, each taking `posts`, which replaces the whole array for that account (still 2-25 parts). Only with `account_ids`, and every key must be one of the ids named there |
-| `posts` | array | Yes | Array of `{ text, media?, media_ids?, media_urls? }` objects (2-25). Media limits vary by platform. |
-| `schedule_at` | string | No | ISO 8601 datetime. Applies to the whole group |
+| `account_configurations` | object | No | Per-account overrides keyed by account UUID, each taking `posts`, which replaces the whole array for that account (still 2-25 parts, or 1-25 on a draft). Only with `account_ids`, and every key must be one of the ids named there |
+| `posts` | array | Yes | Array of `{ text, media?, media_ids?, media_urls? }` objects (2-25, or 1-25 on a draft). Media limits vary by platform. |
+| `schedule_at` | string | No | ISO 8601 datetime. Applies to the whole group. On a draft it is only the time to remember |
+| `draft` | boolean | No | Save the thread without sending it. A draft thread may be a single part while it is still being written |
 
 **Reading a multi-account result.** `results` is in the order the accounts were named, and each entry carries `account_id`, `platform`, `success`, `platform_post_url`, `status`, `error`, plus `post_id`/`post` for a post and `thread_id`/`thread` for a thread. Some accounts can succeed while others fail, so report per account rather than declaring the whole send done. A validation problem (character limit, media rules, the X link-post rule) refuses the whole call with a message prefixed `Account <id>: ` and publishes nothing; only a platform failure is per account, and the quota for that account is given back.
 
@@ -189,7 +191,7 @@ List posts with optional filters.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `status` | string | No | Filter: draft, scheduled, published, failed, deleted |
+| `status` | string | No | Filter: draft, scheduled, publishing, published, failed, deleted. `draft` lists posts saved but not sent |
 | `account_id` | string | No | Filter by account |
 | `group_id` | string | No | Every post of one multi-account send, by the `group_id` its create call returned |
 | `limit` | number | No | Results to return |
@@ -204,7 +206,7 @@ Get a single post by ID.
 
 ### chirpie_update_post
 
-Edit a post that has not published yet. Leaving `schedule_at` out keeps the time the post already has, so this never publishes anything. Only a post that has not published yet can be edited: one that is publishing, published, failed or deleted answers `409 post_not_editable`. Editing does not count against the monthly quota. Rescheduling one post of a thread moves every part of it, and the response lists them in `rescheduled_post_ids`.
+Edit a post that has not published yet, or finish a draft. Leaving `schedule_at` out keeps the time a queued post already has, so this never publishes one. Only a post that has not published yet can be edited, a scheduled post or a draft: one that is publishing, published, failed or deleted answers `409 post_not_editable`, and so does a draft that has already been promoted. Editing does not count against the monthly quota. Rescheduling one post of a thread moves every part of it, and the response lists them in `rescheduled_post_ids`.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -212,7 +214,17 @@ Edit a post that has not published yet. Leaving `schedule_at` out keeps the time
 | `text` | string | No | Replacement text |
 | `media` | object[] | No | Replacement media, each `{ id? , url?, alt? }`. An empty array removes the media |
 | `media_urls` | string[] | No | Replacement media URLs. An empty array removes the media |
-| `schedule_at` | string | No | New ISO 8601 publish time, in the future and carrying a timezone |
+| `schedule_at` | string | No | New ISO 8601 publish time, in the future and carrying a timezone. On a draft it promotes: the draft becomes a scheduled post, unless `draft` is true |
+| `draft` | boolean | No | Keep a draft a draft, so `schedule_at` only changes the time it remembers |
+| `publish` | boolean | No | Publish a draft now. Only on a draft, and never together with `schedule_at` |
+
+### Drafts
+
+`draft: true` on `chirpie_post` or `chirpie_thread` saves the content and sends nothing: no platform call, no quota, and a draft never publishes on its own. It is held to far less than a post, so the text may be empty, media may be missing where the platform requires it, a draft thread may be a single part, and a `schedule_at` need not be in the future.
+
+Every draft answer carries `warnings`, always present and empty when nothing would go wrong. Each entry is `{ account_id, platform, code, message }`, and a warning for something that would really be refused carries the same `code` and sentence the send would answer with. Three describe a change rather than a refusal: `thread_not_native` (the parts publish as standalone posts), `x_link_post_billed` (the X link surcharge applies), `schedule_at_in_past` (the remembered time has passed). Report them to the user instead of assuming the draft is ready.
+
+Promote with `chirpie_update_post`: `schedule_at` queues it, `publish: true` sends it now, and they are never valid together. Promotion runs every rule a create runs and takes the quota, so anything refused leaves the draft exactly as it was. The answer is a new post carrying `promoted_from_draft_id`, or `promoted_from_draft_ids` for a draft thread, which is promoted whole. The draft's own id is then gone.
 
 ### chirpie_delete_post
 
@@ -324,6 +336,8 @@ Once configured, ask your AI agent:
 - "Show me my recent posts"
 - "What are the analytics for my last published post?"
 - "Schedule a post for tomorrow at 9am UTC"
+- "Save this as a draft, I will decide on the wording later"
+- "Show me my drafts, then publish the one about the launch"
 - "List my connected accounts"
 - "Delete the post with ID xyz"
 

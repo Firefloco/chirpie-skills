@@ -1,6 +1,6 @@
 ---
 name: chirpie-sdk
-description: Use the @chirpie/sdk TypeScript client in your application. Covers installation, configuration, all methods including posting to several accounts at once, types, and error handling.
+description: Use the @chirpie/sdk TypeScript client in your application. Covers installation, configuration, all methods including posting to several accounts at once and saving drafts, types, and error handling.
 ---
 
 # Chirpie TypeScript SDK
@@ -85,7 +85,7 @@ const posts = await chirpie.listPosts({
 const post = await chirpie.getPost("post-uuid");
 
 // Edit a post that has not published yet. Leaving `schedule_at` out keeps the
-// time it already has, so this never publishes anything.
+// time it already has, so this never publishes a queued post.
 await chirpie.updatePost("post-uuid", { text: "Now with the typo fixed" });
 await chirpie.updatePost("post-uuid", { schedule_at: "2027-04-02T09:00:00Z" });
 
@@ -125,6 +125,52 @@ Validation (character limits, media rules, the X link-post rule) is run for
 every account up front, so a failure there refuses the whole request with a
 message prefixed `Account <id>: `. Only the platform call itself fails per
 account, and those land in `results[].error`.
+
+### Drafts
+
+```typescript
+// Save a post without sending it. Nothing reaches the platform, nothing counts
+// against either quota, and the text may even be empty.
+const draft = await chirpie.createPost({
+  account_id: "uuid",
+  text: "Half an idea. Finish it later.",
+  schedule_at: "2027-04-01T14:00:00Z",  // Optional, and only a time to remember
+  draft: true,
+});
+// draft.status === "draft". `warnings` is always present, empty when nothing
+// would go wrong: { account_id, platform, code, message } per problem.
+for (const w of draft.warnings) console.log(w.account_id, w.code, w.message);
+
+// A draft thread may be a single part while it is still being written.
+const draftThread = await chirpie.createThread({
+  account_id: "uuid",
+  posts: [{ text: "Opening line, rest to come" }],
+  draft: true,
+});
+
+// Ask for them by name: a listing with no status leaves drafts out.
+const drafts = await chirpie.listPosts({ status: "draft" });
+
+// Change only the time it remembers, still a draft
+await chirpie.updatePost("draft-uuid", {
+  schedule_at: "2027-04-02T09:00:00Z",
+  draft: true,
+});
+
+// Promote it: queue it for a time, or send it now. Never both (400).
+await chirpie.updatePost("draft-uuid", { schedule_at: "2027-04-02T09:00:00Z" });
+await chirpie.updatePost("draft-uuid", { publish: true });
+```
+
+A warning that would really be a refusal carries the same `code` and sentence
+the API would answer the send with. Three describe a change rather than a
+refusal: `thread_not_native`, `x_link_post_billed`, `schedule_at_in_past`.
+
+Promotion runs every rule a create runs and spends the quota the draft never
+spent, so anything refused leaves the draft exactly as it was. The answer is a
+new post carrying `promoted_from_draft_id`, or `promoted_from_draft_ids` for a
+draft thread, which is promoted whole. `draft: false` is refused with a 400, and
+`publish` or `draft` on a post that is not a draft is a 400 too.
 
 ### Accounts
 
@@ -241,6 +287,11 @@ import type {
   ApiKeyInfo,                 // API key metadata (prefix only)
   CreatePostInput,            // Input for createPost()
   CreateThreadInput,          // Input for createThread()
+  DraftWarning,               // One thing that would go wrong if a draft were sent
+  DraftPostResponse,          // createPost({ draft: true }): post + warnings
+  DraftThreadResponse,        // createThread({ draft: true }): thread + warnings
+  FanOutDraftPostResponse,    // A draft post saved for several accounts
+  FanOutDraftThreadResponse,  // A draft thread saved for several accounts
   ConnectBlueskyInput,        // Input for connectBlueskyAccount()
   ConnectLinkedInInput,       // Input for connectLinkedInAccount()
   LinkedInConnectTarget,      // "profile" | "pages"

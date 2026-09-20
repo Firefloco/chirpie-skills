@@ -1,6 +1,6 @@
 ---
 name: chirpie
-description: Chirpie social media API router. Use when user asks about posting to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, or Telegram, social media automation, scheduling posts, connecting social accounts, or using the Chirpie API/SDK/CLI/MCP/n8n node. Automatically routes to the specific skill based on their task.
+description: Chirpie social media API router. Use when user asks about posting to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, or Telegram, social media automation, scheduling posts, saving drafts, connecting social accounts, or using the Chirpie API/SDK/CLI/MCP/n8n node. Automatically routes to the specific skill based on their task.
 ---
 
 # Chirpie Skills Router
@@ -39,6 +39,11 @@ Chirpie is a social media API for AI agents and developers. Post to X/Twitter, B
 - Schedule posts and threads
 - Understand timing, retries, and limits
 - Cancel scheduled posts
+
+**Saving a draft, or finishing one** → Use `chirpie-scheduling`
+- `draft: true` on a post or thread saves it without sending it
+- The `warnings` a draft comes back with
+- Promoting it: `schedule_at` queues it, `publish: true` sends it now
 
 **Using the TypeScript SDK** → Use `chirpie-sdk`
 - Install and configure `@chirpie/sdk`
