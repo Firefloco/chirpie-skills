@@ -1,6 +1,6 @@
 ---
 name: chirpie-sdk
-description: Use the @chirpie/sdk TypeScript client in your application. Covers installation, configuration, all methods including posting to several accounts at once and saving drafts, types, and error handling.
+description: Use the @chirpie/sdk TypeScript client in your application. Covers installation, configuration, all methods including posting to several accounts at once, the first comment, and saving drafts, plus types and error handling.
 ---
 
 # Chirpie TypeScript SDK
@@ -56,7 +56,17 @@ const post = await chirpie.createPost({
   text: "Hello!",            // Required. Char limits: X 280 (25,000 Premium), Bluesky 300, LinkedIn 3,000, Threads 500, Mastodon 500, Instagram 2,200, Facebook 63,206, Telegram 4,096
   media: [{ url: "https://example.com/a.png", alt: "A bird" }],  // Optional. An entry takes `id` (from uploadMedia) or `url`, plus optional alt text. Max per post: X 4, Bluesky 4, LinkedIn 4, Threads 1, Mastodon 4, Instagram 10, Facebook 10, Telegram 10. Instagram REQUIRES media.
   schedule_at: "ISO8601",    // Optional, must be future
+  first_comment: "Full write-up: https://example.com",  // Optional. Published under the post the moment it goes out. X, Threads, Instagram and Facebook only; anywhere else the call throws 400 first_comment_unsupported. Counts as one post against the quota
 });
+
+// The post carries the first comment back:
+// post.first_comment = { text, status: "pending" | "posted" | "failed", comment_id, error }
+// A failed first comment never fails its post. Send it again with the text the
+// post already holds. That text cannot be changed once the post is out, so
+// set it while the post is still a draft or still queued, with updatePost.
+if (post.first_comment?.status === "failed") {
+  await chirpie.retryFirstComment(post.id);
+}
 
 // Post to several accounts in one call. Naming `account_ids` (1-25) instead of
 // `account_id` returns `{ group_id, results }` instead of a single post, even
@@ -88,6 +98,9 @@ const post = await chirpie.getPost("post-uuid");
 // time it already has, so this never publishes a queued post.
 await chirpie.updatePost("post-uuid", { text: "Now with the typo fixed" });
 await chirpie.updatePost("post-uuid", { schedule_at: "2027-04-02T09:00:00Z" });
+// Replace the first comment, or pass "" to remove it. This is also how a first
+// comment is added to a post that has not published yet.
+await chirpie.updatePost("post-uuid", { first_comment: "Full write-up: https://example.com" });
 
 // Delete a post. Takes it down from the platform first, and reports it deleted
 // only once the platform confirms it is gone. If the platform refuses, nothing
@@ -131,6 +144,7 @@ const thread = await chirpie.createThread({
     { text: "Second" },
   ],
   schedule_at: "ISO8601",    // Optional
+  first_comment: "Full write-up: https://example.com",  // Optional. One comment for the whole thread, published under the LAST part and reported on that part
 });
 
 // The same thread to several accounts. An override's `posts` replaces the whole
@@ -148,8 +162,8 @@ const { group_id, results } = await chirpie.createThread({
 A multi-account send reserves quota once for the whole group (one unit per
 account for a post, one per part per account for a thread). If it does not fit
 the plan the call throws `429 usage_limit_exceeded` and nothing publishes.
-Validation (character limits, media rules, the X link-post rule) is run for
-every account up front, so a failure there refuses the whole request with a
+Validation (character limits, media rules, whether the platform takes a first
+comment, the X link-post rule) is run for every account up front, so a failure there refuses the whole request with a
 message prefixed `Account <id>: `. Only the platform call itself fails per
 account, and those land in `results[].error`.
 
@@ -308,12 +322,14 @@ const metrics = await chirpie.getPostAnalytics("post-uuid");
 ```typescript
 import type {
   ApiPost,                    // Post object (includes `platform` field)
+  ApiFirstComment,            // A post's first comment: text, status, comment_id, error
   ApiThread,                  // Thread object returned from API
   ApiAccount,                 // Connected account (platform, username, display_name, avatar_url)
   ApiAnalytics,               // Post metrics
   ApiKeyInfo,                 // API key metadata (prefix only)
   CreatePostInput,            // Input for createPost()
   CreateThreadInput,          // Input for createThread()
+  UpdatePostInput,            // Input for updatePost()
   DraftWarning,               // One thing that would go wrong if a draft were sent
   DraftPostResponse,          // createPost({ draft: true }): post + warnings
   DraftThreadResponse,        // createThread({ draft: true }): thread + warnings

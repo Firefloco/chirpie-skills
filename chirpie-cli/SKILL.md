@@ -1,6 +1,6 @@
 ---
 name: chirpie-cli
-description: Use the Chirpie CLI to post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram from the terminal, one account or several at once. Covers installation, browser-based login, drafts, and all commands.
+description: Use the Chirpie CLI to post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram from the terminal, one account or several at once. Covers installation, browser-based login, drafts, first comments, and all commands.
 ---
 
 # Chirpie CLI
@@ -67,14 +67,16 @@ chirpie post "JSON output" --json
 chirpie post "To two accounts at once" -a ACCOUNT_A -a ACCOUNT_B
 chirpie post "With its own text for one" -a ACCOUNT_A -a ACCOUNT_B \
   --config '{"ACCOUNT_B":{"text":"Text for just this account"}}'
+chirpie post "Link in the first comment" --first-comment "Full write-up: https://example.com"
 ```
 
 | Flag | Description |
 |------|-------------|
 | `-a, --account <id>` | Account ID (auto-selects if only one). Repeat it to publish to several accounts in one call |
-| `--config <json-or-file>` | Per-account overrides for a multi-account post, as JSON or a path to a JSON file. Keyed by account ID, each value taking `text` and media. A field left out inherits the call's own; media replaces rather than merges |
+| `--config <json-or-file>` | Per-account overrides for a multi-account post, as JSON or a path to a JSON file. Keyed by account ID, each value taking `text`, media and `first_comment`. A field left out inherits the call's own; media replaces rather than merges, and `"first_comment": ""` is how one account publishes without the first comment the call is sending |
 | `-m, --media <files...>` | Image or video files on this machine, or public URLs. Files are uploaded first |
 | `--alt <text...>` | Describe each item for screen readers, in the same order as `--media` |
+| `--first-comment <text>` | Post this as a comment under the post, as soon as it goes out. X, Threads, Instagram and Facebook only, refused elsewhere rather than dropped. Counts as one post against the monthly quota |
 | `-s, --schedule <datetime>` | ISO 8601 datetime with a timezone (`...Z` or `+02:00`); normalized to UTC |
 | `--draft` | Save without publishing. Nothing is sent and nothing counts against the quota. Anything that would go wrong is printed, one warning per line |
 | `--json` | Machine-readable JSON output |
@@ -88,9 +90,9 @@ chirpie thread "First post" "Second post" -a ACCOUNT_A -a ACCOUNT_B \
   --config '{"ACCOUNT_B":{"posts":[{"text":"a"},{"text":"b"},{"text":"c"}]}}'
 ```
 
-Min 2 posts, max 25, or 1 to 25 with `--draft`. Same flags as `chirpie post`. Repeat `-a` to publish the thread to several accounts at once; a `--config` override's `posts` replaces the whole thread for that account.
+Min 2 posts, max 25, or 1 to 25 with `--draft`. Same flags as `chirpie post`, and `--first-comment` posts one comment under the thread's last post. Repeat `-a` to publish the thread to several accounts at once; a `--config` override's `posts` replaces the whole thread for that account.
 
-A multi-account send reports per account: some can publish while others fail, and an account that fails gives its quota back. A problem the platform rules catch up front (character limit, media rules, the X link-post rule) refuses the whole call and publishes nothing. Full detail: https://chirpie.ai/docs/multi-account
+A multi-account send reports per account: some can publish while others fail, and an account that fails gives its quota back. A problem the platform rules catch up front (character limit, media rules, whether the platform takes a first comment, the X link-post rule) refuses the whole call and publishes nothing. Full detail: https://chirpie.ai/docs/multi-account
 
 ### chirpie posts
 
@@ -102,6 +104,8 @@ chirpie posts --group GROUP_UUID       # Every post of one multi-account send
 chirpie posts get POST_UUID            # Get single post
 chirpie posts update POST_UUID --text "Fixed"   # Edit a queued post, keeping its time
 chirpie posts update POST_UUID --schedule-at 2027-04-02T09:00:00Z  # Move it
+chirpie posts update POST_UUID --first-comment "Link: https://example.com"  # Set it; "" removes it
+chirpie posts first-comment POST_UUID  # Post a first comment that failed, again
 chirpie posts delete POST_UUID         # Take it down from the platform
 chirpie posts hide POST_UUID           # Hide it from Chirpie only, reversibly
 chirpie posts unhide POST_UUID         # Show it again
@@ -110,6 +114,8 @@ chirpie posts --json                   # JSON output
 ```
 
 On a published post, delete takes it down from the platform and succeeds only once the platform confirms it is gone. On one that has not gone out, nothing reaches a platform: a queued post is cancelled and its quota returned, while a draft is simply marked deleted, since a draft never counted against any quota. Chirpie keeps the post either way, marked deleted, so `chirpie posts --status deleted` still lists it. Instagram and TikTok publish no delete API, so a published post there is refused with `delete_unsupported`: delete it in the platform's own app.
+
+A first comment never fails its post, so a published post can be carrying one that did not go out. `chirpie posts first-comment <id>` re-sends the text the post already carries, and counts as one post against the monthly quota. That text cannot be changed once the post is out, so set it while the post is still a draft or still queued, with `chirpie posts update <id> --first-comment "..."`.
 
 Hide reaches no platform at all. It only decides whether Chirpie shows the post, and `unhide` is the exact undo. A thread, or a multi-account send, is hidden as the one thing it was made as.
 

@@ -1,6 +1,6 @@
 ---
 name: chirpie-mcp
-description: Connect the Chirpie MCP server to Claude, Claude Code, Cursor, ChatGPT, or other AI agents, hosted (one URL) or local. Lists all available tools and their parameters, including saving and promoting drafts.
+description: Connect the Chirpie MCP server to Claude, Claude Code, Cursor, ChatGPT, or other AI agents, hosted (one URL) or local. Lists all available tools and their parameters, including first comments and saving and promoting drafts.
 ---
 
 # Chirpie MCP Server
@@ -163,10 +163,11 @@ Create a single post on any connected platform with optional media, on one accou
 |-----------|------|----------|-------------|
 | `account_id` | string | Yes, unless `account_ids` is given | Account UUID |
 | `account_ids` | string[] | Yes, unless `account_id` is given | 1 to 25 account UUIDs. Publishes to all of them in one call and answers with a `group_id` plus one result per account, in the order given |
-| `account_configurations` | object | No | Per-account overrides keyed by account UUID, each taking `text` and media. Only with `account_ids`, and every key must be in it. A field left out inherits the call's own; media replaces rather than merges, and `media: []` publishes that account with none |
+| `account_configurations` | object | No | Per-account overrides keyed by account UUID, each taking `text`, `first_comment` (`""` publishes that account with none) and media. Only with `account_ids`, and every key must be in it. A field left out inherits the call's own; media replaces rather than merges, and `media: []` publishes that account with none |
 | `text` | string | Yes, unless `draft` is true | Post text. Max varies: X 280 (25,000 on Premium), Bluesky 300, LinkedIn 3,000, Threads 500, Mastodon 500, Instagram 2,200, Facebook 63,206, Telegram 4,096. |
 | `media` | object[] | No | Uploaded files and public links, each `{ id? , url?, alt? }`, with **either** `id` (from `chirpie_upload_media`) **or** `url` per item, never both. `alt` describes the item for screen readers. Use this **or** `media_urls`, not both. |
 | `media_urls` | string[] | No | Public image/video URLs, for a post that needs no alt text. Max per post: X 4, Bluesky 4, LinkedIn 4, Threads 1, Mastodon 4, Instagram 10, Facebook 10, Telegram 10. Instagram REQUIRES media. |
+| `first_comment` | string | No | A comment published under the post the moment it goes out. X, Threads, Instagram and Facebook only: anywhere else the call is refused with `400 first_comment_unsupported` rather than the comment dropped. Counts as one post against the quota. See "The first comment" below |
 | `schedule_at` | string | No | ISO 8601 datetime, must be future and carry a timezone (`...Z` or `+02:00`); normalized to UTC. On a draft it is only the time to remember |
 | `draft` | boolean | No | Save the post without sending it. Nothing reaches the platform and nothing counts against the quota. The answer carries `warnings`: see "Drafts" below |
 
@@ -178,12 +179,13 @@ Create a multi-post thread on any connected platform, on one account or on sever
 |-----------|------|----------|-------------|
 | `account_id` | string | Yes, unless `account_ids` is given | Account UUID |
 | `account_ids` | string[] | Yes, unless `account_id` is given | 1 to 25 account UUIDs. Publishes the thread to all of them in one call and answers with a `group_id` plus one result per account |
-| `account_configurations` | object | No | Per-account overrides keyed by account UUID, each taking `posts`, which replaces the whole array for that account (still 2-25 parts, or 1-25 on a draft). Only with `account_ids`, and every key must be one of the ids named there |
+| `account_configurations` | object | No | Per-account overrides keyed by account UUID, each taking `posts`, which replaces the whole array for that account (still 2-25 parts, or 1-25 on a draft), and `first_comment` (`""` publishes that account with none). Only with `account_ids`, and every key must be one of the ids named there |
 | `posts` | array | Yes | Array of `{ text, media?, media_ids?, media_urls? }` objects (2-25, or 1-25 on a draft). Media limits vary by platform. |
+| `first_comment` | string | No | One comment for the whole thread, published under the **last** part and reported on that part |
 | `schedule_at` | string | No | ISO 8601 datetime. Applies to the whole group. On a draft it is only the time to remember |
 | `draft` | boolean | No | Save the thread without sending it. A draft thread may be a single part while it is still being written |
 
-**Reading a multi-account result.** `results` is in the order the accounts were named, and each entry carries `account_id`, `platform`, `success`, `platform_post_url`, `status`, `error`, plus `post_id`/`post` for a post and `thread_id`/`thread` for a thread. Some accounts can succeed while others fail, so report per account rather than declaring the whole send done. A validation problem (character limit, media rules, the X link-post rule) refuses the whole call with a message prefixed `Account <id>: ` and publishes nothing; only a platform failure is per account, and the quota for that account is given back.
+**Reading a multi-account result.** `results` is in the order the accounts were named, and each entry carries `account_id`, `platform`, `success`, `platform_post_url`, `status`, `error`, plus `post_id`/`post` for a post and `thread_id`/`thread` for a thread. Some accounts can succeed while others fail, so report per account rather than declaring the whole send done. A validation problem (character limit, media rules, whether the platform takes a first comment, the X link-post rule) refuses the whole call with a message prefixed `Account <id>: ` and publishes nothing; only a platform failure is per account, and the quota for that account is given back.
 
 ### chirpie_list_posts
 
@@ -217,9 +219,32 @@ Edit a post that has not published yet, or finish a draft. Leaving `schedule_at`
 | `text` | string | No | Replacement text |
 | `media` | object[] | No | Replacement media, each `{ id? , url?, alt? }`. An empty array removes the media |
 | `media_urls` | string[] | No | Replacement media URLs. An empty array removes the media |
+| `first_comment` | string | No | A new first comment, or an empty string to remove the one the post carries. This is also how a first comment is added to a post that has not published yet. On a thread it belongs to the thread, so it applies whichever part you addressed |
 | `schedule_at` | string | No | New ISO 8601 publish time, in the future and carrying a timezone. On a draft it promotes: the draft becomes a scheduled post, unless `draft` is true |
 | `draft` | boolean | No | Keep a draft a draft, so `schedule_at` only changes the time it remembers |
 | `publish` | boolean | No | Publish a draft now. Only on a draft, and never together with `schedule_at` |
+
+### The first comment
+
+`first_comment` publishes one comment under the post the moment it goes out, the "link in the first comment" pattern. The comment is posted by the same account, recorded as one of the user's own comments, and appears in the post's comment thread with `own: true`.
+
+Honoured on X, Threads, Instagram and Facebook. Anywhere else the call is refused with `400 first_comment_unsupported`, naming the platform and the four that work: it is never silently dropped.
+
+On a multi-account call the shared `first_comment` reaches every account unless its `account_configurations` entry says otherwise: an entry naming a `first_comment` replaces it for that account, and one setting `"first_comment": ""` publishes that account with none. The empty string is how one call sends a first comment to the accounts that take one while an account whose platform has none still publishes the post. The character limit is the account's own post limit, and a first comment counts as one post against the monthly quota, exactly as a reply does. On X a first comment containing a link carries the same $0.25 charge a link post does, and is refused on the Free plan before the post is published, so nothing goes out.
+
+Every post carries `first_comment` back, either `null` or `{ text, status, comment_id, error }`, where `status` is `pending`, `posted` or `failed`. `pending` means the post has not published yet, or the comment is on its way, and `comment_id` is the comment's id in the post's comment thread.
+
+**A failed first comment never fails its post.** The post publishes, `status` is `failed` and `error` says why. Tell the user, and offer `chirpie_retry_first_comment`.
+
+### chirpie_retry_first_comment
+
+Post a first comment that failed, again. It re-sends the text the post already holds. That text cannot be changed once the post is out, because `chirpie_update_post` refuses a published post with `409 post_not_editable`, so set it while the post is still a draft or still queued.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | string | Yes | Post UUID |
+
+The answer is the post, with `first_comment.status` now `posted`. A retry that works costs one post from the monthly quota, exactly as the first attempt would have. Refusals: `404 first_comment_not_found` when the post has none, `409 first_comment_not_retryable` when it is already posted, the post has not published, or another attempt is already in flight, and the platform's own refusal when the retry fails too.
 
 ### Drafts
 

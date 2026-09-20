@@ -1,6 +1,6 @@
 ---
 name: chirpie
-description: Chirpie social media API router. Use when user asks about posting to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, or Telegram, social media automation, scheduling posts, saving drafts, connecting social accounts, or using the Chirpie API/SDK/CLI/MCP/n8n node. Automatically routes to the specific skill based on their task.
+description: Chirpie social media API router. Use when user asks about posting to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, or Telegram, social media automation, scheduling posts, first comments, saving drafts, connecting social accounts, or using the Chirpie API/SDK/CLI/MCP/n8n node. Automatically routes to the specific skill based on their task.
 ---
 
 # Chirpie Skills Router
@@ -29,6 +29,11 @@ Chirpie is a social media API for AI agents and developers. Post to X/Twitter, B
 - List the comments a published post received
 - Reply to a comment (counts as one post against the monthly quota)
 - Hide or delete a comment, where the platform allows it
+
+**Putting the link in the first comment** → Use `chirpie-posting`
+- `first_comment` on a post or a thread, published under the post the moment it goes out
+- X, Threads, Instagram and Facebook only, and it counts as one post against the monthly quota
+- Sending a first comment that failed again with `POST /api/v1/posts/:id/first-comment`
 
 **Posting the same thing to several accounts at once** → Use `chirpie-posting`
 - `account_ids` (1-25) instead of `account_id` on posts and threads
@@ -80,6 +85,7 @@ Chirpie is a social media API for AI agents and developers. Post to X/Twitter, B
 | Update post | `/api/v1/posts/:id` | PATCH |
 | Delete post | `/api/v1/posts/:id` | DELETE |
 | Create thread | `/api/v1/threads` | POST |
+| Retry first comment | `/api/v1/posts/:id/first-comment` | POST |
 | Upload media | `/api/v1/media` | POST |
 | List accounts | `/api/v1/accounts` | GET |
 | Connect account | `/api/v1/accounts` | POST |
