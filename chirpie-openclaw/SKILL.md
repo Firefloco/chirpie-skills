@@ -162,7 +162,11 @@ Media URLs must be publicly reachable, because Chirpie downloads them server-sid
 | 401 | `unauthorized` | Bad or revoked key | Stop; tell the user |
 | 404 | `not_found` | Wrong or inactive `account_id` | Re-list accounts |
 | 429 | `usage_limit_exceeded` | Monthly post or scheduled-post quota spent | Stop; tell the user |
-| 429 | `rate_limited` | 60 req/min burst limit | Sleep for `Retry-After`, then retry once |
+| 429 | `rate_limited` | Past the plan's per-minute burst limit on this key | Sleep for `Retry-After`, then retry once |
+| 429 | `analytics_refresh_rate_limited` | A forced analytics refresh inside the 30-minute floor for that post | Sleep for `Retry-After`, or read the stored numbers without `refresh` |
+| 403 | `insufficient_scope` | The key lacks the scope this route needs | Stop; tell the user which scope the message names |
+| 409 | `idempotency_in_progress` | The same `Idempotency-Key` is still running | Retry the identical call once more to collect the replay |
+| 422 | `idempotency_key_reused` | The same key was used for a different request | Use a fresh key for a different request |
 | 502 | `upstream_error` | Platform API failed | Retry once, then report |
 | 503 | `media_storage_failed` | Media could not be stored | Retry in a moment; nothing was published |
 
@@ -174,7 +178,7 @@ Media URLs must be publicly reachable, because Chirpie downloads them server-sid
 4. **Prefer scheduling** for anything the user has not explicitly approved, since it stays cancellable.
 5. **Confirm before deleting.** Deletion removes the post from the live platform too.
 6. **Do not echo the API key** into logs or output.
-7. **Report failures plainly** with the `code` and `message` from the response. Do not silently retry `401` or `429`.
+7. **Report failures plainly** with the `code` and `message` from the response. Never silently retry `401` or `429 usage_limit_exceeded`: neither gets better on its own, and the user has to act. The two burst codes above are the exception, and they are not silent either: wait the `Retry-After` the response names, then try once more.
 
 ## Example requests
 

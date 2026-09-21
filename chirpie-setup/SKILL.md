@@ -38,6 +38,30 @@ const chirpie = new ChirpieClient({
 
 > **Security:** Never hardcode API keys in source code. Always use environment variables.
 
+### Scopes: give the key only what it needs
+
+A key created without scopes can do whatever created it: everything, from the dashboard or
+from a full-access key, which is the right default for your own project. When you are handing
+a key to an agent or a third-party service, narrow it instead. A narrowed key that mints
+another without naming scopes gets a copy of itself, never a wider key.
+
+In the dashboard, **Create Key** offers **Full access** or a checkbox list of permissions.
+From the CLI or the SDK:
+
+```bash
+chirpie keys create -n "Publishing bot" --scope posts:write --scope media:write
+```
+
+```typescript
+await chirpie.createKey({ name: "Publishing bot", scopes: ["posts:write", "media:write"] });
+```
+
+Vocabulary: `posts:read`, `posts:write`, `accounts:read`, `accounts:write`, `analytics:read`,
+`comments:read`, `comments:write`, `media:write`, `keys:write`. A call outside the key's
+scopes is refused with `403 insufficient_scope` naming the missing one, and a key can never
+grant a scope it does not itself hold. All three key methods need `keys:write`: there is no
+`keys:read`, because the key list is the inventory of the account's credentials.
+
 ## Step 3: Connect Accounts
 
 **X/Twitter**: Connect via OAuth from the dashboard or API:

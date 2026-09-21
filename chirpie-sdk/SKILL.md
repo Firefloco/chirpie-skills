@@ -55,9 +55,20 @@ const post = await chirpie.createPost({
   account_id: "uuid",        // Required
   text: "Hello!",            // Required. Char limits: X 280 (25,000 Premium), Bluesky 300, LinkedIn 3,000, Threads 500, Mastodon 500, Instagram 2,200, Facebook 63,206, Telegram 4,096
   media: [{ url: "https://example.com/a.png", alt: "A bird" }],  // Optional. An entry takes `id` (from uploadMedia) or `url`, plus optional alt text. Max per post: X 4, Bluesky 4, LinkedIn 4, Threads 1, Mastodon 4, Instagram 10, Facebook 10, Telegram 10. Instagram REQUIRES media.
-  schedule_at: "ISO8601",    // Optional, must be future
+  schedule_at: "ISO8601",    // Optional, must be future. Either an absolute instant carrying a timezone, or a local time with no offset ("2026-11-01T09:30:00") read in `timezone` or the timezone saved on the account
+  timezone: "America/New_York",  // Optional IANA name. The zone a `schedule_at` with no offset is read in. Daylight saving is resolved for the date named. A fixed offset like "+02:00" is NOT accepted here: put it on schedule_at instead. Also on CreateThreadInput and UpdatePostInput
   first_comment: "Full write-up: https://example.com",  // Optional. Published under the post the moment it goes out. X, Threads, Instagram and Facebook only; anywhere else the call throws 400 first_comment_unsupported. Counts as one post against the quota
 });
+
+// Retries. createPost() and createThread() generate an Idempotency-Key per
+// call. Pass your own so the key survives a process restart, or null for none.
+await chirpie.createPost(
+  { account_id: "uuid", text: "Hello!" },
+  { idempotencyKey: "campaign-2026-11-01" }
+);
+// uploadMedia(input, options), retryFirstComment(id, options) and
+// replyToComment(postId, commentId, text, options) take the same options
+// object but generate nothing.
 
 // The post carries the first comment back:
 // post.first_comment = { text, status: "pending" | "posted" | "failed", comment_id, error }
@@ -306,7 +317,20 @@ await chirpie.connectTelegramAccount({
 ```typescript
 const { key, prefix, name, expires_at } = await chirpie.createKey("My Bot");
 // `key` is shown once. Keys expire after 90 days; max 25 active keys.
-const keys = await chirpie.listKeys();
+
+// A narrower key. Omitting `scopes` copies the calling key's own scopes, so
+// a bare name gives full access only when the caller has it. A key can never
+// grant a scope it does not itself hold
+// (403 insufficient_scope). Vocabulary: posts:read, posts:write,
+// accounts:read, accounts:write, analytics:read, comments:read,
+// comments:write, media:write, keys:write. There is no keys:read: all three
+// key methods need keys:write.
+const scoped = await chirpie.createKey({
+  name: "Publishing bot",
+  scopes: ["posts:write", "media:write"],
+});
+
+const keys = await chirpie.listKeys();  // each carries `scopes`; null = full access
 await chirpie.revokeKey("key-uuid");
 ```
 
@@ -315,6 +339,12 @@ await chirpie.revokeKey("key-uuid");
 ```typescript
 const metrics = await chirpie.getPostAnalytics("post-uuid");
 // { impressions, likes, retweets, replies, quotes, bookmarks, clicks, fetched_at }
+// Served from a stored snapshot under an hour old, so polling costs nothing.
+
+// Ask the platform now. Floored at one forced refresh per post every 30
+// minutes; past that it throws 429 analytics_refresh_rate_limited with a
+// Retry-After, and the stored numbers are still one ordinary call away.
+const fresh = await chirpie.getPostAnalytics("post-uuid", { refresh: true });
 ```
 
 ## Types
@@ -326,7 +356,10 @@ import type {
   ApiThread,                  // Thread object returned from API
   ApiAccount,                 // Connected account (platform, username, display_name, avatar_url)
   ApiAnalytics,               // Post metrics
-  ApiKeyInfo,                 // API key metadata (prefix only)
+  ApiKeyInfo,                 // API key metadata (prefix only, plus `scopes`)
+  ApiScope,                   // One scope: "posts:write", "analytics:read", and so on
+  CreateKeyInput,             // createKey({ name, scopes })
+  RequestOptions,             // Per-call options: { idempotencyKey }
   CreatePostInput,            // Input for createPost()
   CreateThreadInput,          // Input for createThread()
   UpdatePostInput,            // Input for updatePost()

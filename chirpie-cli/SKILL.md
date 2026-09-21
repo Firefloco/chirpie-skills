@@ -68,6 +68,8 @@ chirpie post "To two accounts at once" -a ACCOUNT_A -a ACCOUNT_B
 chirpie post "With its own text for one" -a ACCOUNT_A -a ACCOUNT_B \
   --config '{"ACCOUNT_B":{"text":"Text for just this account"}}'
 chirpie post "Link in the first comment" --first-comment "Full write-up: https://example.com"
+chirpie post "Half nine, my time" -s "2026-11-01T09:30" --timezone America/New_York
+chirpie post "Safe to retry" --idempotency-key campaign-2026-11-01
 ```
 
 | Flag | Description |
@@ -77,7 +79,9 @@ chirpie post "Link in the first comment" --first-comment "Full write-up: https:/
 | `-m, --media <files...>` | Image or video files on this machine, or public URLs. Files are uploaded first |
 | `--alt <text...>` | Describe each item for screen readers, in the same order as `--media` |
 | `--first-comment <text>` | Post this as a comment under the post, as soon as it goes out. X, Threads, Instagram and Facebook only, refused elsewhere rather than dropped. Counts as one post against the monthly quota |
-| `-s, --schedule <datetime>` | ISO 8601 datetime with a timezone (`...Z` or `+02:00`); normalized to UTC |
+| `-s, --schedule <datetime>` | ISO 8601 datetime. Either absolute, carrying a timezone (`...Z` or `+02:00`), normalized to UTC, or a local time with no offset (`2026-11-01T09:30`) read in `--timezone` or the timezone saved on the account |
+| `--timezone <iana>` | The IANA zone a `--schedule` with no offset is read in, such as `America/New_York`. Daylight saving is resolved for the date named. Also on `chirpie thread` and `chirpie posts update` (there as the zone for `--schedule-at`) |
+| `--idempotency-key <key>` | Make a retry safe: the same key with the same request replays the first answer for 24 hours instead of sending it again. `chirpie post` and `chirpie thread` generate one per invocation when you do not pass one, which protects that one run; name it yourself to make re-running the same command replay instead. Also on `chirpie posts first-comment` and `chirpie comments reply`, which generate nothing, so there a key is the only way to get a replay |
 | `--draft` | Save without publishing. Nothing is sent and nothing counts against the quota. Anything that would go wrong is printed, one warning per line |
 | `--json` | Machine-readable JSON output |
 
@@ -188,17 +192,29 @@ disconnecting anything. Prefer `deactivate` when the account should come back la
 ### chirpie keys
 
 ```bash
-chirpie keys                          # List API keys
-chirpie keys create                   # Create new key
+chirpie keys                          # List API keys, with each key's scopes ("all" = full access)
+chirpie keys create                   # Create new key (as wide as the key you are logged in with)
 chirpie keys create -n "Bot Key"      # Create with name
+chirpie keys create -n "Bot" --scope posts:write --scope media:write   # Narrow it
 chirpie keys revoke KEY_UUID          # Revoke a key
 ```
+
+Repeat `--scope` once per permission. Allowed: `posts:read`, `posts:write`, `accounts:read`,
+`accounts:write`, `analytics:read`, `comments:read`, `comments:write`, `media:write`,
+`keys:write`. Omitting `--scope` gives a key that can do exactly what the key you are calling
+with can do: full access from a key that has it, and a copy of that key's own scopes from a
+narrowed one. A key can never grant a scope it does not itself hold, and all three key
+commands need `keys:write` (there is no `keys:read`).
 
 ### chirpie analytics
 
 ```bash
-chirpie analytics POST_UUID           # Get post metrics
+chirpie analytics POST_UUID           # Get post metrics from the stored snapshot
+chirpie analytics POST_UUID --refresh # Ask the platform now
 ```
+
+`--refresh` is floored at one forced refresh per post every 30 minutes. Past that it reports
+`analytics_refresh_rate_limited`, and the stored numbers are still one ordinary call away.
 
 ## Output Formats
 

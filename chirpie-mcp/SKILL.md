@@ -152,6 +152,7 @@ Upload an image or a video and get back the id a post can attach. Use it wheneve
 | `url` | string | No | A public image or video URL for Chirpie to fetch and store |
 | `data` | string | No | The file's bytes, base64 encoded. Use this or `url`, not both |
 | `filename` | string | No | A name to show in the dashboard. Never used to decide the file type |
+| `idempotency_key` | string | No | Makes retrying this call safe. The same key with the same request replays the first answer for 24 hours instead of sending it again; the same key with a different request is `422 idempotency_key_reused`; a retry arriving while the first is still running is `409 idempotency_in_progress`, which does not wait, so retry once more to collect the replay. Max 255 characters |
 
 The file type is read from the file's own first bytes, so a wrong extension does not matter and a mislabelled file is refused. The id is valid for 7 days; attach it with `media: [{ "id": "...", "alt": "..." }]`. Uploads are limited to 3 MB of file when sent as `data`, so a larger file goes in `media_urls` instead, which has no such limit.
 
@@ -168,7 +169,9 @@ Create a single post on any connected platform with optional media, on one accou
 | `media` | object[] | No | Uploaded files and public links, each `{ id? , url?, alt? }`, with **either** `id` (from `chirpie_upload_media`) **or** `url` per item, never both. `alt` describes the item for screen readers. Use this **or** `media_urls`, not both. |
 | `media_urls` | string[] | No | Public image/video URLs, for a post that needs no alt text. Max per post: X 4, Bluesky 4, LinkedIn 4, Threads 1, Mastodon 4, Instagram 10, Facebook 10, Telegram 10. Instagram REQUIRES media. |
 | `first_comment` | string | No | A comment published under the post the moment it goes out. X, Threads, Instagram and Facebook only: anywhere else the call is refused with `400 first_comment_unsupported` rather than the comment dropped. Counts as one post against the quota. See "The first comment" below |
-| `schedule_at` | string | No | ISO 8601 datetime, must be future and carry a timezone (`...Z` or `+02:00`); normalized to UTC. On a draft it is only the time to remember |
+| `schedule_at` | string | No | ISO 8601 datetime, must be future. Either absolute, carrying a timezone (`...Z` or `+02:00`), normalized to UTC, or a local time with no offset (`2026-11-01T09:30:00`) read in `timezone` or the timezone saved on the account. A local time with neither is refused. On a draft it is only the time to remember |
+| `timezone` | string | No | The IANA zone a `schedule_at` with no offset is read in, such as `America/New_York`. Daylight saving is resolved for the date named, which is what a client computing today's offset gets wrong across a clock change. Ignored when `schedule_at` already carries an offset. Leave it out to use the timezone saved on the account. A fixed offset like `+02:00` is NOT accepted here |
+| `idempotency_key` | string | No | Makes retrying this call safe. The same key with the same request replays the first answer for 24 hours instead of sending it again; the same key with a different request is `422 idempotency_key_reused`; a retry arriving while the first is still running is `409 idempotency_in_progress`, which does not wait, so retry once more to collect the replay. Max 255 characters |
 | `draft` | boolean | No | Save the post without sending it. Nothing reaches the platform and nothing counts against the quota. The answer carries `warnings`: see "Drafts" below |
 
 ### chirpie_thread
@@ -182,7 +185,9 @@ Create a multi-post thread on any connected platform, on one account or on sever
 | `account_configurations` | object | No | Per-account overrides keyed by account UUID, each taking `posts`, which replaces the whole array for that account (still 2-25 parts, or 1-25 on a draft), and `first_comment` (`""` publishes that account with none). Only with `account_ids`, and every key must be one of the ids named there |
 | `posts` | array | Yes | Array of `{ text, media?, media_ids?, media_urls? }` objects (2-25, or 1-25 on a draft). Media limits vary by platform. |
 | `first_comment` | string | No | One comment for the whole thread, published under the **last** part and reported on that part |
-| `schedule_at` | string | No | ISO 8601 datetime. Applies to the whole group. On a draft it is only the time to remember |
+| `schedule_at` | string | No | ISO 8601 datetime, applying to the whole group. Either absolute, carrying a timezone, or a local time with no offset read in `timezone` or the timezone saved on the account. On a draft it is only the time to remember |
+| `timezone` | string | No | The IANA zone a `schedule_at` with no offset is read in, such as `America/New_York`. Daylight saving is resolved for the date named, which is what a client computing today's offset gets wrong across a clock change. Ignored when `schedule_at` already carries an offset. Leave it out to use the timezone saved on the account. A fixed offset like `+02:00` is NOT accepted here |
+| `idempotency_key` | string | No | Makes retrying this call safe. The same key with the same request replays the first answer for 24 hours instead of sending it again; the same key with a different request is `422 idempotency_key_reused`; a retry arriving while the first is still running is `409 idempotency_in_progress`, which does not wait, so retry once more to collect the replay. Max 255 characters |
 | `draft` | boolean | No | Save the thread without sending it. A draft thread may be a single part while it is still being written |
 
 **Reading a multi-account result.** `results` is in the order the accounts were named, and each entry carries `account_id`, `platform`, `success`, `platform_post_url`, `status`, `error`, plus `post_id`/`post` for a post and `thread_id`/`thread` for a thread. Some accounts can succeed while others fail, so report per account rather than declaring the whole send done. A validation problem (character limit, media rules, whether the platform takes a first comment, the X link-post rule) refuses the whole call with a message prefixed `Account <id>: ` and publishes nothing; only a platform failure is per account, and the quota for that account is given back.
@@ -220,7 +225,8 @@ Edit a post that has not published yet, or finish a draft. Leaving `schedule_at`
 | `media` | object[] | No | Replacement media, each `{ id? , url?, alt? }`. An empty array removes the media |
 | `media_urls` | string[] | No | Replacement media URLs. An empty array removes the media |
 | `first_comment` | string | No | A new first comment, or an empty string to remove the one the post carries. This is also how a first comment is added to a post that has not published yet. On a thread it belongs to the thread, so it applies whichever part you addressed |
-| `schedule_at` | string | No | New ISO 8601 publish time, in the future and carrying a timezone. On a draft it promotes: the draft becomes a scheduled post, unless `draft` is true |
+| `schedule_at` | string | No | New ISO 8601 publish time, in the future. Either absolute, carrying a timezone (`...Z` or `+02:00`), or a local time with no offset (`2026-11-01T09:30:00`) read in `timezone` or the timezone saved on the account. A local time with neither is refused. On a draft it promotes: the draft becomes a scheduled post, unless `draft` is true |
+| `timezone` | string | No | The IANA zone a `schedule_at` with no offset is read in, such as `America/New_York`. Daylight saving is resolved for the date named, which is what a client computing today's offset gets wrong across a clock change. Ignored when `schedule_at` already carries an offset. Leave it out to use the timezone saved on the account. A fixed offset like `+02:00` is NOT accepted here |
 | `draft` | boolean | No | Keep a draft a draft, so `schedule_at` only changes the time it remembers |
 | `publish` | boolean | No | Publish a draft now. Only on a draft, and never together with `schedule_at` |
 
@@ -243,6 +249,7 @@ Post a first comment that failed, again. It re-sends the text the post already h
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `id` | string | Yes | Post UUID |
+| `idempotency_key` | string | No | Makes retrying this call safe. The same key with the same request replays the first answer for 24 hours instead of sending it again; the same key with a different request is `422 idempotency_key_reused`; a retry arriving while the first is still running is `409 idempotency_in_progress`, which does not wait, so retry once more to collect the replay. Max 255 characters |
 
 The answer is the post, with `first_comment.status` now `posted`. A retry that works costs one post from the monthly quota, exactly as the first attempt would have. Refusals: `404 first_comment_not_found` when the post has none, `409 first_comment_not_retryable` when it is already posted, the post has not published, or another attempt is already in flight, and the platform's own refusal when the retry fails too.
 
@@ -373,8 +380,11 @@ Get engagement metrics for a published post.
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `post_id` | string | Yes | Post UUID |
+| `refresh` | boolean | No | Ask the platform for the current numbers instead of reading the stored snapshot. Allowed once per post every 30 minutes; past that it answers `429 analytics_refresh_rate_limited` with a `Retry-After`, and the stored numbers are still one ordinary call away |
 
-Returns: impressions, likes, retweets, replies, quotes, bookmarks, clicks.
+Returns: impressions, likes, retweets, replies, quotes, bookmarks, clicks. The numbers come
+from a snapshot at most an hour old, so calling this often costs nothing. Reserve `refresh`
+for the moment somebody is actually looking at the answer.
 
 ## Example Prompts
 
@@ -417,6 +427,15 @@ The user does not need to leave the agent to connect a platform. Call the matchi
 ## Key management tools
 
 `chirpie_create_key` (returns the key once), `chirpie_list_keys`, `chirpie_revoke_key`.
+
+`chirpie_create_key` takes an optional `scopes` array, which narrows what the new key may do:
+`posts:read`, `posts:write`, `accounts:read`, `accounts:write`, `analytics:read`,
+`comments:read`, `comments:write`, `media:write`, `keys:write`. Leave it out for a key that
+can do exactly what the calling key can do, which is full access for every key that predates
+scopes. A key can never grant a scope it does not itself hold, and leaving `scopes` out is
+not a way around that: a call outside a key's scopes is refused with `403 insufficient_scope`
+naming the one that is missing. There is deliberately no `keys:read`: all three key tools
+need `keys:write`, because the key list is the inventory of the account's credentials.
 
 These are API-key auth only, along with `chirpie_remove_x_keys`. On a hosted
 server signed in with OAuth they are not offered. Manage API keys in the

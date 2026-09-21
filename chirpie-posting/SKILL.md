@@ -23,12 +23,25 @@ const post = await chirpie.createPost({
 ```bash
 curl -X POST https://chirpie.ai/api/v1/posts \
   -H "Authorization: Bearer chirpie_sk_YOUR_KEY" \
+  -H "Idempotency-Key: 8f1c0e0c-6d51-4d73-9f4e-6b2a0a2d3f11" \
   -H "Content-Type: application/json" \
   -d '{
     "account_id": "YOUR_ACCOUNT_ID",
     "text": "Hello world!"
   }'
 ```
+
+### Idempotency: never publish twice on a retry
+
+`POST /api/v1/posts`, `POST /api/v1/threads`, `POST /api/v1/media`, `POST /api/v1/posts/:id/first-comment` and `POST /api/v1/posts/:id/comments/:commentId/reply` accept an `Idempotency-Key` header. Send one on anything you might retry.
+
+- Same key, same request: the original response is replayed, carrying `Idempotent-Replay: true`. Nothing publishes again and no quota is spent.
+- Same key, a different method, path or body: `422 idempotency_key_reused`. Use a fresh key per distinct request.
+- Same key while the first call is still running: `409 idempotency_in_progress`. It does not wait. Retry once more to collect the replay.
+- Anything under 500 is stored and replayed, errors included. A 5xx releases the key, so a retry is a real retry. The exception is `502 thread_rollback_incomplete`, which means parts of a thread are still live on the platform: that one is kept and replayed, because the retry would otherwise publish them a second time.
+- Keys last 24 hours and may be up to 255 characters. A blank or longer value is refused with `400 idempotency_key_invalid` rather than ignored: a caller who sends a key is asking for deduplication, so answering `201` without providing any would be worse.
+
+The SDK's `createPost()` and `createThread()` generate a fresh key per call, which protects the one HTTP request it rides on. **Calling the method again is a new call and gets a new key**, so to make your own retry replay rather than republish, pass the same key each time: `{ idempotencyKey }` as the second argument, or `{ idempotencyKey: null }` to send none. `uploadMedia(input, options)`, `retryFirstComment(id, options)` and `replyToComment(postId, commentId, text, options)` take the same options object and generate nothing.
 
 ### Uploading a file
 
@@ -48,7 +61,8 @@ The file type is read from the file's own first bytes, never from its name. Uplo
 | `media_ids` | string[] | No | Ids from `POST /api/v1/media`, when no alt text is needed. |
 | `media_urls` | string[] | No | Public image/video URLs. Max images per post: X 4, Bluesky 4, LinkedIn 4, Threads 1, Mastodon 4, Instagram 10, Facebook 10, Telegram 10. Video: X, Mastodon and Telegram only, 1 per post and never alongside images. Instagram REQUIRES at least one image. Anything a platform cannot take is refused with `400 unsupported_media`, never dropped. |
 | `first_comment` | string | No | A comment published under the post the moment it goes out. X, Threads, Instagram and Facebook only: anywhere else the request is refused with `400 first_comment_unsupported`, never dropped. Counts as one post against the monthly quota. See "First Comment" below |
-| `schedule_at` | ISO 8601 | No | Future datetime for scheduling. Must be absolute and carry a timezone (`...Z` or `+02:00`); normalized to UTC. On a draft it is only the time to remember, and may be any time at all |
+| `schedule_at` | ISO 8601 | No | Future datetime for scheduling. Either absolute, carrying a timezone (`...Z` or `+02:00`), normalized to UTC, or a local time with no offset (`2026-11-01T09:30:00`) read in `timezone` or the timezone saved on the account. A local time with neither is refused. On a draft it is only the time to remember, and may be any time at all |
+| `timezone` | IANA name | No | The zone a `schedule_at` with no offset is read in, such as `America/New_York`. Daylight saving is worked out for the date named, which a client computing today's offset gets wrong across a clock change. A fixed offset (`+02:00`) is NOT accepted here: put it on `schedule_at` instead. Also accepted on `POST /api/v1/threads` and `PATCH /api/v1/posts/:id` |
 | `draft` | boolean | No | Save without sending. Nothing reaches the platform and nothing counts against the quota. See "Drafts" below |
 
 A missing required field is named: `POST /api/v1/posts {}` returns `account_id and text are required`.
@@ -450,6 +464,13 @@ const analytics = await chirpie.getPostAnalytics("post-uuid");
 // Returns: post_id, platform, impressions, likes, retweets, replies, quotes,
 // bookmarks, clicks, fetched_at. Metrics a platform does not expose come back as 0.
 // Cached for 1 hour. Telegram exposes no metrics API, so it returns 502.
+
+// Ask the platform now instead of reading the snapshot. `GET
+// /api/v1/analytics/posts/:id?refresh=true` on the wire. Floored at one forced
+// refresh per post every 30 minutes; past that it is
+// `429 analytics_refresh_rate_limited` carrying Retry-After, and the stored
+// numbers are still one ordinary call away.
+const fresh = await chirpie.getPostAnalytics("post-uuid", { refresh: true });
 ```
 
 ## Error Handling
@@ -464,8 +485,11 @@ try {
     switch (err.status) {
       case 400: // Invalid request (check err.message for details)
       case 401: // Invalid API key
+      case 403: // insufficient_scope: the key lacks the scope named in err.message
       case 404: // Account not found or inactive
-      case 429: // usage_limit_exceeded (quota), rate_limited (burst), or account_limit_reached
+      case 409: // idempotency_in_progress: retry the identical call to collect the replay
+      case 422: // idempotency_key_reused: use a fresh key for a different request
+      case 429: // usage_limit_exceeded (quota), rate_limited (burst), account_limit_reached, or analytics_refresh_rate_limited
       case 502: // Platform API error (temporary, retry)
       case 503: // Media could not be stored (temporary, retry; nothing was published)
     }
@@ -488,4 +512,8 @@ A post with `status: "deleted"` and `error_message` of `"account_disconnected"`,
 
 ## Rate Limit Headers
 
-Every authenticated `/api/v1/*` response carries `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset` (unix seconds). A `429` from the burst limiter also carries `Retry-After` (seconds): sleep that long and retry once. A `429` with no `Retry-After` is a quota (`usage_limit_exceeded`) or account-limit (`account_limit_reached`) refusal, so do not retry it.
+An authenticated `/api/v1/*` response carries `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset` (unix seconds). Treat them as advisory: the burst limiter fails open, so a response can arrive with none of the three. When they are absent, carry on and do not invent a number in their place. The ceiling is set by the plan (Free 120/min, Agent and Starter 600/min, Pro and Scale 1,200/min), so read it off `X-RateLimit-Limit` rather than assuming a number. A `429` from the burst limiter also carries `Retry-After` (seconds): sleep that long and retry once. A `429` with no `Retry-After` is a quota (`usage_limit_exceeded`) or account-limit (`account_limit_reached`) refusal, so do not retry it.
+
+## Scopes
+
+An API key may be created with `scopes`, in which case it can only reach the routes those scopes cover; a key created without them can do exactly what the key that made it can do, which is full access for a key that has it. Posting needs `posts:write`, reading posts `posts:read`, uploading media `media:write`, comments `comments:read` / `comments:write`, analytics `analytics:read`, accounts `accounts:read` / `accounts:write`, and all three `/api/v1/keys` methods `keys:write` (there is no `keys:read`). A call outside the key's scopes is `403 insufficient_scope`, naming the one that is missing. A key can never grant a scope it does not itself hold.

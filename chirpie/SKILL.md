@@ -112,7 +112,7 @@ All endpoints return:
 
 ## Rate Limits
 
-- **Burst:** 60 requests/minute per API key
+- **Burst:** per API key, per minute, on a sliding window, with the ceiling set by the plan: Free 120/min, Agent and Starter 600/min, Pro and Scale 1,200/min. Read `X-RateLimit-Limit` rather than assuming a number, and pace on `X-RateLimit-Remaining`. A `429 rate_limited` carries `Retry-After`.
 - **Monthly quotas:** Free 50, Agent 300, Starter 1K, Pro 5K, Scale 25K+ / custom posts per month
 - **Overage:** $0.03/post (Agent, Starter), $0.025/post (Pro). Free plan has a hard limit. Scale and Enterprise use custom quotas, not per-post overage.
 - **Comment syncs:** refreshing a post's comments from the platform is metered per month: Free 200, Agent 1,000, Starter 5,000, Pro 25,000, Scale and Enterprise custom. Listing comments Chirpie already stored is unlimited, and a reply counts as one post against the monthly post quota. X comment reads are metered per reply returned as well, and are not included on Free.
