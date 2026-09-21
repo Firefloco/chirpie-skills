@@ -55,12 +55,13 @@ The file type is read from the file's own first bytes, never from its name. Uplo
 |-------|------|----------|-------------|
 | `account_id` | UUID string | Yes, unless `account_ids` is given | Connected account ID |
 | `account_ids` | UUID string[] | Yes, unless `account_id` is given | 1 to 25 connected accounts, published to in one request. Duplicates are refused. Naming it selects the fan-out response, even for one account. See "Post to several accounts at once" below |
-| `account_configurations` | object | No | Per-account overrides keyed by account ID. Only with `account_ids`, and every key must be in it. Each value takes `text`, `first_comment` (`""` publishes that account with none), and one of `media`, `media_ids`, `media_urls` |
+| `account_configurations` | object | No | Per-account overrides keyed by account ID. Only with `account_ids`, and every key must be in it. Each value takes `text`, `first_comment` (`""` publishes that account with none), `configuration` (replacing the whole block for that account), and one of `media`, `media_ids`, `media_urls` |
 | `text` | string | Yes, unless `draft` is true | X: 1-280 (25,000 on Premium). Bluesky: 300. LinkedIn: 3,000. Threads: 500. Mastodon: 500. Instagram: 2,200. Facebook: 63,206. Telegram: 4,096, or 1,024 when the post carries media. |
 | `media` | object[] | No | Uploaded files and public links, each `{ id? , url?, alt? }`. `id` comes from `POST /api/v1/media`; `alt` describes the item for screen readers and is sent to X, Bluesky, LinkedIn, Mastodon, Instagram and Facebook. Use one of `media`, `media_ids` and `media_urls`, not several. |
 | `media_ids` | string[] | No | Ids from `POST /api/v1/media`, when no alt text is needed. |
-| `media_urls` | string[] | No | Public image/video URLs. Max images per post: X 4, Bluesky 4, LinkedIn 4, Threads 1, Mastodon 4, Instagram 10, Facebook 10, Telegram 10. Video: X, Mastodon and Telegram only, 1 per post and never alongside images. Instagram REQUIRES at least one image. Anything a platform cannot take is refused with `400 unsupported_media`, never dropped. |
+| `media_urls` | string[] | No | Public image/video URLs. Max images per post: X 4, Bluesky 4, LinkedIn 4, Threads 1, Mastodon 4, Instagram 10, Facebook 10, Telegram 10. Video: X, Mastodon and Telegram, 1 per post and never alongside images, plus Instagram and Facebook where the placement takes one (an Instagram story or Page story takes one image or video, an Instagram reel takes one video and no images). Instagram REQUIRES media on every post. Anything a platform cannot take is refused with `400 unsupported_media`, never dropped. |
 | `first_comment` | string | No | A comment published under the post the moment it goes out. X, Threads, Instagram and Facebook only: anywhere else the request is refused with `400 first_comment_unsupported`, never dropped. Counts as one post against the monthly quota. See "First Comment" below |
+| `configuration` | object | No | Per-platform publishing options, keyed by platform. Instagram takes `feed` (the default), `story` or `reel`; a Facebook Page takes `feed` or `story`. Anything the platform or the placement does not carry is refused with `400 configuration_unsupported`, never dropped. See "Publishing Options" below |
 | `schedule_at` | ISO 8601 | No | Future datetime for scheduling. Either absolute, carrying a timezone (`...Z` or `+02:00`), normalized to UTC, or a local time with no offset (`2026-11-01T09:30:00`) read in `timezone` or the timezone saved on the account. A local time with neither is refused. On a draft it is only the time to remember, and may be any time at all |
 | `timezone` | IANA name | No | The zone a `schedule_at` with no offset is read in, such as `America/New_York`. Daylight saving is worked out for the date named, which a client computing today's offset gets wrong across a clock change. A fixed offset (`+02:00`) is NOT accepted here: put it on `schedule_at` instead. Also accepted on `POST /api/v1/threads` and `PATCH /api/v1/posts/:id` |
 | `draft` | boolean | No | Save without sending. Nothing reaches the platform and nothing counts against the quota. See "Drafts" below |
@@ -114,9 +115,47 @@ No request body: it re-sends the text the post already carries, and there is no 
 
 Refusals: `404 first_comment_not_found` (the post has none), `409 first_comment_not_retryable` (already posted, the post has not published yet, or another attempt is in flight), and `502 first_comment_failed` when the platform refuses the retry too.
 
+### Publishing Options
+
+`configuration` says how a platform publishes the post, keyed by platform slug. Instagram and Facebook are the two platforms that offer a choice; every other platform publishes one way and takes no block.
+
+```json
+{
+  "account_id": "YOUR_ACCOUNT_ID",
+  "text": "Behind the scenes of this week.",
+  "media_urls": ["https://example.com/clip.mp4"],
+  "configuration": { "instagram": { "placement": "reel", "share_to_feed": true } }
+}
+```
+
+Connecting a new Instagram account or Facebook Page is coming soon. Accounts already connected publish and schedule with these options as described here.
+
+| Platform | Placements | Options that placement carries |
+|---|---|---|
+| Instagram | `feed` (default) | `collaborators` (up to 3 usernames, no `@`), `user_tags` (up to 20 `{ username, x, y }`, both coordinates required, single-image posts only) |
+| Instagram | `story` | `user_tags` (coordinates optional: both or neither) |
+| Instagram | `reel` | `collaborators`, `user_tags` (no coordinates), `cover` (an uploaded image id), `video_cover_timestamp_ms`, `share_to_feed`, `trial_reel: { graduation: "manual" \| "performance" }` |
+| Facebook | `feed` (default) | `link` (a URL rendered as a preview) |
+| Facebook | `story` | nothing beyond `placement` |
+
+Media per placement: an Instagram feed post takes 1 to 10 images (JPEG/PNG, 8 MB each) and no video; a story takes exactly one image or video (MP4/MOV, 100 MB); a reel takes exactly one video (300 MB) and no images. A Facebook feed post takes up to 10 images (JPEG/PNG/GIF, 10 MB each) and no video; a Page story takes exactly one image or video (100 MB).
+
+Rules that catch people out:
+
+- **Nothing is dropped quietly.** A block keyed on a platform that takes none, on a platform no account in the request uses, or a field the placement does not carry, is refused with `400 configuration_unsupported` naming the field. Nothing publishes.
+- **A story carries no caption and no first comment.** Send empty text and leave `first_comment` out, on both platforms.
+- **A story or a reel is a single post**, so `POST /api/v1/threads` refuses either placement.
+- **`cover` and `video_cover_timestamp_ms` are alternatives**, never both.
+- **A fan-out shares one block per platform.** An `account_configurations` entry replaces the whole block for that account rather than merging into it.
+- **What Chirpie cannot check** is aspect ratio, frame rate and duration, because it never decodes a video. Meta refuses those at publish time and the reason comes back as `502 upstream_error`. A story video runs 3 to 60 seconds on Instagram and up to 60 on a Facebook Page; a reel runs 3 seconds to 15 minutes; both are shown at 9:16.
+- **Delete truth follows the placement.** Instagram publishes no delete at all, and Facebook publishes one for a Page feed post but none for a Page story, so a published story answers `501 delete_unsupported`. A Page story expires on its own 24 hours after it was posted.
+- **On a PATCH**, `configuration` replaces the post's options and `{}` puts it back to a plain feed post. The media is checked again against the new placement.
+
+Full reference: https://chirpie.ai/docs/platforms/instagram and https://chirpie.ai/docs/platforms/facebook
+
 ### Editing a post that has not gone out
 
-`PATCH /api/v1/posts/:id` changes `text`, the media (`media`, `media_ids` or `media_urls`), `first_comment` (an empty string removes it) or `schedule_at` on a post still waiting to publish, and on a draft also takes `draft` and `publish`. All are optional, and it accepts only those: `account_id` is not among them, because an edit never moves a post to another account.
+`PATCH /api/v1/posts/:id` changes `text`, the media (`media`, `media_ids` or `media_urls`), `first_comment` (an empty string removes it), `configuration` (an empty object puts the post back to a plain feed post) or `schedule_at` on a post still waiting to publish, and on a draft also takes `draft` and `publish`. All are optional, and it accepts only those: `account_id` is not among them, because an edit never moves a post to another account.
 
 **Leaving `schedule_at` out keeps the time the post already has.** The call never publishes a queued post. A draft is the one thing it can send, and only when asked: see "Drafts" below.
 
@@ -225,7 +264,7 @@ Thread results carry `thread_id` and `thread` where post results carry `post_id`
 
 ### What is refused whole, and what fails per account
 
-Before anything publishes, every account is resolved and its body, with that account's overrides applied, is run through the same rules a single-account create runs: character limit, media caps, per-platform media rules, alt-text limits, the platforms that require media, whether the platform takes a first comment (give an account that does not `"first_comment": ""`), and the X link-post rule. Any of those refuses the **whole request** with its usual status and code, and the message is prefixed `Account <id>: `. Nothing publishes and no quota is taken.
+Before anything publishes, every account is resolved and its body, with that account's overrides applied, is run through the same rules a single-account create runs: character limit, media caps, per-platform media rules, alt-text limits, the platforms that require media, whether the platform takes a first comment (give an account that does not `"first_comment": ""`), the publishing options the placement carries, and the X link-post rule. Any of those refuses the **whole request** with its usual status and code, and the message is prefixed `Account <id>: `. Nothing publishes and no quota is taken.
 
 Only the platform call itself fails per account. Those land in `results[].error` and the accounts that worked stay published.
 
@@ -276,6 +315,7 @@ curl -X POST https://chirpie.ai/api/v1/threads \
 - LinkedIn, Instagram, and Facebook degrade gracefully: each item is published as a standalone post.
 - Thread counts as N posts against your monthly quota, N + 1 when it carries a first comment
 - `first_comment` is one comment for the whole thread, published under the **last** part and reported on that part. See "First Comment" above
+- `configuration` applies to every part alike, and a thread publishes to the feed: an Instagram story or reel, and a Facebook Page story, are each a single post, so a thread naming one is refused with `400 configuration_unsupported`. See "Publishing Options" above
 
 ### A thread is all or nothing
 
@@ -503,7 +543,7 @@ try {
 immediate:  → published | failed
 scheduled:  → scheduled → publishing → published | failed
 draft:      → draft (stays there until promoted: schedule_at → scheduled, publish → published)
-deleted:    → deleted (also removed from platform if published, except Instagram)
+deleted:    → deleted (also removed from platform if published, except Instagram and Facebook Page stories)
 ```
 
 Failed posts: check `error_message` for the platform's refusal and `retry_count` for how many attempts were made.

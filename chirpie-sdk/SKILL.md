@@ -58,6 +58,7 @@ const post = await chirpie.createPost({
   schedule_at: "ISO8601",    // Optional, must be future. Either an absolute instant carrying a timezone, or a local time with no offset ("2026-11-01T09:30:00") read in `timezone` or the timezone saved on the account
   timezone: "America/New_York",  // Optional IANA name. The zone a `schedule_at` with no offset is read in. Daylight saving is resolved for the date named. A fixed offset like "+02:00" is NOT accepted here: put it on schedule_at instead. Also on CreateThreadInput and UpdatePostInput
   first_comment: "Full write-up: https://example.com",  // Optional. Published under the post the moment it goes out. X, Threads, Instagram and Facebook only; anywhere else the call throws 400 first_comment_unsupported. Counts as one post against the quota
+  configuration: { instagram: { placement: "reel", share_to_feed: true } },  // Optional. Per-platform publishing options. Instagram: feed (default), story or reel. Facebook Page: feed or story. An option the platform or the placement does not carry throws 400 configuration_unsupported, never dropped. A story carries no caption and no first comment; a story or a reel is a single post, so createThread refuses either. updatePost takes it too, and {} puts a post back to a plain feed post
 });
 
 // Retries. createPost() and createThread() generate an Idempotency-Key per

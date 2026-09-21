@@ -35,6 +35,11 @@ Chirpie is a social media API for AI agents and developers. Post to X/Twitter, B
 - X, Threads, Instagram and Facebook only, and it counts as one post against the monthly quota
 - Sending a first comment that failed again with `POST /api/v1/posts/:id/first-comment`
 
+**Publishing an Instagram story or reel, or a Facebook Page story** → Use `chirpie-posting`
+- `configuration` on a post, keyed by platform: Instagram takes feed, story or reel, a Facebook Page takes feed or story
+- Collaborators, user tags, reel covers, trial reels, a Facebook link preview
+- Connecting a new Instagram account or Facebook Page is coming soon; accounts already connected publish as described
+
 **Posting the same thing to several accounts at once** → Use `chirpie-posting`
 - `account_ids` (1-25) instead of `account_id` on posts and threads
 - Per-account text and media with `account_configurations`
