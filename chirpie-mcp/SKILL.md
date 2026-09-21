@@ -251,7 +251,7 @@ Every post carries `first_comment` back, either `null` or `{ text, status, comme
 
 Instagram's feed posts carry `collaborators` (up to 3 usernames, without the `@`) and `user_tags` (up to 20 `{ username, x, y }`, both coordinates required). A story carries `user_tags` only, with both coordinates or neither. A reel carries `collaborators`, `user_tags` without coordinates, `cover` (an uploaded image id) or `video_cover_timestamp_ms` (never both), `share_to_feed` and `trial_reel: { graduation: "manual" | "performance" }`. A Facebook feed post carries `link`; a Page story carries nothing beyond `placement`.
 
-A story takes exactly one image or video, no caption (send empty text) and no first comment, on both platforms. A reel takes exactly one video. Anything the platform or the placement does not carry is refused with `400 configuration_unsupported` naming the field, and nothing publishes. A story or a reel is a single post, so `chirpie_thread` refuses either placement. Aspect ratio and video duration are the platform's own checks, which come back as `502 upstream_error` at publish time. Instagram publishes no delete at all, and Facebook publishes none for a Page story, so a published story answers `501 delete_unsupported` and expires on its own after 24 hours.
+A story takes exactly one image or video, no caption (send empty text) and no first comment, on both platforms. A reel takes exactly one video. Anything the platform or the placement does not carry is refused with `400 configuration_unsupported` naming the field, and nothing publishes. A story or a reel is a single post, so `chirpie_thread` refuses either placement. Aspect ratio and video duration are the platform's own checks, which come back as `502 upstream_error` at publish time. A published Instagram post cannot be deleted at all, and Facebook publishes no delete for a Page story, so a published story answers `501 delete_unsupported` and expires on its own after 24 hours.
 
 Full reference: https://chirpie.ai/docs/platforms/instagram and https://chirpie.ai/docs/platforms/facebook
 
@@ -280,7 +280,7 @@ Take a post down from the platform. The platform is told first, and the post is 
 
 **The post is never removed from Chirpie**: it keeps its id and its history with `status: "deleted"`, so `chirpie_get_post` still returns it.
 
-Instagram and TikTok publish no delete API, so a published post there is refused with `delete_unsupported`. Tell the user to delete it in the platform's own app, and offer `chirpie_hide_post` to keep it out of their Chirpie listings.
+A published Instagram or TikTok post cannot be deleted, so it is refused with `delete_unsupported`. Tell the user to delete it in the platform's own app, and offer `chirpie_hide_post` to keep it out of their Chirpie listings.
 
 This reaches the platform and cannot be undone, so confirm with the user first.
 

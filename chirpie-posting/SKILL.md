@@ -148,7 +148,7 @@ Rules that catch people out:
 - **`cover` and `video_cover_timestamp_ms` are alternatives**, never both.
 - **A fan-out shares one block per platform.** An `account_configurations` entry replaces the whole block for that account rather than merging into it.
 - **What Chirpie cannot check** is aspect ratio, frame rate and duration, because it never decodes a video. Meta refuses those at publish time and the reason comes back as `502 upstream_error`. A story video runs 3 to 60 seconds on Instagram and up to 60 on a Facebook Page; a reel runs 3 seconds to 15 minutes; both are shown at 9:16.
-- **Delete truth follows the placement.** Instagram publishes no delete at all, and Facebook publishes one for a Page feed post but none for a Page story, so a published story answers `501 delete_unsupported`. A Page story expires on its own 24 hours after it was posted.
+- **Delete truth follows the placement.** A published Instagram post cannot be deleted at all, and Facebook publishes a delete for a Page feed post but none for a Page story, so a published story answers `501 delete_unsupported`. A Page story expires on its own 24 hours after it was posted.
 - **On a PATCH**, `configuration` replaces the post's options and `{}` puts it back to a plain feed post. The media is checked again against the new placement.
 
 Full reference: https://chirpie.ai/docs/platforms/instagram and https://chirpie.ai/docs/platforms/facebook
@@ -319,7 +319,7 @@ curl -X POST https://chirpie.ai/api/v1/threads \
 
 ### A thread is all or nothing
 
-If any part fails to publish, every part that had already published is deleted from the platform and the whole thread's quota is refunded. That holds on every path: immediate, scheduled, promoting a draft, and each account of a multi-account publish. On LinkedIn, Instagram and Facebook the same rule covers the standalone posts made so far.
+If any part fails to publish, every part that had already published is deleted from the platform and the whole thread's quota is refunded. That holds on every path: immediate, scheduled, promoting a draft, and each account of a multi-account publish. On LinkedIn and Facebook the same rule covers the standalone posts made so far. **Instagram is the exception**: Chirpie cannot delete a published Instagram post, so a failed Instagram thread leaves every part it had already published live and names them, which is what `rollback_supported: false` below means.
 
 The error carries `thread_rollback` saying what was removed, and the code tells you whether a retry is safe:
 
@@ -339,7 +339,7 @@ try {
 }
 ```
 
-`rollback_supported: false` means the platform publishes no delete API at all, so nothing could be removed. That is always the case on Instagram. A **scheduled** thread that fails is retried three times, unless the rollback left posts live: then it fails at once, because a retry would publish them twice.
+`rollback_supported: false` means Chirpie cannot delete a published post on that platform, so nothing could be removed. That is always the case on Instagram. A **scheduled** thread that fails is retried three times, unless the rollback left posts live: then it fails at once, because a retry would publish them twice.
 
 ## Drafts
 
@@ -416,7 +416,7 @@ On a published post, delete means delete on the platform: Chirpie tells the plat
 
 **The post is never removed from Chirpie.** It keeps its id and its history with `status: "deleted"`, so `getPost` still returns it.
 
-Instagram and TikTok publish no delete API, so a published post there throws `501 delete_unsupported` and nothing changes. Tell the user to delete it in the platform's own app, and offer to hide it.
+A published Instagram or TikTok post, or a published Facebook Page story, cannot be deleted, so it throws `501 delete_unsupported` and nothing changes. The post stays `published` in Chirpie. Tell the user to delete it in the platform's own app, and offer to hide it. A Page story disappears on its own 24 hours after it was posted.
 
 Delete reaches the platform and cannot be undone, so confirm with the user first. Hiding is the reversible alternative.
 

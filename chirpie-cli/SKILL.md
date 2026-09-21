@@ -119,7 +119,7 @@ chirpie posts --include-hidden         # Include the ones that are hidden
 chirpie posts --json                   # JSON output
 ```
 
-On a published post, delete takes it down from the platform and succeeds only once the platform confirms it is gone. On one that has not gone out, nothing reaches a platform: a queued post is cancelled and its quota returned, while a draft is simply marked deleted, since a draft never counted against any quota. Chirpie keeps the post either way, marked deleted, so `chirpie posts --status deleted` still lists it. Instagram and TikTok publish no delete API, so a published post there is refused with `delete_unsupported`: delete it in the platform's own app.
+On a published post, delete takes it down from the platform and succeeds only once the platform confirms it is gone. On one that has not gone out, nothing reaches a platform: a queued post is cancelled and its quota returned, while a draft is simply marked deleted, since a draft never counted against any quota. Chirpie keeps the post either way, marked deleted, so `chirpie posts --status deleted` still lists it. A published Instagram or TikTok post cannot be deleted, so it is refused with `delete_unsupported`: delete it in the platform's own app.
 
 A first comment never fails its post, so a published post can be carrying one that did not go out. `chirpie posts first-comment <id>` re-sends the text the post already carries, and counts as one post against the monthly quota. That text cannot be changed once the post is out, so set it while the post is still a draft or still queued, with `chirpie posts update <id> --first-comment "..."`.
 

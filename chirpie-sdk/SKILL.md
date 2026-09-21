@@ -117,8 +117,8 @@ await chirpie.updatePost("post-uuid", { first_comment: "Full write-up: https://e
 // Delete a post. Takes it down from the platform first, and reports it deleted
 // only once the platform confirms it is gone. If the platform refuses, nothing
 // changes and the call throws: just retry. Chirpie keeps the post, marked
-// deleted, so it stays in the user's history. Instagram and TikTok publish
-// no delete API and throw `501 delete_unsupported`.
+// deleted, so it stays in the user's history. A published Instagram or TikTok
+// post cannot be deleted and throws `501 delete_unsupported`.
 const result = await chirpie.deletePost("post-uuid");
 
 // Hide a post from the user's Chirpie listings. Nothing reaches the platform:
