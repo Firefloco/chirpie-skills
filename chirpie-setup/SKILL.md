@@ -154,28 +154,38 @@ chirpie accounts connect-mastodon --instance mastodon.social
 # Opens browser for Mastodon OAuth authorization
 ```
 
-**Instagram** (coming soon): Connect via Instagram Login from the dashboard or API. Requires an Instagram professional account (Business or Creator); personal accounts cannot be connected. Instagram posts always need at least one image.
+**Instagram** (coming soon): two routes, and the user picks. Both require an Instagram professional account (Business or Creator); personal accounts cannot be connected. Instagram posts always need media: a feed post takes one image or a carousel of up to 10, a story takes exactly one image or video, and a reel takes exactly one video. Text on its own is refused.
+
+- `via: "instagram"` (the default): the user signs in with Instagram. No Facebook Page needed.
+- `via: "facebook"`: the user signs in with Facebook, and Chirpie connects the Instagram professional accounts linked to the Facebook Pages they share. One authorization can connect several at once, one per linked Page, and any beyond the plan's account limit arrive inactive with `inactive_reason: "plan_limit"` rather than dropped.
+
+Posting, carousels, stories, reels, threads, scheduling, analytics and comments are identical on both. The only difference is deleting a published post: the Facebook route can, the Instagram route answers `501 delete_unsupported`. Recommend `via: "facebook"` when the user wants deletes or runs several accounts across Pages.
+
 ```typescript
 const { authorization_url } = await chirpie.connectInstagramAccount();
-// Open URL in browser to authorize via Instagram Login
+// Open URL in browser to authorize
+
+// Or sign in with Facebook instead:
+const viaFacebook = await chirpie.connectInstagramAccount({ via: "facebook" });
 ```
 
 Or via CLI:
 ```bash
 chirpie accounts connect-instagram
-# Opens browser for Instagram Login OAuth authorization
+chirpie accounts connect-instagram --via facebook
+# Opens browser for OAuth authorization
 ```
 
-**Facebook** (coming soon): Connect Facebook Pages via Facebook Login from the dashboard or API:
+**Facebook** (coming soon): Connect Facebook Pages from the dashboard or API:
 ```typescript
 const { authorization_url } = await chirpie.connectFacebookAccount();
-// Open URL in browser to authorize via Facebook Login and choose which Pages to grant
+// Open URL in browser to authorize and choose which Pages to grant
 ```
 
 Or via CLI:
 ```bash
 chirpie accounts connect-facebook
-# Opens browser for Facebook Login OAuth authorization
+# Opens browser for Facebook OAuth authorization
 ```
 
 One authorization can grant many Pages ("all current and future Pages" grants every Page you

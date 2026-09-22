@@ -119,7 +119,7 @@ chirpie posts --include-hidden         # Include the ones that are hidden
 chirpie posts --json                   # JSON output
 ```
 
-On a published post, delete takes it down from the platform and succeeds only once the platform confirms it is gone. On one that has not gone out, nothing reaches a platform: a queued post is cancelled and its quota returned, while a draft is simply marked deleted, since a draft never counted against any quota. Chirpie keeps the post either way, marked deleted, so `chirpie posts --status deleted` still lists it. A published Instagram or TikTok post cannot be deleted, so it is refused with `delete_unsupported`: delete it in the platform's own app.
+On a published post, delete takes it down from the platform and succeeds only once the platform confirms it is gone. On one that has not gone out, nothing reaches a platform: a queued post is cancelled and its quota returned, while a draft is simply marked deleted, since a draft never counted against any quota. Chirpie keeps the post either way, marked deleted, so `chirpie posts --status deleted` still lists it. A published TikTok post, a published Facebook Page story, or a post on an Instagram account connected through Instagram rather than with `--via facebook` cannot be deleted, so each is refused with `delete_unsupported`: delete it in the platform's own app, though a Page story expires by itself after 24 hours.
 
 A first comment never fails its post, so a published post can be carrying one that did not go out. `chirpie posts first-comment <id>` re-sends the text the post already carries, and counts as one post against the monthly quota. That text cannot be changed once the post is out, so set it while the post is still a draft or still queued, with `chirpie posts update <id> --first-comment "..."`.
 
@@ -158,8 +158,9 @@ chirpie accounts connect-linkedin     # Start LinkedIn OAuth flow (prints URL to
 chirpie accounts connect-linkedin --pages  # Connect the LinkedIn Pages you administer instead (COMING SOON)
 chirpie accounts connect-threads      # Start Threads Meta OAuth flow (COMING SOON)
 chirpie accounts connect-mastodon --instance mastodon.social  # Start Mastodon OAuth flow (a full URL or @you@server also works)
-chirpie accounts connect-instagram     # Start Instagram Login OAuth flow (COMING SOON)
-chirpie accounts connect-facebook      # Start Facebook Login OAuth flow (COMING SOON)
+chirpie accounts connect-instagram     # Start the Instagram OAuth flow (COMING SOON)
+chirpie accounts connect-instagram --via facebook [--reconnect]  # Sign in with Facebook instead, and connect the Instagram accounts linked to the Pages shared (COMING SOON)
+chirpie accounts connect-facebook      # Start the Facebook OAuth flow (COMING SOON)
 chirpie accounts connect-telegram --bot-token TOKEN --chat-id channelname  # Connect Telegram bot (@channelname, a t.me link, or a numeric ID also work)
 # Threads, Instagram, Facebook, Pinterest, TikTok, YouTube, and Google Business
 # Profile are coming soon. Their connect-* commands answer with a "coming soon"

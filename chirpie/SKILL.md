@@ -40,6 +40,10 @@ Chirpie is a social media API for AI agents and developers. Post to X/Twitter, B
 - Collaborators, user tags, reel covers, trial reels, a Facebook link preview
 - Connecting a new Instagram account or Facebook Page is coming soon; accounts already connected publish as described
 
+**Connecting an Instagram account** → Use `chirpie-setup`
+- Two routes: sign in with Instagram (the default), or sign in with Facebook and connect the Instagram accounts linked to the Pages shared
+- Identical for posting, threads, scheduling and analytics; only the Facebook route can delete a published post
+
 **Posting the same thing to several accounts at once** → Use `chirpie-posting`
 - `account_ids` (1-25) instead of `account_id` on posts and threads
 - Per-account text and media with `account_configurations`

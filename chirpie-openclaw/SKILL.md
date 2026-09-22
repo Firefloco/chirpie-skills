@@ -118,7 +118,9 @@ curl -s -X PATCH https://chirpie.ai/api/v1/posts/POST_ID \
   -H "Content-Type: application/json" \
   -d '{"text": "Now with the typo fixed"}'
 
-# Delete (also removes it from the platform, except Instagram)
+# Delete (also removes it from the platform, except on TikTok, on a Facebook
+# Page story, and on an Instagram account connected through Instagram rather
+# than via Facebook)
 curl -s -X DELETE https://chirpie.ai/api/v1/posts/POST_ID \
   -H "Authorization: Bearer $CHIRPIE_API_KEY"
 ```

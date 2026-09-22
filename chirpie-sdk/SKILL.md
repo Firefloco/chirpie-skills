@@ -117,8 +117,9 @@ await chirpie.updatePost("post-uuid", { first_comment: "Full write-up: https://e
 // Delete a post. Takes it down from the platform first, and reports it deleted
 // only once the platform confirms it is gone. If the platform refuses, nothing
 // changes and the call throws: just retry. Chirpie keeps the post, marked
-// deleted, so it stays in the user's history. A published Instagram or TikTok
-// post cannot be deleted and throws `501 delete_unsupported`.
+// deleted, so it stays in the user's history. A published TikTok post, or one
+// on an Instagram account connected through Instagram rather than via
+// Facebook, cannot be deleted and throws `501 delete_unsupported`.
 const result = await chirpie.deletePost("post-uuid");
 
 // Hide a post from the user's Chirpie listings. Nothing reaches the platform:
@@ -243,6 +244,8 @@ const accounts = await chirpie.listAccounts();
 // One Facebook authorization can grant several Pages; all of them are stored.
 // LinkedIn is the same: your profile plus every Page you administer, each with
 // its own id. account_type is "member" for a profile, "organization" for a Page.
+// Instagram accounts carry oauth_variant, "instagram" or "facebook", saying
+// which route connected them. Only "facebook" accounts can be deleted from.
 
 // Choose which accounts publish. Deactivating CANCELS the account's scheduled
 // posts (a switched-off account cannot publish) and returns their quota;
@@ -295,10 +298,17 @@ const { authorization_url } = await chirpie.connectMastodonAccount({
   instance_url: "https://mastodon.social",
 });
 
-// Connect Instagram account (Instagram Login OAuth flow, coming soon)
+// Connect Instagram account (coming soon). `via` picks the route:
+// "instagram" (the default) signs in with Instagram; "facebook" signs in with
+// Facebook and connects the Instagram accounts linked to the Pages the user
+// shares, several at once, parking any beyond the plan limit with
+// inactive_reason "plan_limit". The Facebook route is the one where deletePost
+// can take a published post down; everything else is identical.
+// `reconnect: true` re-asks about anything turned down last time.
 const { authorization_url } = await chirpie.connectInstagramAccount();
+const viaFacebook = await chirpie.connectInstagramAccount({ via: "facebook" });
 
-// Connect Facebook Page (Facebook Login OAuth flow, coming soon)
+// Connect Facebook Page (Facebook OAuth flow, coming soon)
 const { authorization_url } = await chirpie.connectFacebookAccount();
 
 // Connect Telegram bot (bot token auth)
@@ -375,6 +385,7 @@ import type {
   ConnectThreadsInput,        // Input for connectThreadsAccount()
   ConnectMastodonInput,       // Input for connectMastodonAccount()
   ConnectInstagramInput,      // Input for connectInstagramAccount()
+  InstagramConnectVia,        // "instagram" | "facebook"
   ConnectFacebookInput,       // Input for connectFacebookAccount()
   ConnectTelegramInput,       // Input for connectTelegramAccount()
   ListPostsOptions,           // Options for listPosts()

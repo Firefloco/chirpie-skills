@@ -251,7 +251,7 @@ Every post carries `first_comment` back, either `null` or `{ text, status, comme
 
 Instagram's feed posts carry `collaborators` (up to 3 usernames, without the `@`) and `user_tags` (up to 20 `{ username, x, y }`, both coordinates required). A story carries `user_tags` only, with both coordinates or neither. A reel carries `collaborators`, `user_tags` without coordinates, `cover` (an uploaded image id) or `video_cover_timestamp_ms` (never both), `share_to_feed` and `trial_reel: { graduation: "manual" | "performance" }`. A Facebook feed post carries `link`; a Page story carries nothing beyond `placement`.
 
-A story takes exactly one image or video, no caption (send empty text) and no first comment, on both platforms. A reel takes exactly one video. Anything the platform or the placement does not carry is refused with `400 configuration_unsupported` naming the field, and nothing publishes. A story or a reel is a single post, so `chirpie_thread` refuses either placement. Aspect ratio and video duration are the platform's own checks, which come back as `502 upstream_error` at publish time. A published Instagram post cannot be deleted at all, and Facebook publishes no delete for a Page story, so a published story answers `501 delete_unsupported` and expires on its own after 24 hours.
+A story takes exactly one image or video, no caption (send empty text) and no first comment, on both platforms. A reel takes exactly one video. Anything the platform or the placement does not carry is refused with `400 configuration_unsupported` naming the field, and nothing publishes. A story or a reel is a single post, so `chirpie_thread` refuses either placement. Aspect ratio and video duration are the platform's own checks, which come back as `502 upstream_error` at publish time. On Instagram, deleting a published post works on an account connected via Facebook and is refused with `501 delete_unsupported` on one connected through Instagram. Facebook publishes no delete for a Page story, so a published story answers `501 delete_unsupported` and expires on its own after 24 hours.
 
 Full reference: https://chirpie.ai/docs/platforms/instagram and https://chirpie.ai/docs/platforms/facebook
 
@@ -280,7 +280,7 @@ Take a post down from the platform. The platform is told first, and the post is 
 
 **The post is never removed from Chirpie**: it keeps its id and its history with `status: "deleted"`, so `chirpie_get_post` still returns it.
 
-A published Instagram or TikTok post cannot be deleted, so it is refused with `delete_unsupported`. Tell the user to delete it in the platform's own app, and offer `chirpie_hide_post` to keep it out of their Chirpie listings.
+A published TikTok post, a published Facebook Page story, or a post on an Instagram account connected through Instagram rather than via Facebook cannot be deleted, so each is refused with `delete_unsupported`. Tell the user to delete it in the platform's own app (a Page story expires on its own after 24 hours), and offer `chirpie_hide_post` to keep it out of their Chirpie listings.
 
 This reaches the platform and cannot be undone, so confirm with the user first.
 
@@ -431,7 +431,7 @@ The user does not need to leave the agent to connect a platform. Call the matchi
 | `chirpie_connect_linkedin` | LinkedIn profile | none |
 | `chirpie_connect_linkedin_pages` | LinkedIn Pages (coming soon) | none |
 | `chirpie_connect_threads` | Threads (coming soon) | none |
-| `chirpie_connect_instagram` | Instagram (coming soon) | none |
+| `chirpie_connect_instagram` | Instagram (coming soon) | `via`: `instagram` (the default) signs in with Instagram, `facebook` signs in with Facebook and connects the Instagram accounts linked to the Pages shared, several at once. Only the `facebook` route can delete a published post; everything else is identical. `reconnect`: re-ask about anything turned down last time |
 | `chirpie_connect_facebook` | Facebook Pages (coming soon) | none |
 | `chirpie_connect_bluesky` | Bluesky | `identifier`, `app_password` |
 | `chirpie_connect_mastodon` | Mastodon | `instance_url` |
