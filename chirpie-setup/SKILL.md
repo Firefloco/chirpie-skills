@@ -161,6 +161,8 @@ chirpie accounts connect-mastodon --instance mastodon.social
 
 Posting, carousels, stories, reels, threads, scheduling, analytics and comments are identical on both. The only difference is deleting a published post: the Facebook route can, the Instagram route answers `501 delete_unsupported`. Recommend `via: "facebook"` when the user wants deletes or runs several accounts across Pages.
 
+Connecting an account the user already has through the other route **moves** the account they already have rather than adding a second one: it keeps its id and everything it has published, and only deleting changes hands. So switching to `via: "facebook"` adds deleting, and switching back takes it away. Where the two routes report different Instagram accounts the user gets a second account instead, so list the accounts again afterwards rather than assuming which happened.
+
 ```typescript
 const { authorization_url } = await chirpie.connectInstagramAccount();
 // Open URL in browser to authorize
