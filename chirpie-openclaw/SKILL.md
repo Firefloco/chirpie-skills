@@ -165,7 +165,7 @@ Media URLs must be publicly reachable, because Chirpie downloads them server-sid
 | 404 | `not_found` | Wrong or inactive `account_id` | Re-list accounts |
 | 429 | `usage_limit_exceeded` | Monthly post or scheduled-post quota spent | Stop; tell the user |
 | 429 | `rate_limited` | Past the plan's per-minute burst limit on this key | Sleep for `Retry-After`, then retry once |
-| 429 | `analytics_refresh_rate_limited` | A forced analytics refresh inside the 30-minute floor for that post | Sleep for `Retry-After`, or read the stored numbers without `refresh` |
+| 429 | `analytics_refresh_rate_limited` | A forced analytics refresh inside the 5-minute floor for that post | Sleep for `Retry-After`, or read the stored numbers without `refresh` |
 | 403 | `insufficient_scope` | The key lacks the scope this route needs | Stop; tell the user which scope the message names |
 | 409 | `idempotency_in_progress` | The same `Idempotency-Key` is still running | Retry the identical call once more to collect the replay |
 | 422 | `idempotency_key_reused` | The same key was used for a different request | Use a fresh key for a different request |

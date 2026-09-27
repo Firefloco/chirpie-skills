@@ -216,7 +216,7 @@ chirpie analytics POST_UUID           # Get post metrics from the stored snapsho
 chirpie analytics POST_UUID --refresh # Ask the platform now
 ```
 
-`--refresh` is floored at one forced refresh per post every 30 minutes. Past that it reports
+`--refresh` is floored at one forced refresh per post every 5 minutes. Past that it reports
 `analytics_refresh_rate_limited`, and the stored numbers are still one ordinary call away.
 
 ## Output Formats

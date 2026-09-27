@@ -487,7 +487,7 @@ curl -X POST https://chirpie.ai/api/v1/posts/POST_ID/comments/COMMENT_ID/reply \
 
 ### Freshness
 
-A listing answers from comments Chirpie has stored, refreshed on a schedule. `meta.sync.status` says how fresh they are: `ok`, or one of `unsupported`, `permission`, `rate_limited`, `budget`, `plan`, `error`. Anything but `ok` carries a ready-worded sentence in `meta.sync.reason` that can be shown to a user as is. Pass `sync=true` to ask for a refresh now, and `sync=false` to skip one. A refused refresh is still a `200` with the stored comments.
+A listing answers from comments Chirpie has stored, refreshed on a schedule. `meta.sync.status` says how fresh they are: `ok`, or one of `unsupported`, `permission`, `rate_limited`, `budget`, `plan`, `error`. Anything but `ok` carries a ready-worded sentence in `meta.sync.reason` that can be shown to a user as is. Pass `sync=true` to ask for a refresh now (honoured a minute after the last refresh of that post, 15 minutes on X; `meta.sync.next_sync_after` says when), and `sync=false` to skip one. A refused refresh is still a `200` with the stored comments.
 
 `409 comment_permission_required` means the account has to be reconnected at https://chirpie.ai/dashboard/accounts before its comments can be read or managed. Posting and analytics keep working meanwhile.
 
@@ -507,7 +507,7 @@ const analytics = await chirpie.getPostAnalytics("post-uuid");
 
 // Ask the platform now instead of reading the snapshot. `GET
 // /api/v1/analytics/posts/:id?refresh=true` on the wire. Floored at one forced
-// refresh per post every 30 minutes; past that it is
+// refresh per post every 5 minutes; past that it is
 // `429 analytics_refresh_rate_limited` carrying Retry-After, and the stored
 // numbers are still one ordinary call away.
 const fresh = await chirpie.getPostAnalytics("post-uuid", { refresh: true });

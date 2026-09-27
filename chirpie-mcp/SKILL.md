@@ -393,7 +393,7 @@ Get engagement metrics for a published post.
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `post_id` | string | Yes | Post UUID |
-| `refresh` | boolean | No | Ask the platform for the current numbers instead of reading the stored snapshot. Allowed once per post every 30 minutes; past that it answers `429 analytics_refresh_rate_limited` with a `Retry-After`, and the stored numbers are still one ordinary call away |
+| `refresh` | boolean | No | Ask the platform for the current numbers instead of reading the stored snapshot. Allowed once per post every 5 minutes; past that it answers `429 analytics_refresh_rate_limited` with a `Retry-After`, and the stored numbers are still one ordinary call away |
 
 Returns: impressions, likes, retweets, replies, quotes, bookmarks, clicks. The numbers come
 from a snapshot at most an hour old, so calling this often costs nothing. Reserve `refresh`

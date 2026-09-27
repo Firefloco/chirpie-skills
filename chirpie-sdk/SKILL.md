@@ -352,7 +352,7 @@ const metrics = await chirpie.getPostAnalytics("post-uuid");
 // { impressions, likes, retweets, replies, quotes, bookmarks, clicks, fetched_at }
 // Served from a stored snapshot under an hour old, so polling costs nothing.
 
-// Ask the platform now. Floored at one forced refresh per post every 30
+// Ask the platform now. Floored at one forced refresh per post every 5
 // minutes; past that it throws 429 analytics_refresh_rate_limited with a
 // Retry-After, and the stored numbers are still one ordinary call away.
 const fresh = await chirpie.getPostAnalytics("post-uuid", { refresh: true });
