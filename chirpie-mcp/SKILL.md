@@ -399,6 +399,18 @@ Returns: impressions, likes, retweets, replies, quotes, bookmarks, clicks. The n
 from a snapshot at most an hour old, so calling this often costs nothing. Reserve `refresh`
 for the moment somebody is actually looking at the answer.
 
+### Comments: chirpie_list_comments, chirpie_reply_to_comment, chirpie_hide_comment, chirpie_delete_comment
+
+`chirpie_list_comments` takes `post_id`, `limit`, `cursor`, `since`, `sync`, and two filters:
+`include_hidden` adds the comments the user hid (`hidden: true`), and `include_deleted` adds
+the ones that are gone (`deleted: true`, with the last text Chirpie stored, so it can still
+say what was removed). Both are off by default. The user's own replies carry `own: true` and
+are authored by the connected account. Check `capabilities` before offering an action.
+
+`chirpie_delete_comment` deletes on the platform first. On Facebook, Instagram, Threads and
+LinkedIn the replies under the comment are deleted with it and read `deleted: true` too; on
+X, Bluesky and Mastodon they stay live. Confirm with the user before deleting.
+
 ## Example Prompts
 
 Once configured, ask your AI agent:

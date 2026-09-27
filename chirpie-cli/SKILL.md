@@ -219,6 +219,21 @@ chirpie analytics POST_UUID --refresh # Ask the platform now
 `--refresh` is floored at one forced refresh per post every 5 minutes. Past that it reports
 `analytics_refresh_rate_limited`, and the stored numbers are still one ordinary call away.
 
+### chirpie comments
+
+```bash
+chirpie comments list POST_UUID                     # Newest first
+chirpie comments list POST_UUID --include-hidden --include-deleted
+chirpie comments reply POST_UUID COMMENT_UUID --text "Thanks!"   # Counts as one post
+chirpie comments hide POST_UUID COMMENT_UUID        # --unhide to show it again
+chirpie comments delete POST_UUID COMMENT_UUID -y
+```
+
+`--include-deleted` lists deleted comments with the last text Chirpie stored; the `state`
+column says `deleted` or `hidden`. Your own replies show the connected account's name. On
+Facebook, Instagram, Threads and LinkedIn a delete removes the replies under the comment
+too; on X, Bluesky and Mastodon they stay live.
+
 ## Output Formats
 
 By default, output is human-readable (tables and messages). Add `--json` for machine-readable output:

@@ -443,8 +443,11 @@ For a post Chirpie published, list the comments it received, reply to one, hide 
 // List. Newest first. Page with next_cursor until it comes back null.
 const { comments, next_cursor, capabilities, sync } = await chirpie.listComments(
   "post-uuid",
-  { limit: 25, include_hidden: false }
+  { limit: 25, include_hidden: false, include_deleted: false }
 );
+// include_hidden / include_deleted add the comments you hid and the ones that are
+// gone. A deleted comment keeps its text (deleted: true), which is Chirpie's last copy.
+// Your own replies carry own: true, and their author is the connected account.
 
 // Reply. Published to the platform, so it counts as ONE POST against the monthly quota.
 await chirpie.replyToComment("post-uuid", "comment-uuid", "Thanks, that is on the roadmap.");
@@ -453,7 +456,8 @@ await chirpie.replyToComment("post-uuid", "comment-uuid", "Thanks, that is on th
 await chirpie.hideComment("post-uuid", "comment-uuid");
 await chirpie.unhideComment("post-uuid", "comment-uuid");
 
-// Delete.
+// Delete. On Facebook, Instagram, Threads and LinkedIn the replies under it go too,
+// and Chirpie records them deleted; on X, Bluesky and Mastodon they stay live.
 await chirpie.deleteComment("post-uuid", "comment-uuid");
 ```
 
