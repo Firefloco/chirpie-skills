@@ -147,6 +147,15 @@ would be refused stays a draft, unchanged. A draft thread is promoted whole.
 
 ### chirpie accounts
 
+Every account, post, key or comment ID the CLI takes, here and in every other command,
+accepts the eight-character short ID a listing prints (`chirpie accounts`,
+`chirpie posts`, `chirpie keys`, `chirpie comments list`) as well as the full ID. A group
+ID (`chirpie posts --group`) is always the full one a multi-account post returned. A short
+post ID is looked up among your 1,000 most recent posts, and a short draft ID among your
+1,000 most recent drafts. A short comment ID is looked up among a post's 1,000 most
+recent comments, so pass the full ID for anything older. A short ID that matches
+nothing, or more than one thing, stops the command with a message rather than guessing.
+
 ```bash
 chirpie accounts                       # List connected accounts (inactive ones included)
 chirpie accounts activate <id>         # Switch an account on so it can publish
