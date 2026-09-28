@@ -42,7 +42,11 @@ Or add to `.mcp.json` in the project:
 
 ### Claude (claude.ai / desktop)
 
-Settings → Connectors → **Add custom connector** → name `Chirpie`, URL `https://chirpie.ai/mcp` → Connect.
+Customize → Connectors (Claude Desktop: Settings → Connectors) → **+** → **Add custom connector** → URL `https://chirpie.ai/mcp` → Add → Connect. Full guide: https://chirpie.ai/docs/mcp/claude
+
+### Meta Muse
+
+In a Muse conversation: "Add a custom connector for Chirpie. It is a remote MCP server over Streamable HTTP at https://chirpie.ai/mcp with OAuth sign-in. Send me the sign-in link and I will approve it." Full guide: https://chirpie.ai/docs/mcp/meta-muse
 
 ### Cursor
 
