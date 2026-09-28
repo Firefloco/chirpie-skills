@@ -141,6 +141,17 @@ Add to Cursor MCP settings:
 
 Both servers expose exactly the same tools.
 
+### Tool annotations
+
+Every tool carries a title and the MCP annotations `readOnlyHint`,
+`destructiveHint`, `idempotentHint` and `openWorldHint`, and clients use them to
+decide when to ask the user first (by default, Claude asks before a destructive tool).
+
+- **Read-only**: `chirpie_list_posts`, `chirpie_get_post`, `chirpie_list_accounts`, `chirpie_analytics`, `chirpie_list_comments`, `chirpie_list_keys`, `chirpie_get_x_keys_status`.
+- **Destructive**: `chirpie_delete_post`, `chirpie_delete_comment`, `chirpie_update_post` (overwrites a queued post), `chirpie_deactivate_account` and `chirpie_disconnect_account` (both cancel the account's scheduled posts), `chirpie_revoke_key`, `chirpie_set_x_keys` (replaces any app already set), `chirpie_remove_x_keys`.
+- **Neither**: everything that creates (posts, threads, media, replies, keys, connects) and the reversible toggles (`chirpie_hide_post`, `chirpie_unhide_post`, `chirpie_hide_comment`, `chirpie_activate_account`).
+- No creating tool is marked idempotent. `chirpie_post`, `chirpie_thread`, `chirpie_upload_media`, `chirpie_reply_to_comment` and `chirpie_retry_first_comment` take an `idempotency_key` that makes a retry safe; the other creating tools have none.
+
 ## Available Tools
 
 ### chirpie_upload_media
