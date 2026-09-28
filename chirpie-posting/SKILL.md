@@ -187,7 +187,7 @@ Only a post that has not published yet can be edited, which means a scheduled po
 }
 ```
 
-`platform_post_url` is the public permalink, or `null` when the platform has none that can be derived. X, Bluesky, Mastodon, LinkedIn, Facebook, and public Telegram channels get a URL; Threads and Instagram are always `null`. Thread responses carry it on each post too.
+`platform_post_url` is the post's public link on the platform, and `null` until it is published. On Threads and Instagram it is the link the platform gives for the post, kept when it publishes. It is `null` for a Telegram chat with no public `@name`, an Instagram story the platform gave no link for, or a Threads or Instagram post whose link could not be read when it went out; for that last case, `GET /api/v1/posts/{id}` asks again and keeps the answer. Thread responses carry it on each post too.
 
 ## Post to Several Accounts at Once
 
