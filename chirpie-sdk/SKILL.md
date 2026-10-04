@@ -279,6 +279,8 @@ await chirpie.removeXKeys();
 
 // Connect Bluesky account (app password). The identifier takes the first part
 // of the handle alone, a full handle, a custom-domain handle, or the account email.
+// app_password must be an app password (xxxx-xxxx-xxxx-xxxx), never the account
+// password: anything else throws bluesky_app_password_required.
 await chirpie.connectBlueskyAccount({
   platform: "bluesky",
   identifier: "yourhandle.bsky.social",
@@ -293,10 +295,11 @@ const { authorization_url: pagesUrl } = await chirpie.connectLinkedInPagesAccoun
 // Connect Threads account (Meta OAuth flow, coming soon)
 const { authorization_url } = await chirpie.connectThreadsAccount();
 
-// Connect Mastodon account (OAuth flow)
+// Connect Mastodon account (OAuth flow). instance_url takes the server, a handle
+// (@you@mastodon.social) or a profile URL; only the server is kept.
 const { authorization_url } = await chirpie.connectMastodonAccount({
   platform: "mastodon",
-  instance_url: "https://mastodon.social",
+  instance_url: "@you@mastodon.social",
 });
 
 // Connect Instagram account (coming soon). `via` picks the route:

@@ -162,11 +162,11 @@ chirpie accounts activate <id>         # Switch an account on so it can publish
 chirpie accounts deactivate <id>       # Switch it off (frees a plan slot, CANCELS its scheduled posts)
 chirpie accounts disconnect <id>       # End the connection (asks first; -y to skip, CANCELS its scheduled posts)
 chirpie accounts connect-x             # Start X OAuth flow (prints URL)
-chirpie accounts connect-bluesky --handle yourhandle --app-password xxxx-xxxx-xxxx-xxxx  # --handle also takes a full handle, a custom domain, or the account email
+chirpie accounts connect-bluesky --handle yourhandle --app-password xxxx-xxxx-xxxx-xxxx  # An app password only (Settings, Privacy and Security, App Passwords); anything else is refused locally. --handle also takes a full handle, a custom domain, or the account email
 chirpie accounts connect-linkedin     # Start LinkedIn OAuth flow (prints URL to open in browser)
 chirpie accounts connect-linkedin --pages  # Connect the LinkedIn Pages you administer instead (COMING SOON)
 chirpie accounts connect-threads      # Start Threads Meta OAuth flow (COMING SOON)
-chirpie accounts connect-mastodon --instance mastodon.social  # Start Mastodon OAuth flow (a full URL or @you@server also works)
+chirpie accounts connect-mastodon --instance mastodon.social  # Start Mastodon OAuth flow (a handle like @you@mastodon.social or a profile URL also works)
 chirpie accounts connect-instagram     # Start the Instagram OAuth flow (COMING SOON)
 chirpie accounts connect-instagram --via facebook [--reconnect]  # Sign in with Facebook instead, and connect the Instagram accounts linked to the Pages shared (COMING SOON)
 chirpie accounts connect-facebook      # Start the Facebook OAuth flow (COMING SOON)

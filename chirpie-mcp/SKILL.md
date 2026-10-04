@@ -457,8 +457,8 @@ The user does not need to leave the agent to connect a platform. Call the matchi
 | `chirpie_connect_threads` | Threads (coming soon) | none |
 | `chirpie_connect_instagram` | Instagram (coming soon) | `via`: `instagram` (the default) signs in with Instagram, `facebook` signs in with Facebook and connects the Instagram accounts linked to the Pages shared, several at once. Only the `facebook` route can delete a published post; everything else is identical. `reconnect`: re-ask about anything turned down last time |
 | `chirpie_connect_facebook` | Facebook Pages (coming soon) | none |
-| `chirpie_connect_bluesky` | Bluesky | `identifier`, `app_password` |
-| `chirpie_connect_mastodon` | Mastodon | `instance_url` |
+| `chirpie_connect_bluesky` | Bluesky | `identifier`, `app_password` (an app password shaped `xxxx-xxxx-xxxx-xxxx`, never the account password; anything else is `bluesky_app_password_required`) |
+| `chirpie_connect_mastodon` | Mastodon | `instance_url`: the server, the user's handle (`@you@mastodon.social`) or their profile URL; only the server is kept |
 | `chirpie_connect_telegram` | Telegram | `bot_token`, `chat_id` |
 
 ## Key management tools

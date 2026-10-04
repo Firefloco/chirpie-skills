@@ -2,7 +2,7 @@
   "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
   "name": "chirpie",
   "displayName": "Chirpie",
-  "version": "1.1.37",
+  "version": "1.1.38",
   "description": "The publishing connector for AI agents: post, schedule and thread to X, Bluesky, LinkedIn, Mastodon and Telegram from Claude, then read analytics and answer comments. Threads, Instagram and Facebook are coming soon.",
   "author": {
     "name": "Fireflo LLC",

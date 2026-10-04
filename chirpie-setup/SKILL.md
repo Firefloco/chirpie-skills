@@ -83,7 +83,7 @@ await chirpie.setXKeys({
 ```
 Full walkthrough: https://chirpie.ai/docs/x-byo-keys
 
-**Bluesky**: Connect with an app password (generate at https://bsky.app/settings/app-passwords). The `identifier` takes the first part of the handle on its own (`yourhandle`), a full handle, a handle on your own domain, or the email on the account:
+**Bluesky**: Connect with an app password, never the account password. Create one in Bluesky under Settings, Privacy and Security, App Passwords (https://bsky.app/settings/app-passwords); it looks like `xxxx-xxxx-xxxx-xxxx`, and anything else is refused with `400 bluesky_app_password_required` (the CLI refuses it locally with the same code). The `identifier` takes the first part of the handle on its own (`yourhandle`), a full handle, a handle on your own domain, or the email on the account:
 ```typescript
 await chirpie.connectBlueskyAccount({
   platform: "bluesky",
@@ -139,7 +139,7 @@ chirpie accounts connect-threads
 # Opens browser for Meta OAuth authorization
 ```
 
-**Mastodon**: Connect via OAuth from the dashboard or API. The `instance_url` takes a bare host (`mastodon.social`), a full URL, or an `@you@fosstodon.org` address:
+**Mastodon**: Connect via OAuth from the dashboard or API. The `instance_url` takes the server (`mastodon.social`), the user's handle (`@you@mastodon.social`) or their profile URL (`https://mastodon.social/@you`), and keeps only the server. A value naming no server is `400 mastodon_instance_invalid`:
 ```typescript
 const { authorization_url } = await chirpie.connectMastodonAccount({
   platform: "mastodon",
@@ -151,7 +151,8 @@ const { authorization_url } = await chirpie.connectMastodonAccount({
 Or via CLI:
 ```bash
 chirpie accounts connect-mastodon --instance mastodon.social
-# Opens browser for Mastodon OAuth authorization
+# --instance also takes @you@mastodon.social or https://mastodon.social/@you
+# Prints the URL to open for Mastodon OAuth authorization
 ```
 
 **Instagram** (coming soon): two routes, and the user picks. Both require an Instagram professional account (Business or Creator); personal accounts cannot be connected. Instagram posts always need media: a feed post takes one image or a carousel of up to 10, a story takes exactly one image or video, and a reel takes exactly one video. Text on its own is refused.
