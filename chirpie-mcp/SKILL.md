@@ -484,6 +484,18 @@ server signed in with OAuth they are not offered. Manage API keys in the
 1. Sign in through the client's connector flow (recommended)
 2. `Authorization: Bearer chirpie_sk_...` header
 
+### Read only or full access
+
+Signing in shows a Chirpie screen asking what the app may do: **Full access** (default)
+or **Read only**. A read-only connection holds `posts:read`, `accounts:read`,
+`analytics:read` and `comments:read`, and `tools/list` offers only
+`chirpie_list_posts`, `chirpie_get_post`, `chirpie_list_accounts`, `chirpie_analytics`,
+`chirpie_list_comments` and `chirpie_get_x_keys_status`. Calling anything else answers
+`insufficient_scope` naming the missing permission (for example `posts:write`). If the user
+asks a read-only connection to publish, tell them to disconnect Chirpie in their AI app,
+connect it again and choose Full access. A scoped API key is filtered the same way: only
+the tools its scopes cover are offered. Docs: https://chirpie.ai/docs/mcp#read-only-or-full-access
+
 **Local server**:
 1. `CHIRPIE_API_KEY` environment variable
 2. `~/.chirpie/config.json` (created by `chirpie login`)
