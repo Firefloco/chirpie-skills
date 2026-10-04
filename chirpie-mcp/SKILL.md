@@ -64,7 +64,7 @@ Add to `.cursor/mcp.json` (project) or `~/.cursor/mcp.json` (global):
 
 ### ChatGPT
 
-Settings → Connectors → Create → **MCP server** → URL `https://chirpie.ai/mcp` → OAuth.
+On the web only. Settings → Apps → Advanced settings → turn on **Developer mode**, then Settings → Apps → **Create** → MCP server URL `https://chirpie.ai/mcp` → OAuth → **Scan Tools** (sign in to Chirpie) → **Create**. In a chat, pick Chirpie from the tools menu or mention it with `@`. Publishing needs full MCP support (Business, Enterprise, Education); Pro gets read and fetch only, and on Business only admins can use developer mode. ChatGPT treats tools not marked read-only as writes and may ask before running them. For the OpenAI Responses API, add `{ "type": "mcp", "server_label": "chirpie", "server_url": "https://chirpie.ai/mcp", "authorization": "<chirpie_sk_ key>" }` to `tools`. Full guide: https://chirpie.ai/docs/mcp/chatgpt
 
 ### With an API key instead of signing in
 
