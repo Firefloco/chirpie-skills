@@ -1,6 +1,6 @@
 ---
 name: chirpie-posting
-description: Create posts and threads on X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram via the Chirpie API. Covers single posts, posting to several accounts at once with per-account overrides, multi-post threads, the first comment, drafts, listing, deletion, comments and replies, and analytics.
+description: Create posts and threads on X/Twitter, Bluesky, LinkedIn, Mastodon, and Telegram via the Chirpie API (Threads, Instagram and Facebook coming soon). Covers single posts, posting to several accounts at once with per-account overrides, multi-post threads, the first comment, drafts, listing, deletion, comments and replies, and analytics.
 ---
 
 # Chirpie Posting
@@ -60,7 +60,7 @@ The file type is read from the file's own first bytes, never from its name. Uplo
 | `media` | object[] | No | Uploaded files and public links, each `{ id? , url?, alt? }`. `id` comes from `POST /api/v1/media`; `alt` describes the item for screen readers and is sent to X, Bluesky, LinkedIn, Mastodon, Instagram and Facebook. Use one of `media`, `media_ids` and `media_urls`, not several. |
 | `media_ids` | string[] | No | Ids from `POST /api/v1/media`, when no alt text is needed. |
 | `media_urls` | string[] | No | Public image/video URLs. Max images per post: X 4, Bluesky 4, LinkedIn 4, Threads 1, Mastodon 4, Instagram 10, Facebook 10, Telegram 10. Video: X, Mastodon and Telegram, 1 per post and never alongside images, plus Instagram and Facebook where the placement takes one (an Instagram story or Page story takes one image or video, an Instagram reel takes one video and no images). Instagram REQUIRES media on every post. Anything a platform cannot take is refused with `400 unsupported_media`, never dropped. |
-| `first_comment` | string | No | A comment published under the post the moment it goes out. X, Threads, Instagram and Facebook only: anywhere else the request is refused with `400 first_comment_unsupported`, never dropped. Counts as one post against the monthly quota. See "First Comment" below |
+| `first_comment` | string | No | A comment published under the post the moment it goes out. X today; Threads, Instagram and Facebook are coming soon. Anywhere else the request is refused with `400 first_comment_unsupported`, never dropped. Counts as one post against the monthly quota. See "First Comment" below |
 | `configuration` | object | No | Per-platform publishing options, keyed by platform. Instagram takes `feed` (the default), `story` or `reel`; a Facebook Page takes `feed` or `story`. Anything the platform or the placement does not carry is refused with `400 configuration_unsupported`, never dropped. See "Publishing Options" below |
 | `schedule_at` | ISO 8601 | No | Future datetime for scheduling. Either absolute, carrying a timezone (`...Z` or `+02:00`), normalized to UTC, or a local time with no offset (`2026-11-01T09:30:00`) read in `timezone` or the timezone saved on the account. A local time with neither is refused. On a draft it is only the time to remember, and may be any time at all |
 | `timezone` | IANA name | No | The zone a `schedule_at` with no offset is read in, such as `America/New_York`. Daylight saving is worked out for the date named, which a client computing today's offset gets wrong across a clock change. A fixed offset (`+02:00`) is NOT accepted here: put it on `schedule_at` instead. Also accepted on `POST /api/v1/threads` and `PATCH /api/v1/posts/:id` |
@@ -85,7 +85,7 @@ curl -X POST https://chirpie.ai/api/v1/posts \
   }'
 ```
 
-- **Platforms**: X, Threads, Instagram and Facebook. Anywhere else the request is refused with `400 first_comment_unsupported`, naming the platform and the four that work. It is never silently dropped.
+- **Platforms**: X today; Threads, Instagram and Facebook are coming soon, and accounts already connected on them take one. Anywhere else the request is refused with `400 first_comment_unsupported`, naming the platform and the four that work. It is never silently dropped.
 - **Length**: the account's own post limit (280 standard X, 25,000 X Premium, 500 Threads, 2,200 Instagram, 63,206 Facebook).
 - **Quota**: a first comment is a post on the platform, so it counts as one post against the monthly quota, exactly as a comment reply does.
 - **X links**: a first comment containing a link carries the same $0.25 charge on paid plans as a link post, and is refused on the Free plan with `402 x_link_posts_require_paid_plan` before the post is published, so nothing goes out. X accounts using the customer's own X API keys are exempt.
@@ -311,8 +311,8 @@ curl -X POST https://chirpie.ai/api/v1/threads \
 
 - Min 2 posts, max 25 posts per thread
 - Character limits per platform (same as single posts)
-- X, Bluesky, Threads, Mastodon, and Telegram support native reply threading.
-- LinkedIn, Instagram, and Facebook degrade gracefully: each item is published as a standalone post.
+- X, Bluesky, Mastodon, and Telegram support native reply threading, as does Threads (coming soon).
+- LinkedIn degrades gracefully: each item is published as a standalone post. Instagram and Facebook (coming soon) do the same.
 - Thread counts as N posts against your monthly quota, N + 1 when it carries a first comment
 - `first_comment` is one comment for the whole thread, published under the **last** part and reported on that part. See "First Comment" above
 - `configuration` applies to every part alike, and a thread publishes to the feed: an Instagram story or reel, and a Facebook Page story, are each a single post, so a thread naming one is refused with `400 configuration_unsupported`. See "Publishing Options" above
@@ -452,7 +452,7 @@ const { comments, next_cursor, capabilities, sync } = await chirpie.listComments
 // Reply. Published to the platform, so it counts as ONE POST against the monthly quota.
 await chirpie.replyToComment("post-uuid", "comment-uuid", "Thanks, that is on the roadmap.");
 
-// Hide and unhide. Facebook, Instagram and Threads only.
+// Hide and unhide. Facebook, Instagram and Threads only (all coming soon).
 await chirpie.hideComment("post-uuid", "comment-uuid");
 await chirpie.unhideComment("post-uuid", "comment-uuid");
 

@@ -1,12 +1,12 @@
 ---
 name: chirpie-openclaw
-description: Post, thread, and schedule to X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram via the Chirpie API.
+description: Post, thread, and schedule to X, Bluesky, LinkedIn, Mastodon, and Telegram via the Chirpie API. Threads, Instagram and Facebook are coming soon.
 metadata: { "openclaw": { "requires": { "env": ["CHIRPIE_API_KEY"], "bins": ["curl"] }, "primaryEnv": "CHIRPIE_API_KEY", "envVars": [{ "name": "CHIRPIE_API_KEY", "required": true, "description": "Chirpie API key from https://chirpie.ai/dashboard/keys (starts with chirpie_sk_)." }], "emoji": "🐦", "homepage": "https://chirpie.ai" } }
 ---
 
 # Chirpie for OpenClaw
 
-Give this agent a social media account. Chirpie is a single API for posting to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram, with threads, scheduling, deletion, and analytics.
+Give this agent a social media account. Chirpie is a single API for posting to X/Twitter, Bluesky, LinkedIn, Mastodon, and Telegram, with threads, scheduling, deletion, and analytics. Threads, Instagram and Facebook are coming soon.
 
 **Base URL:** `https://chirpie.ai/api/v1`
 **Auth:** `Authorization: Bearer $CHIRPIE_API_KEY`
@@ -74,7 +74,7 @@ Returns `201` with the post object. `status` is `published` or `scheduled`.
 
 ## Create a thread
 
-2–25 posts. X, Bluesky, Threads, Mastodon, and Telegram thread natively; LinkedIn, Instagram, and Facebook publish each item standalone.
+2–25 posts. X, Bluesky, Mastodon, and Telegram thread natively; LinkedIn publishes each item standalone.
 
 ```bash
 curl -s -X POST https://chirpie.ai/api/v1/threads \
@@ -143,10 +143,10 @@ Returns impressions, likes, reposts, replies, quotes, bookmarks, and clicks. Tel
 | X | 280 (25,000 Premium) | 4 images or 1 video |
 | Bluesky | 300 | 4 images, no video |
 | LinkedIn | 3,000 | 4 images, no video |
-| Threads | 500 | 1 image, no video |
+| Threads _(coming soon)_ | 500 | 1 image, no video |
 | Mastodon | 500 | 4 images or 1 video |
-| Instagram | 2,200 | **image required**; 2–10 = carousel |
-| Facebook | 63,206 | 4 images; Pages only |
+| Instagram _(coming soon)_ | 2,200 | **image required**; 2–10 = carousel |
+| Facebook _(coming soon)_ | 63,206 | 4 images; Pages only |
 | Telegram | 4,096 | 10 images or 1 video |
 
 Media URLs must be publicly reachable, because Chirpie downloads them server-side. `localhost` and short-lived signed URLs will fail.

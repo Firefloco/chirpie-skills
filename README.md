@@ -1,6 +1,6 @@
 # Chirpie Skills
 
-AI agent skills for [Chirpie](https://chirpie.ai), the social media API for AI agents and developers. Post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram from a single API.
+AI agent skills for [Chirpie](https://chirpie.ai), the social media API for AI agents and developers. Post to X/Twitter, Bluesky, LinkedIn, Mastodon, and Telegram from a single API. Threads, Instagram and Facebook are coming soon.
 
 ## Install
 
@@ -39,10 +39,7 @@ Once installed, ask your AI agent:
 - "Post a tweet saying 'Hello world!'"
 - "Post to Bluesky saying 'Hello world!'"
 - "Post to LinkedIn saying 'Just shipped a new feature!'"
-- "Post to Threads saying 'Hello world!'"
 - "Post to Mastodon saying 'Hello fediverse!'"
-- "Post to Instagram with this photo"
-- "Post to our Facebook Page about the launch"
 - "Send a message to our Telegram channel"
 - "Create a thread about TypeScript"
 - "Schedule a post for tomorrow at 9am"
@@ -78,7 +75,7 @@ Set `CHIRPIE_API_KEY` in the agent's environment. See the [OpenClaw guide](https
 ## Prerequisites
 
 1. Sign up at [chirpie.ai](https://chirpie.ai/auth/signup)
-2. Connect your social accounts (X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram)
+2. Connect your social accounts (X, Bluesky, LinkedIn, Mastodon, Telegram; Threads, Instagram and Facebook are coming soon)
 3. Get an API key
 
 ## Links

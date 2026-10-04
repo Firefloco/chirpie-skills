@@ -1,6 +1,6 @@
 ---
 name: chirpie-setup
-description: Set up Chirpie in your project. Install the SDK, configure API keys, connect X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram accounts, send your first post.
+description: Set up Chirpie in your project. Install the SDK, configure API keys, connect X, Bluesky, LinkedIn, Mastodon, and Telegram accounts, send your first post. Threads, Instagram and Facebook are coming soon.
 ---
 
 # Chirpie Setup

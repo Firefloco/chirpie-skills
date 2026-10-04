@@ -1,11 +1,11 @@
 ---
 name: chirpie
-description: Chirpie social media API router. Use when user asks about posting to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, or Telegram, social media automation, scheduling posts, first comments, saving drafts, connecting social accounts, or using the Chirpie API/SDK/CLI/MCP/n8n node. Automatically routes to the specific skill based on their task.
+description: Chirpie social media API router. Use when user asks about posting to X/Twitter, Bluesky, LinkedIn, Mastodon, or Telegram (Threads, Instagram and Facebook coming soon), social media automation, scheduling posts, first comments, saving drafts, connecting social accounts, or using the Chirpie API/SDK/CLI/MCP/n8n node. Automatically routes to the specific skill based on their task.
 ---
 
 # Chirpie Skills Router
 
-Chirpie is a social media API for AI agents and developers. Post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram via API, CLI, MCP, or SDK, with scheduling, analytics, and multi-account support.
+Chirpie is a social media API for AI agents and developers. Post to X/Twitter, Bluesky, LinkedIn, Mastodon, and Telegram via API, CLI, MCP, or SDK, with scheduling, analytics, and multi-account support. Threads, Instagram and Facebook are coming soon.
 
 **Base URL:** `https://chirpie.ai/api/v1`
 **Auth:** `Authorization: Bearer chirpie_sk_YOUR_KEY`
@@ -32,7 +32,7 @@ Chirpie is a social media API for AI agents and developers. Post to X/Twitter, B
 
 **Putting the link in the first comment** → Use `chirpie-posting`
 - `first_comment` on a post or a thread, published under the post the moment it goes out
-- X, Threads, Instagram and Facebook only, and it counts as one post against the monthly quota
+- X today (Threads, Instagram and Facebook coming soon), and it counts as one post against the monthly quota
 - Sending a first comment that failed again with `POST /api/v1/posts/:id/first-comment`
 
 **Publishing an Instagram story or reel, or a Facebook Page story** → Use `chirpie-posting`
@@ -40,7 +40,7 @@ Chirpie is a social media API for AI agents and developers. Post to X/Twitter, B
 - Collaborators, user tags, reel covers, trial reels, a Facebook link preview
 - Connecting a new Instagram account or Facebook Page is coming soon; accounts already connected publish as described
 
-**Connecting an Instagram account** → Use `chirpie-setup`
+**Connecting an Instagram account (coming soon)** → Use `chirpie-setup`
 - Two routes: sign in with Instagram (the default), or sign in with Facebook and connect the Instagram accounts linked to the Pages shared
 - Identical for posting, threads, scheduling and analytics; only the Facebook route can delete a published post
 

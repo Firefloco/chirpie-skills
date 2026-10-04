@@ -5,7 +5,7 @@ description: Connect the Chirpie MCP server to Claude, Claude Code, Cursor, Chat
 
 # Chirpie MCP Server
 
-The Chirpie MCP server lets AI agents post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram through the Model Context Protocol.
+The Chirpie MCP server lets AI agents post to X/Twitter, Bluesky, LinkedIn, Mastodon, and Telegram through the Model Context Protocol. Threads, Instagram and Facebook are coming soon.
 
 There are two ways to connect. Prefer the hosted server unless the user explicitly wants to run it locally.
 
@@ -183,7 +183,7 @@ Create a single post on any connected platform with optional media, on one accou
 | `text` | string | Yes, unless `draft` is true | Post text. Max varies: X 280 (25,000 on Premium), Bluesky 300, LinkedIn 3,000, Threads 500, Mastodon 500, Instagram 2,200, Facebook 63,206, Telegram 4,096. |
 | `media` | object[] | No | Uploaded files and public links, each `{ id? , url?, alt? }`, with **either** `id` (from `chirpie_upload_media`) **or** `url` per item, never both. `alt` describes the item for screen readers. Use this **or** `media_urls`, not both. |
 | `media_urls` | string[] | No | Public image/video URLs, for a post that needs no alt text. Max per post: X 4, Bluesky 4, LinkedIn 4, Threads 1, Mastodon 4, Instagram 10, Facebook 10, Telegram 10. Instagram REQUIRES media. |
-| `first_comment` | string | No | A comment published under the post the moment it goes out. X, Threads, Instagram and Facebook only: anywhere else the call is refused with `400 first_comment_unsupported` rather than the comment dropped. Counts as one post against the quota. See "The first comment" below |
+| `first_comment` | string | No | A comment published under the post the moment it goes out. X today; Threads, Instagram and Facebook are coming soon. Anywhere else the call is refused with `400 first_comment_unsupported` rather than the comment dropped. Counts as one post against the quota. See "The first comment" below |
 | `configuration` | object | No | Per-platform publishing options keyed by platform. Instagram takes `feed` (the default), `story` or `reel`; a Facebook Page takes `feed` or `story`. An option the platform or the placement does not carry is refused with `400 configuration_unsupported`, never dropped. See "Publishing options" below |
 | `schedule_at` | string | No | ISO 8601 datetime, must be future. Either absolute, carrying a timezone (`...Z` or `+02:00`), normalized to UTC, or a local time with no offset (`2026-11-01T09:30:00`) read in `timezone` or the timezone saved on the account. A local time with neither is refused. On a draft it is only the time to remember |
 | `timezone` | string | No | The IANA zone a `schedule_at` with no offset is read in, such as `America/New_York`. Daylight saving is resolved for the date named, which is what a client computing today's offset gets wrong across a clock change. Ignored when `schedule_at` already carries an offset. Leave it out to use the timezone saved on the account. A fixed offset like `+02:00` is NOT accepted here |
@@ -252,7 +252,7 @@ Edit a post that has not published yet, or finish a draft. Leaving `schedule_at`
 
 `first_comment` publishes one comment under the post the moment it goes out, the "link in the first comment" pattern. The comment is posted by the same account, recorded as one of the user's own comments, and appears in the post's comment thread with `own: true`.
 
-Honoured on X, Threads, Instagram and Facebook. Anywhere else the call is refused with `400 first_comment_unsupported`, naming the platform and the four that work: it is never silently dropped.
+Honoured on X today; Threads, Instagram and Facebook are coming soon. Anywhere else the call is refused with `400 first_comment_unsupported`, naming the platform and the four that work: it is never silently dropped.
 
 On a multi-account call the shared `first_comment` reaches every account unless its `account_configurations` entry says otherwise: an entry naming a `first_comment` replaces it for that account, and one setting `"first_comment": ""` publishes that account with none. The empty string is how one call sends a first comment to the accounts that take one while an account whose platform has none still publishes the post. The character limit is the account's own post limit, and a first comment counts as one post against the monthly quota, exactly as a reply does. On X a first comment containing a link carries the same $0.25 charge a link post does, and is refused on the Free plan before the post is published, so nothing goes out.
 
@@ -433,10 +433,7 @@ Once configured, ask your AI agent:
 - "Post a tweet saying 'Just shipped v2!'"
 - "Post to Bluesky saying 'Just shipped v2!'"
 - "Post to LinkedIn saying 'Just shipped v2!'"
-- "Post to Threads saying 'Just shipped v2!'"
 - "Post to Mastodon saying 'Hello fediverse!'"
-- "Post to Instagram with this image" (requires media)
-- "Post to our Facebook Page about the product launch"
 - "Send a message to our Telegram channel"
 - "Create a thread about why TypeScript is great"
 - "Show me my recent posts"
