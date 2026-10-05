@@ -42,7 +42,7 @@ Or add to `.mcp.json` in the project:
 
 ### Claude (claude.ai / desktop)
 
-Customize → Connectors (Claude Desktop: Settings → Connectors) → **+** → **Add custom connector** → URL `https://chirpie.ai/mcp` → Add → Connect. Full guide: https://chirpie.ai/docs/mcp/claude
+Quickest: add Chirpie from its Claude Connectors Directory listing, https://claude.ai/directory/chirpie, and sign in. Or by URL: Customize → Connectors (Claude Desktop: Settings → Connectors) → **+** → **Add custom connector** → URL `https://chirpie.ai/mcp` → Add → Connect. Full guide: https://chirpie.ai/docs/mcp/claude
 
 ### Meta Muse
 
