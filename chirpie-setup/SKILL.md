@@ -1,6 +1,6 @@
 ---
 name: chirpie-setup
-description: Set up Chirpie in your project. Install the SDK, configure API keys, connect X, Bluesky, LinkedIn, Mastodon, and Telegram accounts, send your first post. Threads, Instagram and Facebook are coming soon.
+description: Set up Chirpie in your project. Install the SDK, configure API keys, connect X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram accounts, send your first post.
 ---
 
 # Chirpie Setup
@@ -127,7 +127,7 @@ Each Page is an account with its own `id`, and `account_type` says which kind
 it is (`"member"` for your profile, `"organization"` for a Page). Post to
 either by passing that account's `id`.
 
-**Threads** (coming soon): Connect via Meta OAuth from the dashboard or API:
+**Threads**: Connect via Meta OAuth from the dashboard or API:
 ```typescript
 const { authorization_url } = await chirpie.connectThreadsAccount();
 // Open URL in browser to authorize via Meta OAuth
@@ -155,7 +155,7 @@ chirpie accounts connect-mastodon --instance mastodon.social
 # Prints the URL to open for Mastodon OAuth authorization
 ```
 
-**Instagram** (coming soon): two routes, and the user picks. Both require an Instagram professional account (Business or Creator); personal accounts cannot be connected. Instagram posts always need media: a feed post takes one image or a carousel of up to 10, a story takes exactly one image or video, and a reel takes exactly one video. Text on its own is refused.
+**Instagram**: two routes, and the user picks. Both require an Instagram professional account (Business or Creator); personal accounts cannot be connected. Instagram posts always need media: a feed post takes one image or a carousel of up to 10, a story takes exactly one image or video, and a reel takes exactly one video. Text on its own is refused.
 
 - `via: "instagram"` (the default): the user signs in with Instagram. No Facebook Page needed.
 - `via: "facebook"`: the user signs in with Facebook, and Chirpie connects the Instagram professional accounts linked to the Facebook Pages they share. One authorization can connect several at once, one per linked Page, and any beyond the plan's account limit arrive inactive with `inactive_reason: "plan_limit"` rather than dropped.
@@ -179,7 +179,7 @@ chirpie accounts connect-instagram --via facebook
 # Opens browser for OAuth authorization
 ```
 
-**Facebook** (coming soon): Connect Facebook Pages from the dashboard or API:
+**Facebook**: Connect Facebook Pages from the dashboard or API:
 ```typescript
 const { authorization_url } = await chirpie.connectFacebookAccount();
 // Open URL in browser to authorize and choose which Pages to grant
@@ -226,7 +226,7 @@ chirpie accounts connect-telegram --bot-token TOKEN --chat-id channelname
 # --chat-id also accepts @channelname, a t.me link, or a numeric chat ID
 ```
 
-**Threads, Instagram, Facebook, Pinterest, TikTok, YouTube, Google Business Profile**: Coming soon. Connecting one today returns `501 platform_coming_soon`. Accounts already connected keep posting, scheduling and reporting analytics as normal.
+**Pinterest, TikTok, YouTube, Google Business Profile**: Coming soon. Connecting one today returns `501 platform_coming_soon`.
 
 ## Step 4: Find Your Account ID
 
@@ -253,6 +253,8 @@ const post = await chirpie.createPost({
 
 console.log(`Posted! Status: ${post.status}`);
 ```
+
+Instagram is the one platform that refuses a text-only post: add `media_urls` with at least one public image URL when the account is an Instagram one.
 
 ## Alternative: CLI Setup
 

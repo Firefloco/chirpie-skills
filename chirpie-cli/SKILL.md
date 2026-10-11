@@ -1,6 +1,6 @@
 ---
 name: chirpie-cli
-description: Use the Chirpie CLI to post to X/Twitter, Bluesky, LinkedIn, Mastodon, and Telegram from the terminal (Threads, Instagram and Facebook coming soon), one account or several at once. Covers installation, browser-based login, drafts, first comments, and all commands.
+description: Use the Chirpie CLI to post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram from the terminal, one account or several at once. Covers installation, browser-based login, drafts, first comments, and all commands.
 ---
 
 # Chirpie CLI
@@ -78,7 +78,7 @@ chirpie post "Safe to retry" --idempotency-key campaign-2026-11-01
 | `--config <json-or-file>` | Per-account overrides for a multi-account post, as JSON or a path to a JSON file. Keyed by account ID, each value taking `text`, media, `first_comment` and `configuration` (where the options a placement carries go: `collaborators`, `user_tags`, `cover`, `video_cover_timestamp_ms`, `share_to_feed`, `trial_reel` on Instagram, `link` on a Facebook Page). A field left out inherits the call's own; media replaces rather than merges, and `"first_comment": ""` is how one account publishes without the first comment the call is sending |
 | `-m, --media <files...>` | Image or video files on this machine, or public URLs. Files are uploaded first |
 | `--alt <text...>` | Describe each item for screen readers, in the same order as `--media` |
-| `--first-comment <text>` | Post this as a comment under the post, as soon as it goes out. X today; Threads, Instagram and Facebook are coming soon. Refused elsewhere rather than dropped. Counts as one post against the monthly quota |
+| `--first-comment <text>` | Post this as a comment under the post, as soon as it goes out. X, Threads, Instagram and Facebook only, refused elsewhere rather than dropped. Counts as one post against the monthly quota |
 | `--instagram-placement <placement>` | Where the post goes on Instagram: `feed` (the default), `story` or `reel`. A story takes exactly one image or video, no caption (pass `""` as the text) and no first comment. A reel takes exactly one video. Also on `chirpie posts update`, with `--clear-placement` to go back to a plain feed post |
 | `--facebook-placement <placement>` | Where the post goes on a Facebook Page: `feed` (the default) or `story`. A story takes exactly one image or video, no text and no first comment. Also on `chirpie posts update` |
 | `-s, --schedule <datetime>` | ISO 8601 datetime. Either absolute, carrying a timezone (`...Z` or `+02:00`), normalized to UTC, or a local time with no offset (`2026-11-01T09:30`) read in `--timezone` or the timezone saved on the account |
@@ -165,15 +165,14 @@ chirpie accounts connect-x             # Start X OAuth flow (prints URL)
 chirpie accounts connect-bluesky --handle yourhandle --app-password xxxx-xxxx-xxxx-xxxx  # An app password only (Settings, Privacy and Security, App Passwords); anything else is refused locally. --handle also takes a full handle, a custom domain, or the account email
 chirpie accounts connect-linkedin     # Start LinkedIn OAuth flow (prints URL to open in browser)
 chirpie accounts connect-linkedin --pages  # Connect the LinkedIn Pages you administer instead (COMING SOON)
-chirpie accounts connect-threads      # Start Threads Meta OAuth flow (COMING SOON)
+chirpie accounts connect-threads      # Start Threads Meta OAuth flow
 chirpie accounts connect-mastodon --instance mastodon.social  # Start Mastodon OAuth flow (a handle like @you@mastodon.social or a profile URL also works)
-chirpie accounts connect-instagram     # Start the Instagram OAuth flow (COMING SOON)
-chirpie accounts connect-instagram --via facebook [--reconnect]  # Sign in with Facebook instead, and connect the Instagram accounts linked to the Pages shared (COMING SOON)
-chirpie accounts connect-facebook      # Start the Facebook OAuth flow (COMING SOON)
+chirpie accounts connect-instagram     # Start the Instagram OAuth flow
+chirpie accounts connect-instagram --via facebook [--reconnect]  # Sign in with Facebook instead, and connect the Instagram accounts linked to the Pages shared
+chirpie accounts connect-facebook      # Start the Facebook OAuth flow
 chirpie accounts connect-telegram --bot-token TOKEN --chat-id channelname  # Connect Telegram bot (@channelname, a t.me link, or a numeric ID also work)
-# Threads, Instagram, Facebook, Pinterest, TikTok, YouTube, and Google Business
-# Profile are coming soon. Their connect-* commands answer with a "coming soon"
-# message. Accounts already connected keep posting and scheduling as normal.
+# Pinterest, TikTok, YouTube, and Google Business Profile are coming soon. Their
+# connect-* commands answer with a "coming soon" message.
 
 # Optional: connect X through your OWN X developer app, so posts use your X API
 # credits and X link posts are not surcharged.

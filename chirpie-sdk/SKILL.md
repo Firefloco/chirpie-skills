@@ -57,7 +57,7 @@ const post = await chirpie.createPost({
   media: [{ url: "https://example.com/a.png", alt: "A bird" }],  // Optional. An entry takes `id` (from uploadMedia) or `url`, plus optional alt text. Max per post: X 4, Bluesky 4, LinkedIn 4, Threads 1, Mastodon 4, Instagram 10, Facebook 10, Telegram 10. Instagram REQUIRES media.
   schedule_at: "ISO8601",    // Optional, must be future. Either an absolute instant carrying a timezone, or a local time with no offset ("2026-11-01T09:30:00") read in `timezone` or the timezone saved on the account
   timezone: "America/New_York",  // Optional IANA name. The zone a `schedule_at` with no offset is read in. Daylight saving is resolved for the date named. A fixed offset like "+02:00" is NOT accepted here: put it on schedule_at instead. Also on CreateThreadInput and UpdatePostInput
-  first_comment: "Full write-up: https://example.com",  // Optional. Published under the post the moment it goes out. X today; Threads, Instagram and Facebook are coming soon. Anywhere else the call throws 400 first_comment_unsupported. Counts as one post against the quota
+  first_comment: "Full write-up: https://example.com",  // Optional. Published under the post the moment it goes out. X, Threads, Instagram and Facebook only; anywhere else the call throws 400 first_comment_unsupported. Counts as one post against the quota
   configuration: { instagram: { placement: "reel", share_to_feed: true } },  // Optional. Per-platform publishing options. Instagram: feed (default), story or reel. Facebook Page: feed or story. An option the platform or the placement does not carry throws 400 configuration_unsupported, never dropped. A story carries no caption and no first comment; a story or a reel is a single post, so createThread refuses either. updatePost takes it too, and {} puts a post back to a plain feed post
 });
 
@@ -292,7 +292,7 @@ const { authorization_url } = await chirpie.connectLinkedInAccount();
 // LinkedIn Pages you administer are a separate connection (coming soon):
 const { authorization_url: pagesUrl } = await chirpie.connectLinkedInPagesAccount();
 
-// Connect Threads account (Meta OAuth flow, coming soon)
+// Connect Threads account (Meta OAuth flow)
 const { authorization_url } = await chirpie.connectThreadsAccount();
 
 // Connect Mastodon account (OAuth flow). instance_url takes the server, a handle
@@ -302,7 +302,7 @@ const { authorization_url } = await chirpie.connectMastodonAccount({
   instance_url: "@you@mastodon.social",
 });
 
-// Connect Instagram account (coming soon). `via` picks the route:
+// Connect Instagram account. `via` picks the route:
 // "instagram" (the default) signs in with Instagram; "facebook" signs in with
 // Facebook and connects the Instagram accounts linked to the Pages the user
 // shares, several at once, parking any beyond the plan limit with
@@ -312,7 +312,7 @@ const { authorization_url } = await chirpie.connectMastodonAccount({
 const { authorization_url } = await chirpie.connectInstagramAccount();
 const viaFacebook = await chirpie.connectInstagramAccount({ via: "facebook" });
 
-// Connect Facebook Page (Facebook OAuth flow, coming soon)
+// Connect Facebook Page (Facebook OAuth flow)
 const { authorization_url } = await chirpie.connectFacebookAccount();
 
 // Connect Telegram bot (bot token auth)
@@ -322,8 +322,7 @@ await chirpie.connectTelegramAccount({
   chat_id: "CHAT_ID",
 });
 
-// Threads, Instagram, Facebook, Pinterest, TikTok, YouTube, and Google Business
-// Profile are coming soon. Their
+// Pinterest, TikTok, YouTube, and Google Business Profile are coming soon. Their
 // connect methods exist on the client but reject with `platform_coming_soon`.
 ```
 
