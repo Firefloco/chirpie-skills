@@ -9,7 +9,7 @@ Chirpie is a social media API for AI agents and developers. Post to X/Twitter, B
 
 **Base URL:** `https://chirpie.ai/api/v1`
 **Auth:** `Authorization: Bearer chirpie_sk_YOUR_KEY`
-**Docs:** https://chirpie.ai/docs
+**Docs:** https://chirpie.ai/docs?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie
 
 ## By Task
 
@@ -73,7 +73,7 @@ Chirpie is a social media API for AI agents and developers. Post to X/Twitter, B
 - Available tools and parameters
 - Authentication flow
 
-**Using Chirpie in n8n** → See https://chirpie.ai/docs/n8n
+**Using Chirpie in n8n** → See https://chirpie.ai/docs/n8n?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie
 - Install the `@chirpie/n8n-nodes-chirpie` community node (Settings → Community Nodes → `@chirpie/n8n-nodes-chirpie`)
 - Add a Chirpie API credential, then use the Chirpie node for posts, threads, accounts, and analytics
 - The node is usable as a tool by n8n AI Agents

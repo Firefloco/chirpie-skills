@@ -149,7 +149,7 @@ Rules that catch people out:
 - **Delete truth follows the account and the placement.** On Instagram it depends on how the account was connected: an account connected via Facebook can be deleted from (feed posts, carousels, stories and reels alike), and one connected through Instagram answers `501 delete_unsupported`. On Facebook there is a delete for a Page feed post but none for a Page story, so a published story answers `501 delete_unsupported` and expires on its own 24 hours after it was posted.
 - **On a PATCH**, `configuration` replaces the post's options and `{}` puts it back to a plain feed post. The media is checked again against the new placement.
 
-Full reference: https://chirpie.ai/docs/platforms/instagram and https://chirpie.ai/docs/platforms/facebook
+Full reference: https://chirpie.ai/docs/platforms/instagram?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-posting and https://chirpie.ai/docs/platforms/facebook?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-posting
 
 ### Editing a post that has not gone out
 
@@ -491,7 +491,7 @@ curl -X POST https://chirpie.ai/api/v1/posts/POST_ID/comments/COMMENT_ID/reply \
 
 A listing answers from comments Chirpie has stored, refreshed on a schedule. `meta.sync.status` says how fresh they are: `ok`, or one of `unsupported`, `permission`, `rate_limited`, `budget`, `plan`, `error`. Anything but `ok` carries a ready-worded sentence in `meta.sync.reason` that can be shown to a user as is. Pass `sync=true` to ask for a refresh now (honoured a minute after the last refresh of that post, 15 minutes on X; `meta.sync.next_sync_after` says when), and `sync=false` to skip one. A refused refresh is still a `200` with the stored comments.
 
-`409 comment_permission_required` means the account has to be reconnected at https://chirpie.ai/dashboard/accounts before its comments can be read or managed. Posting and analytics keep working meanwhile.
+`409 comment_permission_required` means the account has to be reconnected at https://chirpie.ai/dashboard/accounts?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-posting before its comments can be read or managed. Posting and analytics keep working meanwhile.
 
 ### Cost
 
@@ -550,7 +550,7 @@ deleted:    → deleted (also removed from platform if published, except Faceboo
 
 Failed posts: check `error_message` for the platform's refusal and `retry_count` for how many attempts were made.
 
-A post with `status: "deleted"` and `error_message` of `"account_disconnected"`, `"account_deactivated"` or `"connection_lost"` was cancelled by Chirpie, not by you, and its quota was returned. `"connection_lost"` means the platform stopped accepting that account's credential: check `inactive_reason` on the account, stop posting to it, and tell the user to reconnect. See https://chirpie.ai/docs/connection-dies.
+A post with `status: "deleted"` and `error_message` of `"account_disconnected"`, `"account_deactivated"` or `"connection_lost"` was cancelled by Chirpie, not by you, and its quota was returned. `"connection_lost"` means the platform stopped accepting that account's credential: check `inactive_reason` on the account, stop posting to it, and tell the user to reconnect. See <https://chirpie.ai/docs/connection-dies?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-posting>.
 
 ## Rate Limit Headers
 

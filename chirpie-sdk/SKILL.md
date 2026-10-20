@@ -268,7 +268,7 @@ console.log(gone.disconnected, gone.canceled_posts);
 const { authorization_url } = await chirpie.connectXAccount();
 
 // Optional: use your own X developer app so posts bill your X API credits
-// (and X link posts are not surcharged). Setup: https://chirpie.ai/docs/x-byo-keys
+// (and X link posts are not surcharged). Setup: https://chirpie.ai/docs/x-byo-keys?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-sdk
 await chirpie.setXKeys({
   client_id: process.env.X_CLIENT_ID!,
   client_secret: process.env.X_CLIENT_SECRET!,

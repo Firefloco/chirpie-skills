@@ -122,7 +122,7 @@ that has any.
 - Failed posts retry up to **3 times** with 5-minute delays
 - After 3 failures → `status: "failed"` with `error_message`; `retry_count` says how many attempts were made
 - Threads: if any post fails, the whole thread is rescheduled
-- If the **connection** dies, retrying cannot help: the account is switched off with an `inactive_reason`, its whole scheduled queue is cancelled (`error_message: "connection_lost"`) and the quota returned. Pause and tell the user to reconnect: https://chirpie.ai/docs/connection-dies
+- If the **connection** dies, retrying cannot help: the account is switched off with an `inactive_reason`, its whole scheduled queue is cancelled (`error_message: "connection_lost"`) and the quota returned. Pause and tell the user to reconnect: https://chirpie.ai/docs/connection-dies?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-scheduling
 
 ## Changing a Scheduled Post
 

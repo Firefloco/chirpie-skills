@@ -42,11 +42,11 @@ Or add to `.mcp.json` in the project:
 
 ### Claude (claude.ai / desktop)
 
-Quickest: add Chirpie from its Claude Connectors Directory listing, https://claude.ai/directory/chirpie, and sign in. Or by URL: Customize → Connectors (Claude Desktop: Settings → Connectors) → **+** → **Add custom connector** → URL `https://chirpie.ai/mcp` → Add → Connect. Full guide: https://chirpie.ai/docs/mcp/claude
+Quickest: add Chirpie from its Claude Connectors Directory listing, https://claude.ai/directory/chirpie, and sign in. Or by URL: Customize → Connectors (Claude Desktop: Settings → Connectors) → **+** → **Add custom connector** → URL `https://chirpie.ai/mcp` → Add → Connect. Full guide: https://chirpie.ai/docs/mcp/claude?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-mcp
 
 ### Meta Muse
 
-In a Muse conversation: "Add a custom connector for Chirpie. It is a remote MCP server over Streamable HTTP at https://chirpie.ai/mcp with OAuth sign-in. Send me the sign-in link and I will approve it." Full guide: https://chirpie.ai/docs/mcp/meta-muse
+In a Muse conversation: "Add a custom connector for Chirpie. It is a remote MCP server over Streamable HTTP at https://chirpie.ai/mcp with OAuth sign-in. Send me the sign-in link and I will approve it." Full guide: https://chirpie.ai/docs/mcp/meta-muse?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-mcp
 
 ### Cursor
 
@@ -64,7 +64,7 @@ Add to `.cursor/mcp.json` (project) or `~/.cursor/mcp.json` (global):
 
 ### ChatGPT
 
-On the web only. Settings → Apps → Advanced settings → turn on **Developer mode**, then Settings → Apps → **Create** → MCP server URL `https://chirpie.ai/mcp` → OAuth → **Scan Tools** (sign in to Chirpie) → **Create**. In a chat, pick Chirpie from the tools menu or mention it with `@`. Publishing needs full MCP support (Business, Enterprise, Education); Pro gets read and fetch only, and on Business only admins can use developer mode. ChatGPT treats tools not marked read-only as writes and may ask before running them. For the OpenAI Responses API, add `{ "type": "mcp", "server_label": "chirpie", "server_url": "https://chirpie.ai/mcp", "authorization": "<chirpie_sk_ key>" }` to `tools`. Full guide: https://chirpie.ai/docs/mcp/chatgpt
+On the web only. Settings → Apps → Advanced settings → turn on **Developer mode**, then Settings → Apps → **Create** → MCP server URL `https://chirpie.ai/mcp` → OAuth → **Scan Tools** (sign in to Chirpie) → **Create**. In a chat, pick Chirpie from the tools menu or mention it with `@`. Publishing needs full MCP support (Business, Enterprise, Education); Pro gets read and fetch only, and on Business only admins can use developer mode. ChatGPT treats tools not marked read-only as writes and may ask before running them. For the OpenAI Responses API, add `{ "type": "mcp", "server_label": "chirpie", "server_url": "https://chirpie.ai/mcp", "authorization": "<chirpie_sk_ key>" }` to `tools`. Full guide: https://chirpie.ai/docs/mcp/chatgpt?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-mcp
 
 ### With an API key instead of signing in
 
@@ -268,7 +268,7 @@ Instagram's feed posts carry `collaborators` (up to 3 usernames, without the `@`
 
 A story takes exactly one image or video, no caption (send empty text) and no first comment, on both platforms. A reel takes exactly one video. Anything the platform or the placement does not carry is refused with `400 configuration_unsupported` naming the field, and nothing publishes. A story or a reel is a single post, so `chirpie_thread` refuses either placement. Aspect ratio and video duration are the platform's own checks, which come back as `502 upstream_error` at publish time. On Instagram, deleting a published post works on an account connected via Facebook and is refused with `501 delete_unsupported` on one connected through Instagram. Facebook publishes no delete for a Page story, so a published story answers `501 delete_unsupported` and expires on its own after 24 hours.
 
-Full reference: https://chirpie.ai/docs/platforms/instagram and https://chirpie.ai/docs/platforms/facebook
+Full reference: https://chirpie.ai/docs/platforms/instagram?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-mcp and https://chirpie.ai/docs/platforms/facebook?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-mcp
 
 ### chirpie_retry_first_comment
 
@@ -384,7 +384,7 @@ without reauthorizing.
 
 Manage the user's own X developer app, so their X accounts post against their X
 API credits and X link posts are not surcharged.
-Setup guide: https://chirpie.ai/docs/x-byo-keys
+Setup guide: https://chirpie.ai/docs/x-byo-keys?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-mcp
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -398,7 +398,7 @@ URI on their X app and reconnect each X account (`chirpie_connect_x`).
 
 `chirpie_remove_x_keys` is API-key auth only. On a hosted server signed in with
 OAuth it is not offered. Remove the app from
-[account settings](https://chirpie.ai/dashboard/accounts) instead. Setting keys
+[account settings](https://chirpie.ai/dashboard/accounts?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-mcp) instead. Setting keys
 and checking their status stay available over OAuth.
 
 ### chirpie_analytics
@@ -479,7 +479,7 @@ need `keys:write`, because the key list is the inventory of the account's creden
 
 These are API-key auth only, along with `chirpie_remove_x_keys`. On a hosted
 server signed in with OAuth they are not offered. Manage API keys in the
-[dashboard](https://chirpie.ai/dashboard/keys) instead.
+[dashboard](https://chirpie.ai/dashboard/keys?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-mcp) instead.
 
 ## Authentication Priority
 
@@ -497,7 +497,7 @@ or **Read only**. A read-only connection holds `posts:read`, `accounts:read`,
 `insufficient_scope` naming the missing permission (for example `posts:write`). If the user
 asks a read-only connection to publish, tell them to disconnect Chirpie in their AI app,
 connect it again and choose Full access. A scoped API key is filtered the same way: only
-the tools its scopes cover are offered. Docs: https://chirpie.ai/docs/mcp#read-only-or-full-access
+the tools its scopes cover are offered. Docs: https://chirpie.ai/docs/mcp?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-mcp#read-only-or-full-access
 
 **Local server**:
 1. `CHIRPIE_API_KEY` environment variable

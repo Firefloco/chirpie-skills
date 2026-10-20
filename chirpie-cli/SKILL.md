@@ -98,7 +98,7 @@ chirpie thread "First post" "Second post" -a ACCOUNT_A -a ACCOUNT_B \
 
 Min 2 posts, max 25, or 1 to 25 with `--draft`. Same flags as `chirpie post`, and `--first-comment` posts one comment under the thread's last post. Repeat `-a` to publish the thread to several accounts at once; a `--config` override's `posts` replaces the whole thread for that account.
 
-A multi-account send reports per account: some can publish while others fail, and an account that fails gives its quota back. A problem the platform rules catch up front (character limit, media rules, whether the platform takes a first comment, the X link-post rule) refuses the whole call and publishes nothing. Full detail: https://chirpie.ai/docs/multi-account
+A multi-account send reports per account: some can publish while others fail, and an account that fails gives its quota back. A problem the platform rules catch up front (character limit, media rules, whether the platform takes a first comment, the X link-post rule) refuses the whole call and publishes nothing. Full detail: https://chirpie.ai/docs/multi-account?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-cli
 
 ### chirpie posts
 
@@ -176,7 +176,7 @@ chirpie accounts connect-telegram --bot-token TOKEN --chat-id channelname  # Con
 
 # Optional: connect X through your OWN X developer app, so posts use your X API
 # credits and X link posts are not surcharged.
-# Setup guide: https://chirpie.ai/docs/x-byo-keys
+# Setup guide: https://chirpie.ai/docs/x-byo-keys?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-cli
 chirpie accounts x-keys set --client-id ID   # Prompts for the secret (no echo)
 chirpie accounts x-keys status               # Shows config status, never the secret
 chirpie accounts x-keys remove

@@ -1,7 +1,7 @@
 ---
 name: chirpie-openclaw
 description: Post, thread, and schedule to X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram via the Chirpie API.
-metadata: { "openclaw": { "requires": { "env": ["CHIRPIE_API_KEY"], "bins": ["curl"] }, "primaryEnv": "CHIRPIE_API_KEY", "envVars": [{ "name": "CHIRPIE_API_KEY", "required": true, "description": "Chirpie API key from https://chirpie.ai/dashboard/keys (starts with chirpie_sk_)." }], "emoji": "🐦", "homepage": "https://chirpie.ai" } }
+metadata: { "openclaw": { "requires": { "env": ["CHIRPIE_API_KEY"], "bins": ["curl"] }, "primaryEnv": "CHIRPIE_API_KEY", "envVars": [{ "name": "CHIRPIE_API_KEY", "required": true, "description": "Chirpie API key from https://chirpie.ai/dashboard/keys?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-openclaw (starts with chirpie_sk_)." }], "emoji": "🐦", "homepage": "https://chirpie.ai?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-openclaw" } }
 ---
 
 # Chirpie for OpenClaw
@@ -10,13 +10,13 @@ Give this agent a social media account. Chirpie is a single API for posting to X
 
 **Base URL:** `https://chirpie.ai/api/v1`
 **Auth:** `Authorization: Bearer $CHIRPIE_API_KEY`
-**Docs:** https://chirpie.ai/docs
+**Docs:** https://chirpie.ai/docs?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-openclaw
 
 ## Setup
 
-1. Sign up at https://chirpie.ai/auth/signup
-2. Connect social accounts at https://chirpie.ai/dashboard/accounts
-3. Create an API key at https://chirpie.ai/dashboard/keys
+1. Sign up at https://chirpie.ai/auth/signup?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-openclaw
+2. Connect social accounts at https://chirpie.ai/dashboard/accounts?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-openclaw
+3. Create an API key at https://chirpie.ai/dashboard/keys?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-openclaw
 4. Export it: `export CHIRPIE_API_KEY=chirpie_sk_...`
 
 Install this skill:
@@ -45,7 +45,7 @@ curl -s https://chirpie.ai/api/v1/accounts \
 
 Each account returns `id`, `platform`, `username`, `display_name`, `max_post_length`, `is_active`, and `inactive_reason` when it is switched off. Use `max_post_length`. It is authoritative and already accounts for X Premium.
 
-If `is_active` is `false`, do not retry. `inactive_reason` of `plan_limit` means the account can be switched on once a slot is free, so the user deactivates another account or upgrades first; `token_revoked`, `token_expired` or `reauth_required` means it has to be connected again; no `inactive_reason` at all means the user switched it off themselves and only has to switch it back on. Either way, tell the user, at https://chirpie.ai/dashboard/accounts.
+If `is_active` is `false`, do not retry. `inactive_reason` of `plan_limit` means the account can be switched on once a slot is free, so the user deactivates another account or upgrades first; `token_revoked`, `token_expired` or `reauth_required` means it has to be connected again; no `inactive_reason` at all means the user switched it off themselves and only has to switch it back on. Either way, tell the user, at https://chirpie.ai/dashboard/accounts?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-openclaw.
 
 ## Create a post
 

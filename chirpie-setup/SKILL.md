@@ -7,9 +7,9 @@ description: Set up Chirpie in your project. Install the SDK, configure API keys
 
 ## Prerequisites
 
-- A Chirpie account at https://chirpie.ai/auth/signup
-- An API key (created during onboarding or at https://chirpie.ai/dashboard/keys)
-- At least one connected social account (via https://chirpie.ai/dashboard/accounts)
+- A Chirpie account at https://chirpie.ai/auth/signup?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-setup
+- An API key (created during onboarding or at https://chirpie.ai/dashboard/keys?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-setup)
+- At least one connected social account (via https://chirpie.ai/dashboard/accounts?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-setup)
 
 ## Step 1: Install the SDK
 
@@ -81,7 +81,7 @@ await chirpie.setXKeys({
 });
 // Then reconnect the X account to move it onto your app.
 ```
-Full walkthrough: https://chirpie.ai/docs/x-byo-keys
+Full walkthrough: https://chirpie.ai/docs/x-byo-keys?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-setup
 
 **Bluesky**: Connect with an app password, never the account password. Create one in Bluesky under Settings, Privacy and Security, App Passwords (https://bsky.app/settings/app-passwords); it looks like `xxxx-xxxx-xxxx-xxxx`, and anything else is refused with `400 bluesky_app_password_required` (the CLI refuses it locally with the same code). The `identifier` takes the first part of the handle on its own (`yourhandle`), a full handle, a handle on your own domain, or the email on the account:
 ```typescript
@@ -236,7 +236,7 @@ console.log(accounts);
 // listAccountsWithLimits() returns the same accounts plus accounts_limit
 // (your plan's max, or null when the plan sets no limit) and accounts_active
 // (how many are currently on).
-// Each account has: id, platform, username, display_name, avatar_url, is_active, and inactive_reason when it is switched off. `plan_limit` means activate it once a slot is free; `token_revoked`, `token_expired` and `reauth_required` mean it has to be connected again at https://chirpie.ai/dashboard/accounts; no reason at all means it was switched off deliberately and activating is enough
+// Each account has: id, platform, username, display_name, avatar_url, is_active, and inactive_reason when it is switched off. `plan_limit` means activate it once a slot is free; `token_revoked`, `token_expired` and `reauth_required` mean it has to be connected again at <https://chirpie.ai/dashboard/accounts?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-setup>; no reason at all means it was switched off deliberately and activating is enough
 // Use the `id` field as your account_id for posting.
 // Accounts with is_active: false are not publishing. inactive_reason: "plan_limit"
 // means the account is connected but over your plan's account limit. Activate it

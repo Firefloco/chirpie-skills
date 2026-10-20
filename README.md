@@ -1,6 +1,6 @@
 # Chirpie Skills
 
-AI agent skills for [Chirpie](https://chirpie.ai), the social media API for AI agents and developers. Post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram from a single API.
+AI agent skills for [Chirpie](https://chirpie.ai?utm_source=agent_skills&utm_medium=skill&utm_campaign=readme), the social media API for AI agents and developers. Post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram from a single API.
 
 ## Install
 
@@ -69,23 +69,23 @@ openclaw skills install git:Firefloco/chirpie-skills
 openclaw skills install git:Firefloco/chirpie-skills --global
 ```
 
-Set `CHIRPIE_API_KEY` in the agent's environment. See the [OpenClaw guide](https://chirpie.ai/docs/guides/give-your-openclaw-agent-a-social-media-account).
+Set `CHIRPIE_API_KEY` in the agent's environment. See the [OpenClaw guide](https://chirpie.ai/docs/guides/give-your-openclaw-agent-a-social-media-account?utm_source=agent_skills&utm_medium=skill&utm_campaign=readme).
 
 ## Other Ways to Use Chirpie
 
-- **n8n**: install the `@chirpie/n8n-nodes-chirpie` community node (Settings → Community Nodes → `@chirpie/n8n-nodes-chirpie`) to post, thread, schedule, and pull analytics from a workflow. It also works as a tool for n8n AI Agents. [Docs](https://chirpie.ai/docs/n8n)
+- **n8n** (self-hosted): install the `@chirpie/n8n-nodes-chirpie` community node (Settings → Community Nodes → `@chirpie/n8n-nodes-chirpie`) to post, thread, schedule, and pull analytics from a workflow. It also works as a tool for n8n AI Agents. n8n Cloud can only install verified community nodes, and this one is not verified yet. [Docs](https://chirpie.ai/docs/n8n?utm_source=agent_skills&utm_medium=skill&utm_campaign=readme)
 
 ## Prerequisites
 
-1. Sign up at [chirpie.ai](https://chirpie.ai/auth/signup)
+1. Sign up at [chirpie.ai](https://chirpie.ai/auth/signup?utm_source=agent_skills&utm_medium=skill&utm_campaign=readme)
 2. Connect your social accounts (X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram)
 3. Get an API key
 
 ## Links
 
-- [Documentation](https://chirpie.ai/docs)
-- [Dashboard](https://chirpie.ai/dashboard)
-- [API Reference](https://chirpie.ai/docs/api/posts)
+- [Documentation](https://chirpie.ai/docs?utm_source=agent_skills&utm_medium=skill&utm_campaign=readme)
+- [Dashboard](https://chirpie.ai/dashboard?utm_source=agent_skills&utm_medium=skill&utm_campaign=readme)
+- [API Reference](https://chirpie.ai/docs/api/posts?utm_source=agent_skills&utm_medium=skill&utm_campaign=readme)
 
 ## License
 
