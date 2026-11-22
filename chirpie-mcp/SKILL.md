@@ -209,7 +209,7 @@ Create a multi-post thread on any connected platform, on one account or on sever
 | `draft` | boolean | No | Save the thread without sending it. A draft thread may be a single part while it is still being written |
 | `allow_duplicate` | boolean | No | Publish even when an account already has a post with the same text as the thread's first post within 12 hours |
 
-**Reading a multi-account result.** `results` is in the order the accounts were named, and each entry carries `account_id`, `platform`, `success`, `platform_post_url`, `status`, `error`, plus `post_id`/`post` for a post and `thread_id`/`thread` for a thread. Some accounts can succeed while others fail, so report per account rather than declaring the whole send done. A validation problem (character limit, media rules, whether the platform takes a first comment, the X link-post rule) refuses the whole call with a message prefixed `Account <id>: ` and publishes nothing; only a platform failure is per account, and the quota for that account is given back.
+**Reading a multi-account result.** `results` is in the order the accounts were named, and each entry carries `account_id`, `platform`, `success`, `platform_post_url`, `status`, `error`, plus `post_id`/`post` for a post and `thread_id`/`thread` for a thread. Some accounts can succeed while others fail, so report per account rather than declaring the whole send done. A successful entry whose `status` is `processing` has not gone live yet (see below). A validation problem (character limit, media rules, whether the platform takes a first comment, the X link-post rule) refuses the whole call with a message prefixed `Account <id>: ` and publishes nothing; only a platform failure is per account, and the quota for that account is given back.
 
 ### chirpie_list_posts
 
@@ -217,7 +217,7 @@ List posts one page at a time. The answer is `{ posts, has_more, next_offset }`:
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `status` | string | No | Filter: draft, scheduled, publishing, published, failed, deleted. `draft` lists posts saved but not sent |
+| `status` | string | No | Filter: draft, scheduled, publishing, processing, published, failed, deleted. `draft` lists posts saved but not sent |
 | `from` | string | No | ISO 8601 instant with a timezone. Only posts whose scheduled or publish time is at or after it |
 | `to` | string | No | ISO 8601 instant with a timezone. Only posts whose scheduled or publish time is before it |
 | `q` | string | No | Words in the text, case-insensitive |
@@ -232,6 +232,8 @@ List posts one page at a time. The answer is `{ posts, has_more, next_offset }`:
 
 A post the user deleted stays in the listing with `status: "deleted"` and no cancel reason: Chirpie never removes a post's history. Every post carries `hidden`.
 
+**A post can come back `processing`.** Instagram and Threads process a post's media before it can be published, and a video can take Meta several minutes. When Meta is still working, `chirpie_post` answers with `status: "processing"` instead of `published`. With `account_ids` this is per account: each entry in `results` has its own `status`, and one can be `processing` while another failed, so report each account rather than one status for the whole call. Do not post it again: Chirpie publishes it on its own as soon as Meta is done, usually within a few minutes, or marks it `failed` with Meta's reason (after a refusal, or 30 minutes) and returns its quota. Tell the user it is on its way, and check it with `chirpie_get_post` a minute or two later. Deleting a `processing` post cancels it and returns its quota, unless Chirpie is publishing it at that moment: then `chirpie_delete_post` answers `409 post_publishing`. Do not report it cancelled; wait, check it with `chirpie_get_post`, and delete again once its status is `published` or `failed` (it can stay `processing` for a few minutes while Chirpie confirms whether the platform took it). A published post is then deleted from the platform, except where Chirpie cannot delete on that platform or account (for example an Instagram account connected through Instagram), which answers `delete_unsupported`: then tell the user to delete it in the platform's app.
+
 A scheduled post becomes `published` (or `failed`, or `deleted` if cancelled) once its time passes, so a post queued yesterday for this morning is no longer under `status: "scheduled"`. That does not mean it was lost: find it by its time with `from`/`to`, which match a post whose scheduled time or publish time falls in the range, whatever its status (drafts excepted: add `status=draft` for those). If a post seems missing, search by its time and text before creating it again: re-sending the same text to the same account within 12 hours is refused with `409 duplicate_post`, which names the post already there.
 
 ### chirpie_get_post
@@ -244,7 +246,7 @@ Get a single post by ID.
 
 ### chirpie_update_post
 
-Edit a post that has not published yet, or finish a draft. Leaving `schedule_at` out keeps the time a queued post already has, so this never publishes one. Only a post that has not published yet can be edited, a scheduled post or a draft: one that is publishing, published, failed or deleted answers `409 post_not_editable`, and so does a draft that has already been promoted. Editing does not count against the monthly quota. Rescheduling one post of a thread moves every part of it, and the response lists them in `rescheduled_post_ids`.
+Edit a post that has not published yet, or finish a draft. Leaving `schedule_at` out keeps the time a queued post already has, so this never publishes one. Only a post that has not published yet can be edited, a scheduled post or a draft: one that is publishing, processing, published, failed or deleted answers `409 post_not_editable`, and so does a draft that has already been promoted. Editing does not count against the monthly quota. Rescheduling one post of a thread moves every part of it, and the response lists them in `rescheduled_post_ids`.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|

@@ -163,7 +163,7 @@ Full reference: https://chirpie.ai/docs/platforms/instagram?utm_source=agent_ski
 
 **Leaving `schedule_at` out keeps the time the post already has.** The call never publishes a queued post. A draft is the one thing it can send, and only when asked: see "Drafts" below.
 
-Only a post that has not published yet can be edited, which means a scheduled post or a draft. A `publishing`, `published`, `failed` or `deleted` post answers `409 post_not_editable`, and so does a draft that has already been promoted. Editing does not count against the monthly quota. Rescheduling one post of a thread moves every part of it, and `rescheduled_post_ids` names them.
+Only a post that has not published yet can be edited, which means a scheduled post or a draft. A `publishing`, `processing`, `published`, `failed` or `deleted` post answers `409 post_not_editable`, and so does a draft that has already been promoted. Editing does not count against the monthly quota. Rescheduling one post of a thread moves every part of it, and `rescheduled_post_ids` names them.
 
 ### Response (201)
 
@@ -393,7 +393,7 @@ Deleting a draft refunds nothing, because nothing was charged, and it deletes th
 
 ```typescript
 const posts = await chirpie.listPosts({
-  status: "published",  // Optional: draft|scheduled|publishing|published|failed|deleted
+  status: "published",  // Optional: draft|scheduled|publishing|processing|published|failed|deleted
   account_id: "uuid",   // Optional
   group_id: "uuid",     // Optional: every post of one multi-account send
   platform: "x",        // Optional: one network
@@ -561,13 +561,15 @@ try {
 ## Post Status Flow
 
 ```
-immediate:  → published | failed
-scheduled:  → scheduled → publishing → published | failed
+immediate:  → published | failed | processing → published | failed
+scheduled:  → scheduled → publishing → published | failed | processing → published | failed
 draft:      → draft (stays there until promoted: schedule_at → scheduled, publish → published)
 deleted:    → deleted (also removed from platform if published, except Facebook Page stories and Instagram accounts connected through Instagram rather than via Facebook)
 ```
 
 Failed posts: check `error_message` for the platform's refusal and `retry_count` for how many attempts were made.
+
+`processing` means Instagram or Threads already has the post and is still processing its media (a video can take Meta several minutes). An immediate post that ends up there answers `202` instead of `201`. On a multi-account send, that account's result has `success: true` and `status: "processing"`, and the response is `202` only when every account succeeded: one failed account makes it `207` whatever the others are doing. **Do not send it again.** Chirpie publishes it on its own as soon as Meta is done, usually within a few minutes, or marks it `failed` with Meta's reason after a refusal or 30 minutes, and returns its quota. Poll `GET /api/v1/posts/{id}` every minute or two to see which. Deleting a `processing` post cancels it and returns its quota, unless Chirpie is publishing it at that moment: then the delete answers `409 post_publishing`. Do not report it cancelled; wait, read the post back, and delete again once its status is `published` or `failed` (it can stay `processing` for a few minutes while Chirpie confirms whether the platform took it). A published post is then deleted from the platform, except where Chirpie cannot delete on that platform or account (for example an Instagram account connected through Instagram), which answers `delete_unsupported`: then delete it in the platform's app.
 
 A post with `status: "deleted"` and `error_message` of `"account_disconnected"`, `"account_deactivated"` or `"connection_lost"` was cancelled by Chirpie, not by you, and its quota was returned. `"connection_lost"` means the platform stopped accepting that account's credential: check `inactive_reason` on the account, stop posting to it, and tell the user to reconnect. See <https://chirpie.ai/docs/connection-dies?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-posting>.
 
