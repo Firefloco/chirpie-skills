@@ -154,7 +154,7 @@ decide when to ask the user first (by default, Claude asks before a destructive 
 - **Read-only**: `chirpie_list_posts`, `chirpie_get_post`, `chirpie_list_accounts`, `chirpie_analytics`, `chirpie_list_comments`, `chirpie_list_keys`, `chirpie_get_x_keys_status`.
 - **Destructive**: `chirpie_delete_post`, `chirpie_delete_comment`, `chirpie_update_post` (overwrites a queued post), `chirpie_deactivate_account` and `chirpie_disconnect_account` (both cancel the account's scheduled posts), `chirpie_revoke_key`, `chirpie_set_x_keys` (replaces any app already set), `chirpie_remove_x_keys`.
 - **Neither**: everything that creates (posts, threads, media, replies, keys, connects) and the reversible toggles (`chirpie_hide_post`, `chirpie_unhide_post`, `chirpie_hide_comment`, `chirpie_activate_account`).
-- No creating tool is marked idempotent. `chirpie_post`, `chirpie_thread`, `chirpie_upload_media`, `chirpie_reply_to_comment` and `chirpie_retry_first_comment` take an `idempotency_key` that makes a retry safe; the other creating tools have none.
+- No creating tool is marked idempotent. `chirpie_post`, `chirpie_thread`, `chirpie_upload_media`, `chirpie_create_media_upload`, `chirpie_reply_to_comment` and `chirpie_retry_first_comment` take an `idempotency_key` that makes a retry safe; the other creating tools have none.
 
 ## Available Tools
 
@@ -164,12 +164,29 @@ Upload an image or a video and get back the id a post can attach. Use it wheneve
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
+| `path` | string | No | **Local (stdio) server only.** A file on this computer, at any supported size. Files over 4 MB go straight to storage |
 | `url` | string | No | A public image or video URL for Chirpie to fetch and store |
-| `data` | string | No | The file's bytes, base64 encoded. Use this or `url`, not both |
+| `data` | string | No | The file's bytes, base64 encoded, up to 3 MB of file |
+| `upload_id` | string | No | Finishes a direct upload started with `chirpie_create_media_upload`, once the file has been sent |
 | `filename` | string | No | A name to show in the dashboard. Never used to decide the file type |
 | `idempotency_key` | string | No | Makes retrying this call safe. The same key with the same request replays the first answer for 24 hours instead of sending it again; the same key with a different request is `422 idempotency_key_reused`; a retry arriving while the first is still running is `409 idempotency_in_progress`, which does not wait, so retry once more to collect the replay. Max 255 characters |
 
-The file type is read from the file's own first bytes, so a wrong extension does not matter and a mislabelled file is refused. The id is valid for 7 days; attach it with `media: [{ "id": "...", "alt": "..." }]`. Uploads are limited to 3 MB of file when sent as `data`, so a larger file goes in `media_urls` instead, which has no such limit.
+Give it one of `path`, `url`, `data` or `upload_id`. The file type is read from the file's own first bytes, so a wrong extension does not matter and a mislabelled file is refused. The id is valid for 7 days; attach it with `media: [{ "id": "...", "alt": "..." }]`.
+
+**A large local file.** On the local server, pass its `path`: up to 20 MB for an image and 512 MB for a video, no bucket or public URL needed. The hosted server (`https://chirpie.ai/mcp`) cannot read your computer's files and does not offer `path`; there, call `chirpie_create_media_upload`, send the file to the `upload_url` it returns, then call this with the `upload_id`.
+
+### chirpie_create_media_upload
+
+Start a direct upload for a file too large to send as base64 `data`.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `content_type` | string | Yes | `image/jpeg`, `image/png`, `image/webp`, `image/gif`, `video/mp4` or `video/quicktime` |
+| `size` | integer | Yes | The file's exact size in bytes. Up to 20 MB for an image, 512 MB for a video |
+| `filename` | string | No | A name to show in the dashboard |
+| `idempotency_key` | string | No | The same key with the same request hands back the same target |
+
+Returns `upload_id`, `upload_url`, `method` and `headers`. Send the file's bytes as the body to `upload_url` with exactly that method and those headers, for example `curl -X PUT --data-binary @video.mp4 -H "<name>: <value>" ... "<upload_url>"` (no API key: the target carries its own authorization), then call `chirpie_upload_media` with the `upload_id`. The target closes after an hour.
 
 ### chirpie_post
 

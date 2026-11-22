@@ -44,11 +44,12 @@ const chirpie = new ChirpieClient({
 ```typescript
 // Upload a file and attach it. The id is valid for 7 days, and a post keeps
 // its own copy of the bytes, so an expired id never breaks a queued post.
-const media = await chirpie.uploadMedia({
-  data: await readFile("./screenshot.png"),
-  filename: "screenshot.png",
-});
+// uploadFile takes a path (Node), a Blob/File or bytes, at any supported size:
+// up to 4 MB in one request, larger straight to storage (20 MB image, 512 MB video).
+const media = await chirpie.uploadFile("./launch-video.mp4");
 // Or: await chirpie.uploadMedia({ url: "https://example.com/a.png" })
+// Step by step: createMediaUpload({ content_type, size }) returns upload_url,
+// method and headers; send the bytes there, then uploadMedia({ upload_id }).
 
 // Create a post (immediate or scheduled)
 const post = await chirpie.createPost({
@@ -67,7 +68,7 @@ await chirpie.createPost(
   { account_id: "uuid", text: "Hello!" },
   { idempotencyKey: "campaign-2026-11-01" }
 );
-// uploadMedia(input, options), retryFirstComment(id, options) and
+// uploadMedia(input, options), createMediaUpload(input, options), retryFirstComment(id, options) and
 // replyToComment(postId, commentId, text, options) take the same options
 // object but generate nothing.
 

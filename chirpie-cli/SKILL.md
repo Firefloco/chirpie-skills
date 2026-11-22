@@ -76,7 +76,7 @@ chirpie post "Safe to retry" --idempotency-key campaign-2026-11-01
 |------|-------------|
 | `-a, --account <id>` | Account ID (auto-selects if only one). Repeat it to publish to several accounts in one call |
 | `--config <json-or-file>` | Per-account overrides for a multi-account post, as JSON or a path to a JSON file. Keyed by account ID, each value taking `text`, media, `first_comment` and `configuration` (where the options a placement carries go: `collaborators`, `user_tags`, `cover`, `video_cover_timestamp_ms`, `share_to_feed`, `trial_reel` on Instagram, `link` on a Facebook Page). A field left out inherits the call's own; media replaces rather than merges, and `"first_comment": ""` is how one account publishes without the first comment the call is sending |
-| `-m, --media <files...>` | Image or video files on this machine, or public URLs. Files are uploaded first |
+| `-m, --media <files...>` | Image or video files on this machine, or public URLs. Files are uploaded first, at any supported size (up to 20 MB for an image, 512 MB for a video) |
 | `--alt <text...>` | Describe each item for screen readers, in the same order as `--media` |
 | `--first-comment <text>` | Post this as a comment under the post, as soon as it goes out. X, Threads, Instagram and Facebook only, refused elsewhere rather than dropped. Counts as one post against the monthly quota |
 | `--instagram-placement <placement>` | Where the post goes on Instagram: `feed` (the default), `story` or `reel`. A story takes exactly one image or video, no caption (pass `""` as the text) and no first comment. A reel takes exactly one video. Also on `chirpie posts update`, with `--clear-placement` to go back to a plain feed post |
@@ -203,6 +203,17 @@ the connection, so the stored credential is removed and connecting the account a
 authorizing it on the platform again. Posts it already published are kept. It cannot be
 undone, so it asks first; pass `-y` in a non-interactive shell or it stops without
 disconnecting anything. Prefer `deactivate` when the account should come back later.
+
+### chirpie media
+
+```bash
+chirpie media upload ./launch-video.mp4            # Prints the media id (valid 7 days)
+chirpie media upload https://example.com/a.png    # Chirpie fetches a public URL
+chirpie media upload ./a.png --json --idempotency-key upload-a-1
+```
+
+A file over 4 MB goes straight to storage, so a large video needs no bucket or
+public URL of your own. `chirpie post --media <file>` does the same upload for you.
 
 ### chirpie keys
 

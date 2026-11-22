@@ -33,7 +33,7 @@ curl -X POST https://chirpie.ai/api/v1/posts \
 
 ### Idempotency: never publish twice on a retry
 
-`POST /api/v1/posts`, `POST /api/v1/threads`, `POST /api/v1/media`, `POST /api/v1/posts/:id/first-comment` and `POST /api/v1/posts/:id/comments/:commentId/reply` accept an `Idempotency-Key` header. Send one on anything you might retry.
+`POST /api/v1/posts`, `POST /api/v1/threads`, `POST /api/v1/media`, `POST /api/v1/media/uploads`, `POST /api/v1/posts/:id/first-comment` and `POST /api/v1/posts/:id/comments/:commentId/reply` accept an `Idempotency-Key` header. Send one on anything you might retry.
 
 - Same key, same request: the original response is replayed, carrying `Idempotent-Replay: true`. Nothing publishes again and no quota is spent.
 - Same key, a different method, path or body: `422 idempotency_key_reused`. Use a fresh key per distinct request.
@@ -53,7 +53,7 @@ Treat it as a signal, not an obstacle: check the named post first (a scheduled p
 
 `POST /api/v1/media` takes a `multipart/form-data` body with the file in a part named `file`, or a JSON body naming a public `url`, and answers `201` with `{ "data": { "id", "url", "mime_type", "media_type", "bytes", "expires_at", ... } }`. Attach the id with `media: [{ "id": "...", "alt": "..." }]` or `media_ids: ["..."]`.
 
-The file type is read from the file's own first bytes, never from its name. Uploads are limited to 4 MB as a `file` part, or 3 MB of file as base64 `data`, which bounds the request rather than the post; a larger file is attached by URL instead, which has no such limit. An id is good for 7 days, and a post keeps its own copy of the bytes, so it publishes as written whatever happens to the id. A post still waiting to publish also keeps its id alive, so it stays editable; a post reads back as `media: [{ url, alt, media_id }]`, and an edit should send an uploaded item back as `{ "id": media_id }` rather than by its URL.
+The file type is read from the file's own first bytes, never from its name. One request carries up to 4 MB as a `file` part, or 3 MB of file as base64 `data`. A larger file (up to 20 MB for an image, 512 MB for a video) goes straight to storage with a direct upload: `POST /api/v1/media/uploads` with `{ "content_type", "size" }` returns `upload_id`, `upload_url`, `method` and `headers`; send the bytes to `upload_url` with exactly that method and those headers (no API key); then `POST /api/v1/media` with `{ "upload_id" }` checks the file and returns the same media record. The SDK's `uploadFile(path)`, `chirpie media upload <file>` and the local MCP server's `path` do all three for you. Or attach a file that already has a public URL by URL. An id is good for 7 days, and a post keeps its own copy of the bytes, so it publishes as written whatever happens to the id. A post still waiting to publish also keeps its id alive, so it stays editable; a post reads back as `media: [{ url, alt, media_id }]`, and an edit should send an uploaded item back as `{ "id": media_id }` rather than by its URL.
 
 ### Request Body
 
