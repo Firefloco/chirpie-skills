@@ -115,7 +115,7 @@ const { posts: found, has_more, next_offset } = await chirpie.listPostsPage({
   to: "2026-11-18T16:00:00Z",
 });
 
-// The same text to the same account within 24 hours throws
+// The same text to the same account within 12 hours throws
 // ChirpieApiError "duplicate_post" (409); err.details.duplicate_of names the
 // post already there. Pass allow_duplicate: true to post it again on purpose.
 await chirpie.createPost({ account_id: "uuid", text: "Again", allow_duplicate: true });

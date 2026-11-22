@@ -85,7 +85,7 @@ chirpie post "Safe to retry" --idempotency-key campaign-2026-11-01
 | `--timezone <iana>` | The IANA zone a `--schedule` with no offset is read in, such as `America/New_York`. Daylight saving is resolved for the date named. Also on `chirpie thread` and `chirpie posts update` (there as the zone for `--schedule-at`) |
 | `--idempotency-key <key>` | Make a retry safe: the same key with the same request replays the first answer for 24 hours instead of sending it again. `chirpie post` and `chirpie thread` generate one per invocation when you do not pass one, which protects that one run; name it yourself to make re-running the same command replay instead. Also on `chirpie posts first-comment` and `chirpie comments reply`, which generate nothing, so there a key is the only way to get a replay |
 | `--draft` | Save without publishing. Nothing is sent and nothing counts against the quota. Anything that would go wrong is printed, one warning per line |
-| `--allow-duplicate` | Publish even when an account already has a post with the same text within 24 hours, which is otherwise refused with `duplicate_post` naming the post already there. Also on `chirpie thread`, `chirpie posts update` and `chirpie posts publish` |
+| `--allow-duplicate` | Publish even when an account already has a post with the same text within 12 hours, which is otherwise refused with `duplicate_post` naming the post already there. Also on `chirpie thread`, `chirpie posts update` and `chirpie posts publish` |
 | `--json` | Machine-readable JSON output |
 
 ### chirpie thread

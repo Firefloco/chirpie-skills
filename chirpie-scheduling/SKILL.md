@@ -80,7 +80,7 @@ Client surfaces: SDK `timezone` on `CreatePostInput`, `CreateThreadInput` and `U
 
 A scheduled create is worth an `Idempotency-Key` header: a retry after a timeout would otherwise queue the same post twice. The same key with the same request replays the first answer for 24 hours (with `Idempotent-Replay: true`); the same key with a different request is `422 idempotency_key_reused`; a retry arriving while the first is still running is `409 idempotency_in_progress`, which does not wait, so retry once more to collect the replay. See the chirpie-posting skill for the full rules.
 
-Without a key, the duplicate guard still refuses the same text to the same account within 24 hours with `409 duplicate_post`, naming the post already there. Send `allow_duplicate: true` only to repeat it on purpose.
+Without a key, the duplicate guard still refuses the same text to the same account within 12 hours with `409 duplicate_post`, naming the post already there. Send `allow_duplicate: true` only to repeat it on purpose.
 
 ## Minimum Spacing
 
@@ -204,4 +204,4 @@ Both `posts` and `scheduled` limits are checked when creating scheduled content.
 4. **The two hours a year that are not simple.** A local time on the night the clocks change is resolved the way every scheduler resolves it, and never earlier than you named. A wall time that happens twice (the clocks go back) takes the **first** occurrence; one that does not exist (the clocks go forward) is shifted forward by the length of the gap, so `02:30` in a one-hour gap publishes at `03:30` local. Correct on zones that move by half an hour too.
 5. **Thread atomicity.** You can't cancel individual posts in a scheduled thread: delete any one post and the whole thread is canceled.
 6. **Platform rate limits.** If any platform rate-limits your account, scheduled posts will retry automatically.
-7. **"Not under `scheduled`" is not "lost".** A scheduled post becomes `published` once its time passes. Search by time (`from`/`to`) and text (`q`) before posting it again; re-sending the same text within 24 hours is refused with `409 duplicate_post`.
+7. **"Not under `scheduled`" is not "lost".** A scheduled post becomes `published` once its time passes. Search by time (`from`/`to`) and text (`q`) before posting it again; re-sending the same text within 12 hours is refused with `409 duplicate_post`.

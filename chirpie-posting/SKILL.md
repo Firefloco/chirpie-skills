@@ -45,7 +45,7 @@ The SDK's `createPost()` and `createThread()` generate a fresh key per call, whi
 
 ### Duplicate posts
 
-The same text (trimmed) to the same account within 24 hours either side of another post that account has `scheduled`, `publishing` or `published` is refused with `409 duplicate_post`, and nothing is sent. `error.duplicate_of` names the post already there: `post_id`, `account_id`, `platform`, `status`, `time`, `platform_post_url`. A thread is compared by its opening post; drafts, failed and deleted posts never count; a post with no text is never checked. On a multi-account call the whole request is refused, prefixed `Account <id>: `. It also applies to promoting a draft and to an edit that changes a queued post's text or time.
+The same text (trimmed) to the same account within 12 hours either side of another post that account has `scheduled`, `publishing` or `published` is refused with `409 duplicate_post`, and nothing is sent. `error.duplicate_of` names the post already there: `post_id`, `account_id`, `platform`, `status`, `time`, `platform_post_url`. A thread is compared by its opening post; drafts, failed and deleted posts never count; a post with no text is never checked. On a multi-account call the whole request is refused, prefixed `Account <id>: `. It also applies to promoting a draft and to an edit that changes a queued post's text or time.
 
 Treat it as a signal, not an obstacle: check the named post first (a scheduled post that seemed missing has usually just published). Send `allow_duplicate: true` only when the user really means to post the same words again. It is a check, not a lock, so an `Idempotency-Key` is still what makes a retry safe.
 
@@ -547,7 +547,7 @@ try {
       case 401: // Invalid API key
       case 403: // insufficient_scope: the key lacks the scope named in err.message
       case 404: // Account not found or inactive
-      case 409: // duplicate_post: same text on this account within 24h (err.details.duplicate_of);
+      case 409: // duplicate_post: same text on this account within 12h (err.details.duplicate_of);
                 // idempotency_in_progress: retry the identical call to collect the replay
       case 422: // idempotency_key_reused: use a fresh key for a different request
       case 429: // usage_limit_exceeded (quota), rate_limited (burst), account_limit_reached, or analytics_refresh_rate_limited
