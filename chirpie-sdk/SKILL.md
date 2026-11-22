@@ -55,7 +55,7 @@ const media = await chirpie.uploadFile("./launch-video.mp4");
 const post = await chirpie.createPost({
   account_id: "uuid",        // Required
   text: "Hello!",            // Required. Char limits: X 280 (25,000 Premium), Bluesky 300, LinkedIn 3,000, Threads 500, Mastodon 500, Instagram 2,200, Facebook 63,206, Telegram 4,096
-  media: [{ url: "https://example.com/a.png", alt: "A bird" }],  // Optional. An entry takes `id` (from uploadMedia) or `url`, plus optional alt text. Max per post: X 4, Bluesky 4, LinkedIn 4, Threads 1, Mastodon 4, Instagram 10, Facebook 10, Telegram 10. Instagram REQUIRES media.
+  media: [{ url: "https://example.com/a.png", alt: "A bird" }],  // Optional. An entry takes `id` (from uploadMedia) or `url`, plus optional alt text. Max per post: X 4, Bluesky 4, LinkedIn 4, Threads 20, Mastodon 4, Instagram 10, Facebook 10, Telegram 10. Video on X, Threads, Mastodon, Instagram, Facebook and Telegram. Instagram REQUIRES media.
   schedule_at: "ISO8601",    // Optional, must be future. Either an absolute instant carrying a timezone, or a local time with no offset ("2026-11-01T09:30:00") read in `timezone` or the timezone saved on the account
   timezone: "America/New_York",  // Optional IANA name. The zone a `schedule_at` with no offset is read in. Daylight saving is resolved for the date named. A fixed offset like "+02:00" is NOT accepted here: put it on schedule_at instead. Also on CreateThreadInput and UpdatePostInput
   first_comment: "Full write-up: https://example.com",  // Optional. Published under the post the moment it goes out. X, Threads, Instagram and Facebook only; anywhere else the call throws 400 first_comment_unsupported. Counts as one post against the quota

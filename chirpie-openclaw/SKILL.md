@@ -143,10 +143,10 @@ Returns impressions, likes, reposts, replies, quotes, bookmarks, and clicks. Tel
 | X | 280 (25,000 Premium) | 4 images or 1 video |
 | Bluesky | 300 | 4 images, no video |
 | LinkedIn | 3,000 | 4 images, no video |
-| Threads | 500 | 1 image, no video |
+| Threads | 500 | 1 image or video, or a carousel of 2 to 20 |
 | Mastodon | 500 | 4 images or 1 video |
-| Instagram | 2,200 | **image required**; 2–10 = carousel |
-| Facebook | 63,206 | 10 images; Pages only |
+| Instagram | 2,200 | **image or video required**; 2–10 = carousel (videos too) |
+| Facebook | 63,206 | 10 images or 1 video; Pages only |
 | Telegram | 4,096 | 10 images or 1 video |
 
 Media URLs must be publicly reachable, because Chirpie downloads them server-side. `localhost` and short-lived signed URLs will fail.
