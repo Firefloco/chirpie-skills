@@ -99,9 +99,26 @@ const posts = await chirpie.listPosts({
   status: "published",       // Optional
   account_id: "uuid",        // Optional
   group_id: "uuid",          // Optional: every post of one multi-account send
+  platform: "threads",       // Optional: one network
+  q: "launch",               // Optional: words in the text
+  from: "2026-11-18T15:00:00Z", // Optional: scheduled or publish time at or after
+  to: "2026-11-18T16:00:00Z",   // Optional: scheduled or publish time before
+  sort: "time",              // Optional: "created_at" (default) or "time"
   limit: 20,                 // Optional, max 100
   offset: 0,                 // Optional
 });
+
+// A page with has_more and next_offset. A scheduled post becomes "published"
+// once it goes out, so find it by time, not by status: "scheduled".
+const { posts: found, has_more, next_offset } = await chirpie.listPostsPage({
+  from: "2026-11-18T15:00:00Z",
+  to: "2026-11-18T16:00:00Z",
+});
+
+// The same text to the same account within 24 hours throws
+// ChirpieApiError "duplicate_post" (409); err.details.duplicate_of names the
+// post already there. Pass allow_duplicate: true to post it again on purpose.
+await chirpie.createPost({ account_id: "uuid", text: "Again", allow_duplicate: true });
 
 // Get a single post
 const post = await chirpie.getPost("post-uuid");
@@ -391,7 +408,8 @@ import type {
   InstagramConnectVia,        // "instagram" | "facebook"
   ConnectFacebookInput,       // Input for connectFacebookAccount()
   ConnectTelegramInput,       // Input for connectTelegramAccount()
-  ListPostsOptions,           // Options for listPosts()
+  ListPostsOptions,           // Options for listPosts() and listPostsPage()
+  PostList,                   // listPostsPage(): posts + has_more + next_offset
 } from "@chirpie/sdk";
 ```
 

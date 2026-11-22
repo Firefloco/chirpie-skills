@@ -54,6 +54,7 @@ Threads publish atomically: if any post fails, the entire thread retries.
 2. A cron job runs **every 5 minutes** checking for posts due to publish
 3. Posts publish within ~5 minutes of their `schedule_at` time
 4. Everything Chirpie returns (`scheduled_at`, `published_at`) is **UTC**
+5. Once it goes out a post is `published` (or `failed`), so it **leaves** `status=scheduled`. To find a post you scheduled earlier, list by its time: `GET /api/v1/posts?from=...&to=...` matches a post whose scheduled or publish time falls in the range, whatever its status (drafts excepted)
 
 ## Timezones
 
@@ -78,6 +79,8 @@ Client surfaces: SDK `timezone` on `CreatePostInput`, `CreateThreadInput` and `U
 ## Idempotency
 
 A scheduled create is worth an `Idempotency-Key` header: a retry after a timeout would otherwise queue the same post twice. The same key with the same request replays the first answer for 24 hours (with `Idempotent-Replay: true`); the same key with a different request is `422 idempotency_key_reused`; a retry arriving while the first is still running is `409 idempotency_in_progress`, which does not wait, so retry once more to collect the replay. See the chirpie-posting skill for the full rules.
+
+Without a key, the duplicate guard still refuses the same text to the same account within 24 hours with `409 duplicate_post`, naming the post already there. Send `allow_duplicate: true` only to repeat it on purpose.
 
 ## Minimum Spacing
 
@@ -195,9 +198,10 @@ Both `posts` and `scheduled` limits are checked when creating scheduled content.
 
 ## Common Pitfalls
 
-1. **The field is `schedule_at`, not `scheduled_at`.** `scheduled_at` is the field name in the *response*. Sending it returns a `400` error naming the unknown field `scheduled_at` and suggesting `schedule_at`; the post is not published. Only `account_id`, `account_ids`, `account_configurations`, `text`, `media`, `media_ids`, `media_urls`, `first_comment`, `configuration`, `schedule_at`, `timezone` and `draft` (or `account_id`, `account_ids`, `account_configurations`, `posts`, `first_comment`, `configuration`, `schedule_at`, `timezone`, `draft` for a thread) are accepted, so do not send back a whole post object you read from the API.
+1. **The field is `schedule_at`, not `scheduled_at`.** `scheduled_at` is the field name in the *response*. Sending it returns a `400` error naming the unknown field `scheduled_at` and suggesting `schedule_at`; the post is not published. Only `account_id`, `account_ids`, `account_configurations`, `text`, `media`, `media_ids`, `media_urls`, `first_comment`, `configuration`, `schedule_at`, `timezone`, `draft` and `allow_duplicate` (or `account_id`, `account_ids`, `account_configurations`, `posts`, `first_comment`, `configuration`, `schedule_at`, `timezone`, `draft`, `allow_duplicate` for a thread) are accepted, so do not send back a whole post object you read from the API.
 2. **`schedule_at` must be in the future and resolvable to an instant**, except on a draft, where it is only a remembered time. Each failure has its own 400 message: a local time with no `timezone` on the request and none saved on the account ("schedule_at is missing a timezone, so the instant it names is ambiguous. Add 'Z' for UTC or an offset like '+02:00', send a timezone field such as 'America/New_York', or save a timezone on your account."), a `timezone` that is not an IANA name ("timezone must be an IANA timezone name such as 'America/New_York' or 'Europe/Berlin', not '+02:00'."), a relative offset such as `+30m` ("schedule_at must be an absolute ISO 8601 timestamp, not a relative offset like '+30m'."), a local time that is the right shape but not a real moment, such as `2026-02-30T09:30` or `2026-01-01T25:00` ("schedule_at is not a real date and time: '...'. Check the day of the month and the hour."), anything else malformed ("schedule_at must be an ISO 8601 timestamp."). Past datetimes also return 400.
 3. **Do not convert local time to UTC yourself.** Send the local time with a `timezone` such as `America/New_York`, or save one on the account. Computing an offset from today is what goes an hour wrong across a clock change. Everything Chirpie returns is UTC.
 4. **The two hours a year that are not simple.** A local time on the night the clocks change is resolved the way every scheduler resolves it, and never earlier than you named. A wall time that happens twice (the clocks go back) takes the **first** occurrence; one that does not exist (the clocks go forward) is shifted forward by the length of the gap, so `02:30` in a one-hour gap publishes at `03:30` local. Correct on zones that move by half an hour too.
 5. **Thread atomicity.** You can't cancel individual posts in a scheduled thread: delete any one post and the whole thread is canceled.
 6. **Platform rate limits.** If any platform rate-limits your account, scheduled posts will retry automatically.
+7. **"Not under `scheduled`" is not "lost".** A scheduled post becomes `published` once its time passes. Search by time (`from`/`to`) and text (`q`) before posting it again; re-sending the same text within 24 hours is refused with `409 duplicate_post`.

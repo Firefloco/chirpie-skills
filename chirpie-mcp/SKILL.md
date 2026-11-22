@@ -189,6 +189,7 @@ Create a single post on any connected platform with optional media, on one accou
 | `timezone` | string | No | The IANA zone a `schedule_at` with no offset is read in, such as `America/New_York`. Daylight saving is resolved for the date named, which is what a client computing today's offset gets wrong across a clock change. Ignored when `schedule_at` already carries an offset. Leave it out to use the timezone saved on the account. A fixed offset like `+02:00` is NOT accepted here |
 | `idempotency_key` | string | No | Makes retrying this call safe. The same key with the same request replays the first answer for 24 hours instead of sending it again; the same key with a different request is `422 idempotency_key_reused`; a retry arriving while the first is still running is `409 idempotency_in_progress`, which does not wait, so retry once more to collect the replay. Max 255 characters |
 | `draft` | boolean | No | Save the post without sending it. Nothing reaches the platform and nothing counts against the quota. The answer carries `warnings`: see "Drafts" below |
+| `allow_duplicate` | boolean | No | Publish even when an account already has a post with the same text within 24 hours. Without it such a call is refused with `409 duplicate_post`, nothing is sent, and `duplicate_of` names the post already there |
 
 ### chirpie_thread
 
@@ -206,22 +207,32 @@ Create a multi-post thread on any connected platform, on one account or on sever
 | `timezone` | string | No | The IANA zone a `schedule_at` with no offset is read in, such as `America/New_York`. Daylight saving is resolved for the date named, which is what a client computing today's offset gets wrong across a clock change. Ignored when `schedule_at` already carries an offset. Leave it out to use the timezone saved on the account. A fixed offset like `+02:00` is NOT accepted here |
 | `idempotency_key` | string | No | Makes retrying this call safe. The same key with the same request replays the first answer for 24 hours instead of sending it again; the same key with a different request is `422 idempotency_key_reused`; a retry arriving while the first is still running is `409 idempotency_in_progress`, which does not wait, so retry once more to collect the replay. Max 255 characters |
 | `draft` | boolean | No | Save the thread without sending it. A draft thread may be a single part while it is still being written |
+| `allow_duplicate` | boolean | No | Publish even when an account already has a post with the same text as the thread's first post within 24 hours |
 
 **Reading a multi-account result.** `results` is in the order the accounts were named, and each entry carries `account_id`, `platform`, `success`, `platform_post_url`, `status`, `error`, plus `post_id`/`post` for a post and `thread_id`/`thread` for a thread. Some accounts can succeed while others fail, so report per account rather than declaring the whole send done. A validation problem (character limit, media rules, whether the platform takes a first comment, the X link-post rule) refuses the whole call with a message prefixed `Account <id>: ` and publishes nothing; only a platform failure is per account, and the quota for that account is given back.
 
 ### chirpie_list_posts
 
-List posts with optional filters.
+List posts one page at a time. The answer is `{ posts, has_more, next_offset }`: pass `next_offset` back as `offset` while `has_more` is true.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `status` | string | No | Filter: draft, scheduled, publishing, published, failed, deleted. `draft` lists posts saved but not sent |
+| `from` | string | No | ISO 8601 instant with a timezone. Only posts whose scheduled or publish time is at or after it |
+| `to` | string | No | ISO 8601 instant with a timezone. Only posts whose scheduled or publish time is before it |
+| `q` | string | No | Words in the text, case-insensitive |
+| `platform` | string | No | One network: x, bluesky, linkedin, threads, mastodon, instagram, facebook, telegram |
 | `account_id` | string | No | Filter by account |
 | `group_id` | string | No | Every post of one multi-account send, by the `group_id` its create call returned |
-| `limit` | number | No | Results to return |
+| `sort` | string | No | `created_at` (default) or `time`: scheduled, else published, else created |
+| `order` | string | No | `desc` (default) or `asc` |
+| `limit` | number | No | Posts per page, 1 to 100 (default 20) |
+| `offset` | number | No | Posts to skip: the `next_offset` from the previous page |
 | `include_hidden` | boolean | No | Include posts the user hid with `chirpie_hide_post`. Off by default on every filter |
 
 A post the user deleted stays in the listing with `status: "deleted"` and no cancel reason: Chirpie never removes a post's history. Every post carries `hidden`.
+
+A scheduled post becomes `published` (or `failed`, or `deleted` if cancelled) once its time passes, so a post queued yesterday for this morning is no longer under `status: "scheduled"`. That does not mean it was lost: find it by its time with `from`/`to`, which match a post whose scheduled time or publish time falls in the range, whatever its status (drafts excepted: add `status=draft` for those). If a post seems missing, search by its time and text before creating it again: re-sending the same text to the same account within 24 hours is refused with `409 duplicate_post`, which names the post already there.
 
 ### chirpie_get_post
 
@@ -247,6 +258,7 @@ Edit a post that has not published yet, or finish a draft. Leaving `schedule_at`
 | `timezone` | string | No | The IANA zone a `schedule_at` with no offset is read in, such as `America/New_York`. Daylight saving is resolved for the date named, which is what a client computing today's offset gets wrong across a clock change. Ignored when `schedule_at` already carries an offset. Leave it out to use the timezone saved on the account. A fixed offset like `+02:00` is NOT accepted here |
 | `draft` | boolean | No | Keep a draft a draft, so `schedule_at` only changes the time it remembers |
 | `publish` | boolean | No | Publish a draft now. Only on a draft, and never together with `schedule_at` |
+| `allow_duplicate` | boolean | No | Go ahead even when the account already has a post with the same text within 24 hours, when promoting a draft or changing a queued post's text or time |
 
 ### The first comment
 

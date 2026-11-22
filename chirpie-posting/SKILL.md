@@ -43,6 +43,12 @@ curl -X POST https://chirpie.ai/api/v1/posts \
 
 The SDK's `createPost()` and `createThread()` generate a fresh key per call, which protects the one HTTP request it rides on. **Calling the method again is a new call and gets a new key**, so to make your own retry replay rather than republish, pass the same key each time: `{ idempotencyKey }` as the second argument, or `{ idempotencyKey: null }` to send none. `uploadMedia(input, options)`, `retryFirstComment(id, options)` and `replyToComment(postId, commentId, text, options)` take the same options object and generate nothing.
 
+### Duplicate posts
+
+The same text (trimmed) to the same account within 24 hours either side of another post that account has `scheduled`, `publishing` or `published` is refused with `409 duplicate_post`, and nothing is sent. `error.duplicate_of` names the post already there: `post_id`, `account_id`, `platform`, `status`, `time`, `platform_post_url`. A thread is compared by its opening post; drafts, failed and deleted posts never count; a post with no text is never checked. On a multi-account call the whole request is refused, prefixed `Account <id>: `. It also applies to promoting a draft and to an edit that changes a queued post's text or time.
+
+Treat it as a signal, not an obstacle: check the named post first (a scheduled post that seemed missing has usually just published). Send `allow_duplicate: true` only when the user really means to post the same words again. It is a check, not a lock, so an `Idempotency-Key` is still what makes a retry safe.
+
 ### Uploading a file
 
 `POST /api/v1/media` takes a `multipart/form-data` body with the file in a part named `file`, or a JSON body naming a public `url`, and answers `201` with `{ "data": { "id", "url", "mime_type", "media_type", "bytes", "expires_at", ... } }`. Attach the id with `media: [{ "id": "...", "alt": "..." }]` or `media_ids: ["..."]`.
@@ -390,11 +396,23 @@ const posts = await chirpie.listPosts({
   status: "published",  // Optional: draft|scheduled|publishing|published|failed|deleted
   account_id: "uuid",   // Optional
   group_id: "uuid",     // Optional: every post of one multi-account send
+  platform: "x",        // Optional: one network
+  q: "launch",          // Optional: words in the text, case-insensitive
+  from: "2026-11-18T15:00:00Z", // Optional: scheduled or publish time at or after
+  to: "2026-11-18T16:00:00Z",   // Optional: scheduled or publish time before
+  sort: "time",         // Optional: "created_at" (default) or "time"
   limit: 20,            // Max 100
   offset: 0,
   include_hidden: false, // Optional: posts the user hid are left out by default
 });
+
+// The same filters, plus whether another page follows.
+const { posts: page, has_more, next_offset } = await chirpie.listPostsPage({ q: "launch" });
 ```
+
+Over HTTP: `GET /api/v1/posts?from=...&to=...&q=...&platform=...&sort=time&limit=20&offset=0`. The answer carries `meta: { has_more, next_offset }` beside `data`.
+
+A scheduled post becomes `published` (or `failed`, or `deleted` if cancelled) once its time passes, so a post queued yesterday for this morning is no longer under `status: "scheduled"`. That does not mean it was lost: find it by its time with `from`/`to`, which match a post whose scheduled time or publish time falls in the range, whatever its status (drafts excepted: add `status=draft` for those).
 
 A post the user deleted stays in the listing with `status: "deleted"`: a delete takes the post down from the platform and never removes the record of it.
 
@@ -529,7 +547,8 @@ try {
       case 401: // Invalid API key
       case 403: // insufficient_scope: the key lacks the scope named in err.message
       case 404: // Account not found or inactive
-      case 409: // idempotency_in_progress: retry the identical call to collect the replay
+      case 409: // duplicate_post: same text on this account within 24h (err.details.duplicate_of);
+                // idempotency_in_progress: retry the identical call to collect the replay
       case 422: // idempotency_key_reused: use a fresh key for a different request
       case 429: // usage_limit_exceeded (quota), rate_limited (burst), account_limit_reached, or analytics_refresh_rate_limited
       case 502: // Platform API error (temporary, retry)

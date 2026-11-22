@@ -88,7 +88,7 @@ Chirpie is a social media API for AI agents and developers. Post to X/Twitter, B
 | Action | Endpoint | Method |
 |--------|----------|--------|
 | Create post | `/api/v1/posts` | POST |
-| List posts (also by `group_id`) | `/api/v1/posts` | GET |
+| List posts (by `status`, `group_id`, `platform`, time with `from`/`to`, text with `q`) | `/api/v1/posts` | GET |
 | Get post | `/api/v1/posts/:id` | GET |
 | Update post | `/api/v1/posts/:id` | PATCH |
 | Delete post | `/api/v1/posts/:id` | DELETE |

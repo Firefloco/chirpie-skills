@@ -85,6 +85,7 @@ chirpie post "Safe to retry" --idempotency-key campaign-2026-11-01
 | `--timezone <iana>` | The IANA zone a `--schedule` with no offset is read in, such as `America/New_York`. Daylight saving is resolved for the date named. Also on `chirpie thread` and `chirpie posts update` (there as the zone for `--schedule-at`) |
 | `--idempotency-key <key>` | Make a retry safe: the same key with the same request replays the first answer for 24 hours instead of sending it again. `chirpie post` and `chirpie thread` generate one per invocation when you do not pass one, which protects that one run; name it yourself to make re-running the same command replay instead. Also on `chirpie posts first-comment` and `chirpie comments reply`, which generate nothing, so there a key is the only way to get a replay |
 | `--draft` | Save without publishing. Nothing is sent and nothing counts against the quota. Anything that would go wrong is printed, one warning per line |
+| `--allow-duplicate` | Publish even when an account already has a post with the same text within 24 hours, which is otherwise refused with `duplicate_post` naming the post already there. Also on `chirpie thread`, `chirpie posts update` and `chirpie posts publish` |
 | `--json` | Machine-readable JSON output |
 
 ### chirpie thread
@@ -107,6 +108,9 @@ chirpie posts                           # List recent posts
 chirpie posts --status published        # Filter by status
 chirpie posts --limit 50               # More results
 chirpie posts --group GROUP_UUID       # Every post of one multi-account send
+chirpie posts --from 2026-11-18T15:00:00Z --to 2026-11-18T16:00:00Z  # By scheduled or publish time, any status
+chirpie posts --search "launch day" --platform threads  # By words in the text, on one network
+chirpie posts --sort time --offset 20  # Order by post time; read the next page
 chirpie posts get POST_UUID            # Get single post
 chirpie posts update POST_UUID --text "Fixed"   # Edit a queued post, keeping its time
 chirpie posts update POST_UUID --schedule-at 2027-04-02T09:00:00Z  # Move it
@@ -116,7 +120,7 @@ chirpie posts delete POST_UUID         # Take it down from the platform
 chirpie posts hide POST_UUID           # Hide it from Chirpie only, reversibly
 chirpie posts unhide POST_UUID         # Show it again
 chirpie posts --include-hidden         # Include the ones that are hidden
-chirpie posts --json                   # JSON output
+chirpie posts --json                   # JSON output (the posts array)
 ```
 
 On a published post, delete takes it down from the platform and succeeds only once the platform confirms it is gone. On one that has not gone out, nothing reaches a platform: a queued post is cancelled and its quota returned, while a draft is simply marked deleted, since a draft never counted against any quota. Chirpie keeps the post either way, marked deleted, so `chirpie posts --status deleted` still lists it. A published TikTok post, a published Facebook Page story, or a post on an Instagram account connected through Instagram rather than with `--via facebook` cannot be deleted, so each is refused with `delete_unsupported`: delete it in the platform's own app, though a Page story expires by itself after 24 hours.
