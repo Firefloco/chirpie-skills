@@ -141,8 +141,8 @@ Returns impressions, likes, reposts, replies, quotes, bookmarks, and clicks. Tel
 | Platform | Max text | Media |
 |---|---|---|
 | X | 280 (25,000 Premium) | 4 images or 1 video |
-| Bluesky | 300 | 4 images, no video |
-| LinkedIn | 3,000 | 4 images, no video |
+| Bluesky | 300 | 4 images or 1 video (MP4, 100 MB) |
+| LinkedIn | 3,000 | 4 images or 1 video (MP4, 500 MB) |
 | Threads | 500 | 1 image or video, or a carousel of 2 to 20 |
 | Mastodon | 500 | 4 images or 1 video |
 | Instagram | 2,200 | **image or video required**; 2–10 = carousel (videos too) |
