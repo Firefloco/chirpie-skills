@@ -481,7 +481,18 @@ Once configured, ask your AI agent:
 ## Connecting social accounts from chat
 
 The user does not need to leave the agent to connect a platform. Call the matching
-`chirpie_connect_*` tool and hand back the `authorization_url` for them to open:
+`chirpie_connect_*` tool and hand back the `authorization_url` for them to open. It is a
+chirpie.ai link: in their browser, Chirpie asks them to sign in if that browser is not
+signed in yet, **Continue** takes them to the platform to approve, and they land on a page
+saying the account is connected. Then `chirpie_list_accounts` returns its `account_id`.
+Bluesky and Telegram connect within the call, from the credentials passed to it.
+
+A new Chirpie account has no social account, and nothing publishes until one is
+connected. When `chirpie_list_accounts` returns no accounts it carries `next_step`
+naming the connect tools, and `chirpie_post` / `chirpie_thread` answer
+`no_connected_accounts` with the same pointer. Connecting an account is the first step
+for a user who signed in through a connector (Claude, ChatGPT) and has never used the
+dashboard.
 
 | Tool | Platform | Arguments |
 |------|----------|-----------|

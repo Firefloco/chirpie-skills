@@ -67,7 +67,8 @@ grant a scope it does not itself hold. All three key methods need `keys:write`: 
 **X/Twitter**: Connect via OAuth from the dashboard or API:
 ```typescript
 const { authorization_url } = await chirpie.connectXAccount();
-// Open URL in browser to authorize
+// A chirpie.ai link: open it in a browser, sign in to Chirpie if asked,
+// press Continue and approve on X.
 ```
 
 Optionally connect X through **your own** X developer app, so posts use your X
