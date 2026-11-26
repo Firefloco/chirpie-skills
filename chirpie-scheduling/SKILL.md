@@ -131,15 +131,17 @@ that has any.
 
 `PATCH /api/v1/posts/:id` edits a post that has not gone out yet. `text`, the media (`media`, `media_ids` or `media_urls`) and `schedule_at` are all optional, and only what is sent changes. On a draft it also takes `draft` and `publish`: see "Drafts" below.
 
+Angle-bracket ids such as `<post_id>` are placeholders: replace each with a real `id` from a create response or a listing (`GET /api/v1/posts`), never send the example text.
+
 ```bash
 # Fix the words, keep the time
-curl -X PATCH https://chirpie.ai/api/v1/posts/POST_ID \
+curl -X PATCH https://chirpie.ai/api/v1/posts/<post_id> \
   -H "Authorization: Bearer $CHIRPIE_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"text": "Now with the typo fixed"}'
 
 # Move it, keep the words
-curl -X PATCH https://chirpie.ai/api/v1/posts/POST_ID \
+curl -X PATCH https://chirpie.ai/api/v1/posts/<post_id> \
   -H "Authorization: Bearer $CHIRPIE_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"schedule_at": "2027-04-02T09:00:00Z"}'

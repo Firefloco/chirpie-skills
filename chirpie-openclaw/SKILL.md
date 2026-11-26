@@ -103,17 +103,19 @@ Rules: must be in the future, UTC only, and at least **5 minutes apart** from an
 
 ## List, inspect, delete
 
+Angle-bracket ids such as `<post_id>` are placeholders: replace each with a real `id` from a create response or a listing (`GET /api/v1/posts`), never send the example text.
+
 ```bash
 # Queued
 curl -s "https://chirpie.ai/api/v1/posts?status=scheduled&limit=50" \
   -H "Authorization: Bearer $CHIRPIE_API_KEY"
 
 # One post
-curl -s https://chirpie.ai/api/v1/posts/POST_ID \
+curl -s https://chirpie.ai/api/v1/posts/<post_id> \
   -H "Authorization: Bearer $CHIRPIE_API_KEY"
 
 # Edit one that has not gone out yet. Leaving schedule_at out keeps its time.
-curl -s -X PATCH https://chirpie.ai/api/v1/posts/POST_ID \
+curl -s -X PATCH https://chirpie.ai/api/v1/posts/<post_id> \
   -H "Authorization: Bearer $CHIRPIE_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"text": "Now with the typo fixed"}'
@@ -121,7 +123,7 @@ curl -s -X PATCH https://chirpie.ai/api/v1/posts/POST_ID \
 # Delete (also removes it from the platform, except on TikTok, on a Facebook
 # Page story, and on an Instagram account connected through Instagram rather
 # than via Facebook)
-curl -s -X DELETE https://chirpie.ai/api/v1/posts/POST_ID \
+curl -s -X DELETE https://chirpie.ai/api/v1/posts/<post_id> \
   -H "Authorization: Bearer $CHIRPIE_API_KEY"
 ```
 
@@ -130,7 +132,7 @@ Deleting a scheduled post before its time cancels it.
 ## Analytics
 
 ```bash
-curl -s https://chirpie.ai/api/v1/analytics/posts/POST_ID \
+curl -s https://chirpie.ai/api/v1/analytics/posts/<post_id> \
   -H "Authorization: Bearer $CHIRPIE_API_KEY"
 ```
 

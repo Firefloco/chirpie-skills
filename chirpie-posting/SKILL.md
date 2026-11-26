@@ -112,8 +112,10 @@ Every post payload carries `first_comment`, either `null` or:
 
 ### Retry a First Comment
 
+Angle-bracket ids such as `<post_id>` are placeholders: replace each with a real `id` from a create response or a listing (`GET /api/v1/posts`), never send the example text.
+
 ```bash
-curl -X POST https://chirpie.ai/api/v1/posts/POST_ID/first-comment \
+curl -X POST https://chirpie.ai/api/v1/posts/<post_id>/first-comment \
   -H "Authorization: Bearer chirpie_sk_YOUR_KEY"
 ```
 
@@ -455,6 +457,8 @@ A thread, or a multi-account send, is hidden as the one thing it was made as, so
 
 For a post Chirpie published, list the comments it received, reply to one, hide one, or delete one.
 
+Only a post that is on the platform has comments. Asking about one that is still queued, failed, or was cancelled answers `501 comments_unsupported` with a sentence saying which. A failed or cancelled post never has comments, so stop asking; a queued one has them once its `status` is `published`.
+
 ```typescript
 // List. Newest first. Page with next_cursor until it comes back null.
 const { comments, next_cursor, capabilities, sync } = await chirpie.listComments(
@@ -479,11 +483,13 @@ await chirpie.deleteComment("post-uuid", "comment-uuid");
 
 ### curl
 
+`<post_id>` and `<comment_id>` are placeholders: take the post's `id` from a create response or `GET /api/v1/posts`, and the comment's `id` from the comment listing.
+
 ```bash
-curl "https://chirpie.ai/api/v1/posts/POST_ID/comments?limit=25" \
+curl "https://chirpie.ai/api/v1/posts/<post_id>/comments?limit=25" \
   -H "Authorization: Bearer chirpie_sk_YOUR_KEY"
 
-curl -X POST https://chirpie.ai/api/v1/posts/POST_ID/comments/COMMENT_ID/reply \
+curl -X POST https://chirpie.ai/api/v1/posts/<post_id>/comments/<comment_id>/reply \
   -H "Authorization: Bearer chirpie_sk_YOUR_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "text": "Thanks, that is on the roadmap." }'

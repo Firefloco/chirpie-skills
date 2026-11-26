@@ -184,7 +184,7 @@ Start a direct upload for a file too large to send as base64 `data`.
 | `content_type` | string | Yes | `image/jpeg`, `image/png`, `image/webp`, `image/gif`, `video/mp4` or `video/quicktime` |
 | `size` | integer | Yes | The file's exact size in bytes. Up to 20 MB for an image, 512 MB for a video |
 | `filename` | string | No | A name to show in the dashboard |
-| `idempotency_key` | string | No | The same key with the same request hands back the same target |
+| `idempotency_key` | string | No | The same key with the same request hands back the same target. The same key can then be passed to `chirpie_upload_media` with the `upload_id`: the two calls never collide |
 
 Returns `upload_id`, `upload_url`, `method` and `headers`. Send the file's bytes as the body to `upload_url` with exactly that method and those headers, for example `curl -X PUT --data-binary @video.mp4 -H "<name>: <value>" ... "<upload_url>"` (no API key: the target carries its own authorization), then call `chirpie_upload_media` with the `upload_id`. The target closes after an hour.
 
@@ -259,7 +259,7 @@ Get a single post by ID.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `id` | string | Yes | Post UUID |
+| `id` | string | Yes | Post UUID, from `chirpie_list_posts` or the answer that created the post. Also accepted as `post_id` |
 
 ### chirpie_update_post
 
@@ -267,7 +267,7 @@ Edit a post that has not published yet, or finish a draft. Leaving `schedule_at`
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `id` | string | Yes | Post UUID |
+| `id` | string | Yes | Post UUID, from `chirpie_list_posts` or the answer that created the post. Also accepted as `post_id` |
 | `text` | string | No | Replacement text |
 | `media` | object[] | No | Replacement media, each `{ id? , url?, alt? }`. An empty array removes the media |
 | `media_urls` | string[] | No | Replacement media URLs. An empty array removes the media |
@@ -307,7 +307,7 @@ Post a first comment that failed, again. It re-sends the text the post already h
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `id` | string | Yes | Post UUID |
+| `id` | string | Yes | Post UUID, from `chirpie_list_posts` or the answer that created the post. Also accepted as `post_id` |
 | `idempotency_key` | string | No | Makes retrying this call safe. The same key with the same request replays the first answer for 24 hours instead of sending it again; the same key with a different request is `422 idempotency_key_reused`; a retry arriving while the first is still running is `409 idempotency_in_progress`, which does not wait, so retry once more to collect the replay. Max 255 characters |
 
 The answer is the post, with `first_comment.status` now `posted`. A retry that works costs one post from the monthly quota, exactly as the first attempt would have. Refusals: `404 first_comment_not_found` when the post has none, `409 first_comment_not_retryable` when it is already posted, the post has not published, or another attempt is already in flight, and the platform's own refusal when the retry fails too.
@@ -332,7 +332,7 @@ This reaches the platform and cannot be undone, so confirm with the user first.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `id` | string | Yes | Post UUID |
+| `id` | string | Yes | Post UUID, from `chirpie_list_posts` or the answer that created the post. Also accepted as `post_id` |
 
 ### chirpie_hide_post
 
@@ -438,7 +438,7 @@ Get engagement metrics for a published post.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `post_id` | string | Yes | Post UUID |
+| `post_id` | string | Yes | Post UUID. Also accepted as `id`, the name the post tools use |
 | `refresh` | boolean | No | Ask the platform for the current numbers instead of reading the stored snapshot. Allowed once per post every 5 minutes; past that it answers `429 analytics_refresh_rate_limited` with a `Retry-After`, and the stored numbers are still one ordinary call away |
 
 Returns: impressions, likes, retweets, replies, quotes, bookmarks, clicks. The numbers come
