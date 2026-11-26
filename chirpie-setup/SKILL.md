@@ -1,11 +1,23 @@
 ---
 name: chirpie-setup
-description: Set up Chirpie in your project. Install the SDK, configure API keys, connect X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram accounts, send your first post.
+description: Set up Chirpie (chirpie.ai). For an AI app, add the hosted MCP server at https://chirpie.ai/mcp in one step; for code, install the SDK, configure API keys, connect X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram accounts, send your first post.
 ---
 
 # Chirpie Setup
 
-## Prerequisites
+## First: which route?
+
+- **The user wants their AI app (Claude, Claude Code, Cursor, VS Code, ChatGPT, Codex, Gemini CLI, Windsurf, Manus) to post.** Use the hosted MCP server, `https://chirpie.ai/mcp`. No SDK, and no API key in any app that signs in to Chirpie with OAuth (Manus is the exception: give it a scoped key as a bearer token, see `chirpie-mcp`). In Claude Code that is one command:
+
+  ```bash
+  claude mcp add --transport http chirpie https://chirpie.ai/mcp
+  ```
+
+  then `/mcp` to sign in. Every other app is in the `chirpie-mcp` skill and at https://chirpie.ai/docs/mcp?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-setup. Connect social accounts at https://chirpie.ai/dashboard/accounts?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-setup, and stop here.
+- **A shell agent, a script or a scheduled job.** Use the CLI: `npm install -g chirpie`, `chirpie login`. See `chirpie-cli`.
+- **The user is building an app or a service.** Use the SDK or the REST API with an API key: the rest of this skill.
+
+## Prerequisites (SDK and REST API)
 
 - A Chirpie account at https://chirpie.ai/auth/signup?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-setup
 - An API key (created during onboarding or at https://chirpie.ai/dashboard/keys?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-setup)
@@ -272,7 +284,7 @@ chirpie post "Hello from the CLI!"
 
 ## Alternative: MCP Setup
 
-See `chirpie-mcp` skill for Claude/Cursor/AI agent configuration.
+For any AI app, the hosted server at `https://chirpie.ai/mcp` needs no code at all. See the `chirpie-mcp` skill.
 
 ## Common Pitfalls
 

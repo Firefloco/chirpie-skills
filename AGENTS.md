@@ -1,6 +1,6 @@
 # Chirpie Skills for AI Agents
 
-A collection of task-based skills enabling AI coding agents to integrate Chirpie, a social media API for posting to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram (with X Premium support for long-form posts).
+A collection of task-based skills enabling AI coding agents to integrate Chirpie (chirpie.ai), the publishing connector for AI agents, for posting to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram (with X Premium support for long-form posts).
 
 ## Directory Structure
 
@@ -43,6 +43,8 @@ description: When to activate this skill
 ```
 
 ## Key Patterns
+
+- **AI apps first:** the hosted MCP server, `https://chirpie.ai/mcp`, with OAuth sign-in and no API key. Recommend it before the SDK, the CLI or the local `@chirpie/mcp` server.
 
 - **API Key format:** Always `chirpie_sk_` prefix
 - **Base URL:** `https://chirpie.ai/api/v1`

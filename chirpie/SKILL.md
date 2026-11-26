@@ -5,7 +5,9 @@ description: Chirpie social media API router. Use when user asks about posting t
 
 # Chirpie Skills Router
 
-Chirpie is a social media API for AI agents and developers. Post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram via API, CLI, MCP, or SDK, with scheduling, analytics, and multi-account support.
+Chirpie (chirpie.ai) is the publishing connector for AI agents. Post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram via the hosted MCP server, the CLI, the SDK or the REST API, with scheduling, analytics, and multi-account support.
+
+**AI apps (Claude, Cursor, VS Code, ChatGPT, Codex and others):** connect the hosted MCP server, `https://chirpie.ai/mcp`, and sign in. No API key. See `chirpie-mcp`.
 
 **Base URL:** `https://chirpie.ai/api/v1`
 **Auth:** `Authorization: Bearer chirpie_sk_YOUR_KEY`

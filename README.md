@@ -1,6 +1,6 @@
 # Chirpie Skills
 
-AI agent skills for [Chirpie](https://chirpie.ai?utm_source=agent_skills&utm_medium=skill&utm_campaign=readme), the social media API for AI agents and developers. Post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram from a single API.
+AI agent skills for [Chirpie (chirpie.ai)](https://chirpie.ai?utm_source=agent_skills&utm_medium=skill&utm_campaign=readme), the publishing connector for AI agents. Post to X/Twitter, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, and Telegram from a single API.
 
 ## Install
 
@@ -15,7 +15,11 @@ Install the Chirpie plugin. It bundles the hosted MCP server **and** all eight s
 
 The plugin registers `https://chirpie.ai/mcp` and signs you in with OAuth the first time a Chirpie tool runs. There is no API key to paste.
 
+From a shell, the same two steps are `claude plugin marketplace add Firefloco/chirpie-skills` and `claude plugin install chirpie@chirpie-skills`. Then run `/mcp` and sign in to **chirpie**.
+
 ### Any other agent
+
+Connect the hosted MCP server, `https://chirpie.ai/mcp`, in your agent (one click in Cursor and VS Code, one command in Codex and Gemini CLI: see the [per-app guides](https://chirpie.ai/docs/mcp?utm_source=agent_skills&utm_medium=skill&utm_campaign=readme)), then add the skills:
 
 ```bash
 npx skills add Firefloco/chirpie-skills
@@ -77,9 +81,9 @@ Set `CHIRPIE_API_KEY` in the agent's environment. See the [OpenClaw guide](https
 
 ## Prerequisites
 
-1. Sign up at [chirpie.ai](https://chirpie.ai/auth/signup?utm_source=agent_skills&utm_medium=skill&utm_campaign=readme)
-2. Connect your social accounts (X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram)
-3. Get an API key
+1. A Chirpie account. Signing in from your AI app the first time creates one, or sign up at [chirpie.ai](https://chirpie.ai/auth/signup?utm_source=agent_skills&utm_medium=skill&utm_campaign=readme)
+2. Your social accounts connected (X, Bluesky, LinkedIn, Threads, Mastodon, Instagram, Facebook, Telegram)
+3. An API key only if your agent calls the CLI, the SDK or the REST API, or uses an MCP client that cannot sign in (such as Manus)
 
 ## Links
 
