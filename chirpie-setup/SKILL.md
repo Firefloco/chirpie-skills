@@ -13,14 +13,14 @@ description: Set up Chirpie (chirpie.ai). For an AI app, add the hosted MCP serv
   claude mcp add --transport http chirpie https://chirpie.ai/mcp
   ```
 
-  then `/mcp` to sign in. Every other app is in the `chirpie-mcp` skill and at https://chirpie.ai/docs/mcp?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-setup. Connect social accounts at https://chirpie.ai/dashboard/accounts?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-setup, and stop here.
+  then `/mcp` to sign in. A person with no Chirpie account signs up in that window with just their email and a 6-digit code (no password) and goes straight back to the app. Every other app is in the `chirpie-mcp` skill and at https://chirpie.ai/docs/mcp?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-setup. Connect social accounts at https://chirpie.ai/dashboard/accounts?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-setup, and stop here.
 - **A shell agent, a script or a scheduled job.** Use the CLI: `npm install -g chirpie`, `chirpie login`. See `chirpie-cli`.
 - **The user is building an app or a service.** Use the SDK or the REST API with an API key: the rest of this skill.
 
 ## Prerequisites (SDK and REST API)
 
-- A Chirpie account at https://chirpie.ai/auth/signup?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-setup
-- An API key (created during onboarding or at https://chirpie.ai/dashboard/keys?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-setup)
+- A Chirpie account at https://chirpie.ai/auth/signup?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-setup (email and a 6-digit code; a password is optional and can be added later in Settings)
+- An API key (shown during onboarding, created at https://chirpie.ai/dashboard/keys?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-setup, or written for you by `chirpie login`, which also works for a brand-new, signed-out user)
 - At least one connected social account (via https://chirpie.ai/dashboard/accounts?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-setup)
 
 ## Step 1: Install the SDK
