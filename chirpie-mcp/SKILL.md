@@ -101,13 +101,33 @@ Open the MCP config file from Cascade's MCP settings and add `{ "mcpServers": { 
 
 ### Manus
 
-Manus's Add MCP by URL form has no field for a key, so use **Connectors** → **Create** → **Import MCP by JSON** with `{ "mcpServers": { "chirpie": { "url": "https://chirpie.ai/mcp", "headers": { "Authorization": "Bearer chirpie_sk_..." } } } }`. Ask the user to create a scoped key in the dashboard (https://chirpie.ai/dashboard/keys) and paste it into Manus themselves, not into the chat.
+Manus's Add MCP by URL form has no field for a key, so use **Connectors** → **Create** → **Import MCP by JSON** with `{ "mcpServers": { "chirpie": { "url": "https://chirpie.ai/mcp", "headers": { "Authorization": "Bearer chirpie_sk_..." } } } }`. Ask the user to create a scoped key in the dashboard (https://chirpie.ai/dashboard/keys) and paste it into Manus themselves, not into the chat. If you are the agent setting it up and can write files on the user's machine, you may get the key by device authorization (below: the user only taps Approve) and write that JSON, key included, to a file only the user can read (create it with mode 600, for example `umask 077` first), which they open and paste from; delete it once they have imported it. Never put the key in the chat: it stays in the conversation history.
 
 ### n8n
 
 Give an AI Agent an **MCP Client Tool** with endpoint `https://chirpie.ai/mcp`, HTTP Streamable transport, and an MCP OAuth2 credential. OAuth needs n8n served over https or on localhost; a self-hosted n8n on plain http elsewhere should use a scoped API key as a bearer header.
 
 Per-app guides: https://chirpie.ai/docs/mcp?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-mcp
+
+### Set it up as an agent (Claude Code, Codex, Gemini CLI)
+
+Signing in to the hosted server is a command only the person can run in these clients (`/mcp`, `codex mcp login`, `/mcp auth`). An agent can do the rest without it: get a key by device authorization, where the person only taps Approve, then add the server with that key.
+
+1. `POST https://chirpie.ai/api/v1/device/code` with `{"client_name": "Claude Code"}` (no auth), relay `data.human_action.message` to the person, and poll `POST https://chirpie.ai/api/v1/device/token` with `{"device_code": "..."}` every `data.interval` seconds (on `slow_down`, switch to the `interval` that answer carries) until it returns `data.api_key`. Or run `chirpie login`, which saves it to `~/.chirpie/config.json`.
+2. Add the server with it:
+
+```bash
+claude mcp add --transport http chirpie https://chirpie.ai/mcp --header "Authorization: Bearer chirpie_sk_..."
+export CHIRPIE_API_KEY=chirpie_sk_...   # Codex stores the name; set it wherever Codex runs
+codex mcp add chirpie --url https://chirpie.ai/mcp --bearer-token-env-var CHIRPIE_API_KEY
+gemini mcp add --scope user --transport http --header "Authorization: Bearer chirpie_sk_..." chirpie https://chirpie.ai/mcp
+```
+
+Keep a key out of files a project commits: Claude Code's default scope and Gemini's `--scope user` store it outside the project (never `--scope project` with a key), and Codex stores only the variable's name, which must be set wherever Codex runs. When the person is at the keyboard, the OAuth sign-in above needs no key at all. Guide: https://chirpie.ai/docs/agents?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-mcp
+
+### Every step that needs a person says so
+
+Any tool answer or error that only a person can resolve carries `human_action: { message, url }`: a connect tool's `authorization_url`, a plan limit (`usage_limit_exceeded`, `account_limit_reached`, `x_link_posts_require_paid_plan`). Pass `message` to the person as written and wait for them.
 
 ### With an API key instead of signing in
 
@@ -131,7 +151,7 @@ Other clients take the same `headers` object inside their own entry: VS Code `{ 
 
 Only when the hosted server will not do: a client that speaks nothing but stdio, or an agent that should read large files straight from the user's disk with `path`.
 
-Authenticate via the CLI (opens a browser; the user is typically already logged in):
+With no key configured, the local server signs itself in: the first tool call answers `login_required` with a link and a code for the person to approve, and once they have, the key is saved to `~/.chirpie/config.json` and the next call works. Or sign in ahead of time with the CLI (prints a link and a code, works over SSH):
 
 ```bash
 npm install -g chirpie

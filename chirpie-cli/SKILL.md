@@ -19,13 +19,14 @@ npx chirpie post "Hello!"
 
 ## Authentication
 
-### Browser Login (Recommended)
+### Login (Recommended)
 
 ```bash
-chirpie login
+chirpie login                           # prints a link and a code
+chirpie signup --email you@example.com  # no account yet: one approval email
 ```
 
-Opens your browser, signs you in, and saves an API key to `~/.chirpie/config.json`.
+Prints a chirpie.ai link and a code. The person opens it in any browser (it creates an account with just their email if they have none) and taps Approve, and the CLI saves an API key to `~/.chirpie/config.json`. Works over SSH and from an agent: relay the printed link and code to the person, never ask them for a password or a code. `--read-only` asks for a key that can only read; `--localhost` keeps the older same-machine browser flow.
 
 ### Manual Key
 

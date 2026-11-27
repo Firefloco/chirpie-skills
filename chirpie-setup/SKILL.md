@@ -14,8 +14,20 @@ description: Set up Chirpie (chirpie.ai). For an AI app, add the hosted MCP serv
   ```
 
   then `/mcp` to sign in. A person with no Chirpie account signs up in that window with just their email and a 6-digit code (no password) and goes straight back to the app. Every other app is in the `chirpie-mcp` skill and at https://chirpie.ai/docs/mcp?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-setup. Connect social accounts at https://chirpie.ai/dashboard/accounts?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-setup, and stop here.
-- **A shell agent, a script or a scheduled job.** Use the CLI: `npm install -g chirpie`, `chirpie login`. See `chirpie-cli`.
+- **A shell agent, a script or a scheduled job.** Use the CLI: `npm install -g chirpie`, `chirpie login` (prints a link and a code for the person to approve in any browser, so it works over SSH). See `chirpie-cli`.
+- **You are the agent and the person has no key or account yet.** Use device authorization, below: the person taps Approve once and you receive a key.
 - **The user is building an app or a service.** Use the SDK or the REST API with an API key: the rest of this skill.
+
+## If you are the agent doing the setup
+
+You can get the person started without handling any credential; they only tap **Approve** on a link you relay. Never ask them for a password, an emailed code or an API key.
+
+1. `POST https://chirpie.ai/api/v1/device/code` with `{"client_name": "<you> on <host>"}`, no auth. If the person has no Chirpie account you may instead `POST https://chirpie.ai/api/v1/signup` with `{"email": "<their address>"}` (ask them for it): they get one approval email.
+2. Relay `data.human_action.message` to the person exactly as written. It names the link and the code.
+3. Poll `POST https://chirpie.ai/api/v1/device/token` with `{"device_code": "..."}` every `data.interval` seconds. `authorization_pending`: keep waiting. `slow_down`: use the new `interval`. The first `200` carries `data.api_key` (`chirpie_sk_...`), once.
+4. Use it as `Authorization: Bearer <key>`. If `GET /api/v1/accounts` lists nothing, `POST /api/v1/accounts` with a `platform` and relay the `human_action` it returns.
+
+Any later answer or error that carries `human_action` (a connect link, a plan limit) is a step only the person can take: relay it the same way. `chirpie login` does steps 1 to 3 in a terminal, over SSH too. In Claude Code, Codex and Gemini CLI, whose hosted-server sign-in is a command only the person can run (`/mcp`, `codex mcp login`, `/mcp auth`), add the hosted server with the key instead (see `chirpie-mcp`). Full guide: https://chirpie.ai/docs/agents?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-setup
 
 ## Prerequisites (SDK and REST API)
 
@@ -275,8 +287,10 @@ Instagram is the one platform that refuses a text-only post: add `media_urls` wi
 # Install globally
 npm install -g chirpie
 
-# Login via browser (creates API key automatically)
+# Prints a link and a code; approve in any browser (creates the API key)
 chirpie login
+# No account yet: one approval email, then the same wait
+chirpie signup --email you@example.com
 
 # Post (auto-selects account if you only have one)
 chirpie post "Hello from the CLI!"
