@@ -532,6 +532,8 @@ The user does not need to leave the agent to connect a platform. Call the matchi
 chirpie.ai link: in their browser, Chirpie asks them to sign in if that browser is not
 signed in yet, **Continue** takes them to the platform to approve, and they land on a page
 saying the account is connected. Then `chirpie_list_accounts` returns its `account_id`.
+Hand the link over exactly as it came back: it works for 24 hours, only for this Chirpie
+account, and an edited link is refused. If it expires, call the tool again for a new one.
 Bluesky and Telegram connect within the call, from the credentials passed to it.
 
 A new Chirpie account has no social account, and nothing publishes until one is
