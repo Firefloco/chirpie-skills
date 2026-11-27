@@ -1,6 +1,6 @@
 ---
 name: chirpie-mcp
-description: Connect Chirpie (chirpie.ai) to Claude, Claude Code, Cursor, VS Code, ChatGPT, Codex, Windsurf, Gemini CLI, Manus or any MCP client through the hosted server at https://chirpie.ai/mcp, or run it locally. Lists all available tools and their parameters, including first comments and saving and promoting drafts.
+description: Connect Chirpie (chirpie.ai) to Claude, Claude Code, Cursor, VS Code, ChatGPT, Codex, Windsurf, Gemini CLI, Manus, Meta Muse, n8n or any MCP client through the hosted server at https://chirpie.ai/mcp, or run it locally. Lists all available tools and their parameters, including first comments and saving and promoting drafts.
 ---
 
 # Chirpie MCP Server
@@ -18,6 +18,8 @@ https://chirpie.ai/mcp
 ```
 
 The user signs in through their client's connector flow the first time. No API key needed.
+
+**The sign-in is the user's to do, not yours.** When you add the server for them, tell them what comes next, in these words or close to them: "A browser window will open on chirpie.ai. Sign in, or choose Sign up and enter the code Chirpie emails you. Then choose Full access or Read only and click Allow, and tell me when the page says you are connected." In Claude Code, the user runs `/mcp` and picks **chirpie** themselves; it is a slash command, not something you can run from a tool. Never ask for their Chirpie password or the emailed code in the chat.
 
 ### Claude Code
 
@@ -50,7 +52,7 @@ In a Muse conversation: "Add a custom connector for Chirpie. It is a remote MCP 
 
 ### Cursor
 
-One click: open `cursor://anysphere.cursor-deeplink/mcp/install?name=chirpie&config=eyJ1cmwiOiJodHRwczovL2NoaXJwaWUuYWkvbWNwIn0=` (web version: `https://cursor.com/en/install-mcp?name=chirpie&config=eyJ1cmwiOiJodHRwczovL2NoaXJwaWUuYWkvbWNwIn0%3D`). Or add to `.cursor/mcp.json` (project) or `~/.cursor/mcp.json` (global):
+One click: open `cursor://anysphere.cursor-deeplink/mcp/install?name=chirpie&config=eyJ1cmwiOiJodHRwczovL2NoaXJwaWUuYWkvbWNwIn0=` (web version: `https://cursor.com/install-mcp?name=chirpie&config=eyJ1cmwiOiJodHRwczovL2NoaXJwaWUuYWkvbWNwIn0%3D`). Or add to `.cursor/mcp.json` (project) or `~/.cursor/mcp.json` (global):
 
 ```json
 {
@@ -64,7 +66,7 @@ One click: open `cursor://anysphere.cursor-deeplink/mcp/install?name=chirpie&con
 
 ### ChatGPT
 
-On the web only. Settings → Apps → Advanced settings → turn on **Developer mode**, then Settings → Apps → **Create** → MCP server URL `https://chirpie.ai/mcp` → OAuth → **Scan Tools** (sign in to Chirpie) → **Create**. In a chat, pick Chirpie from the tools menu or mention it with `@`. Publishing needs full MCP support (Business, Enterprise, Education); Pro gets read and fetch only, and on Business only admins can use developer mode. ChatGPT treats tools not marked read-only as writes and may ask before running them. For the OpenAI Responses API, add `{ "type": "mcp", "server_label": "chirpie", "server_url": "https://chirpie.ai/mcp", "authorization": "<chirpie_sk_ key>" }` to `tools`. Full guide: https://chirpie.ai/docs/mcp/chatgpt?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-mcp
+On the web only. **Plugins** → **+** → **Add custom MCP server** → name `Chirpie`, URL `https://chirpie.ai/mcp` → OAuth → **Create as a plugin** (sign in to Chirpie). No developer-mode toggle is needed first. If the workspace still shows the older flow, turn on Developer mode under Settings → Apps → Advanced settings and create the app there. In a chat, pick Chirpie from the tools menu or mention it with `@`. Publishing needs full MCP support (Business, Enterprise, Education); Pro gets read and fetch only, and on Business only admins and owners can add it, so tell a member to ask their admin. ChatGPT treats tools not marked read-only as writes and may ask before running them. For the OpenAI Responses API, add `{ "type": "mcp", "server_label": "chirpie", "server_url": "https://chirpie.ai/mcp", "authorization": "<chirpie_sk_ key>" }` to `tools`. Full guide: https://chirpie.ai/docs/mcp/chatgpt?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-mcp
 
 ### VS Code (GitHub Copilot)
 
@@ -99,17 +101,17 @@ Open the MCP config file from Cascade's MCP settings and add `{ "mcpServers": { 
 
 ### Manus
 
-Connectors, Create, Add MCP by URL: name `Chirpie`, URL `https://chirpie.ai/mcp`, and a scoped Chirpie API key as the bearer token.
+Manus's Add MCP by URL form has no field for a key, so use **Connectors** → **Create** → **Import MCP by JSON** with `{ "mcpServers": { "chirpie": { "url": "https://chirpie.ai/mcp", "headers": { "Authorization": "Bearer chirpie_sk_..." } } } }`. Ask the user to create a scoped key in the dashboard (https://chirpie.ai/dashboard/keys) and paste it into Manus themselves, not into the chat.
 
 ### n8n
 
-Give an AI Agent an **MCP Client Tool** with endpoint `https://chirpie.ai/mcp`, HTTP Streamable transport, and an MCP OAuth2 credential (or a bearer API key).
+Give an AI Agent an **MCP Client Tool** with endpoint `https://chirpie.ai/mcp`, HTTP Streamable transport, and an MCP OAuth2 credential. OAuth needs n8n served over https or on localhost; a self-hosted n8n on plain http elsewhere should use a scoped API key as a bearer header.
 
 Per-app guides: https://chirpie.ai/docs/mcp?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-mcp
 
 ### With an API key instead of signing in
 
-For CI, scripts, or clients without an OAuth flow:
+For CI, scripts, or clients without an OAuth flow. This is the Claude Code (`.mcp.json`) and Cursor (`mcp.json`) shape:
 
 ```json
 {
@@ -122,6 +124,8 @@ For CI, scripts, or clients without an OAuth flow:
   }
 }
 ```
+
+Other clients take the same `headers` object inside their own entry: VS Code `{ "servers": { "chirpie": { "type": "http", "url": "https://chirpie.ai/mcp", "headers": {...} } } }`, Windsurf beside `serverUrl`, Gemini CLI beside `httpUrl`. Codex: `bearer_token_env_var = "CHIRPIE_API_KEY"` under `[mcp_servers.chirpie]`, with the key in that variable.
 
 ## Advanced: local server
 
