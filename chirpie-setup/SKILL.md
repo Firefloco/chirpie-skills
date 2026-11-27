@@ -27,6 +27,8 @@ You can get the person started without handling any credential; they only tap **
 3. Poll `POST https://chirpie.ai/api/v1/device/token` with `{"device_code": "..."}` every `data.interval` seconds. `authorization_pending`: keep waiting. `slow_down`: use the new `interval`. The first `200` carries `data.api_key` (`chirpie_sk_...`), once.
 4. Use it as `Authorization: Bearer <key>`. If `GET /api/v1/accounts` lists nothing, `POST /api/v1/accounts` with a `platform` and relay the `human_action` it returns.
 
+**If you have your own AgentID inbox (AgentMail)**: Sign in with AgentID is coming soon. Until then, use the steps above.
+
 Any later answer or error that carries `human_action` (a connect link, a plan limit) is a step only the person can take: relay it the same way. `chirpie login` does steps 1 to 3 in a terminal, over SSH too. In Claude Code, Codex and Gemini CLI, whose hosted-server sign-in is a command only the person can run (`/mcp`, `codex mcp login`, `/mcp auth`), add the hosted server with the key instead (see `chirpie-mcp`). Full guide: https://chirpie.ai/docs/agents?utm_source=agent_skills&utm_medium=skill&utm_campaign=chirpie-setup
 
 ## Prerequisites (SDK and REST API)
